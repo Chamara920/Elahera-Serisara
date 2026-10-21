@@ -38,6 +38,22 @@
 
     <div class="container-xl py-4">
 
+        <!-- Trip Configuration Header -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+            <div>
+                <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-2.5 py-1 rounded-pill small mb-1">
+                    <i class="bi bi-database-check me-1"></i> Database-Driven Transit Planning
+                </span>
+                <h4 class="fw-bold text-dark mb-0">Smart Day-Trip Planner</h4>
+                <p class="text-secondary small mb-0">
+                    සියලු සංචාරක සැලසුම් කිරීම් යෙදවුමේ ඇති සංචාරක ගමනාන්ත, රැඳෙන කාලය, ගමන් කාලය සහ පොදු ප්‍රවාහන දත්ත ඇසුරෙන්ම සිදුකෙරේ.
+                </p>
+            </div>
+            <div class="text-muted small mt-2 mt-md-0">
+                <i class="bi bi-shield-check text-success me-1"></i> Verified Regional Corridor Metrics
+            </div>
+        </div>
+
         <!-- Trip Configuration Bar -->
         <div class="card card-custom border-0 shadow-sm p-4 mb-4">
             <div class="row g-3 align-items-end">

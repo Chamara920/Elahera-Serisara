@@ -155,80 +155,7 @@
         </div>
 
 
-        <!-- 3. Quick Trip Planner Widget (Positioned Directly Below the 5 Cards) -->
-        <div class="card card-custom border-0 shadow mb-5" style="background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border-left: 6px solid var(--primary-emerald) !important;">
-            <div class="card-body p-4 p-md-5">
-                <div class="row align-items-center mb-4">
-                    <div class="col-md-8">
-                        <div class="d-flex align-items-center gap-2 mb-1">
-                            <span class="badge bg-success text-white px-2.5 py-1 rounded-pill small">AI Powered</span>
-                            <span class="text-uppercase fw-bold text-success small letter-spacing-1">Smart Day-Trip Quick Planner</span>
-                        </div>
-                        <h3 class="fw-bold text-dark mb-0">Plan Your 1-Day Elahera Journey Instantly</h3>
-                    </div>
-                    <div class="col-md-4 text-md-end mt-2 mt-md-0 text-muted small">
-                        <i class="bi bi-clock-history me-1 text-success"></i> Auto-calculated drive times & halts
-                    </div>
-                </div>
-
-                <!-- Form redirects straight to main Smart Trip Planner with prefilled values -->
-                <form action="{{ route('planner.index') }}" method="GET">
-                    <div class="row g-3 align-items-end">
-                        <!-- Field 1: Trip Date -->
-                        <div class="col-md-3">
-                            <label class="form-label fw-semibold text-secondary small mb-1">
-                                <i class="bi bi-calendar3 text-success me-1"></i> {{ __('messages.trip_date') }}
-                            </label>
-                            <input type="date" name="date" class="form-control form-control-lg bg-white border-light-subtle shadow-sm fs-6" value="{{ date('Y-m-d') }}" required>
-                        </div>
-
-                        <!-- Field 2: Start Location -->
-                        <div class="col-md-3">
-                            <label class="form-label fw-semibold text-secondary small mb-1">
-                                <i class="bi bi-geo-alt text-success me-1"></i> {{ __('messages.start_location') }}
-                            </label>
-                            <select name="start_location" class="form-select form-select-lg bg-white border-light-subtle shadow-sm fs-6">
-                                <option value="Bakamuna Town" selected>Bakamuna Town (Hub)</option>
-                                <option value="Elahera Anicut Junction">Elahera Anicut Junction</option>
-                                <option value="Matale Central">Matale Town</option>
-                                <option value="Polonnaruwa Station">Polonnaruwa</option>
-                                <option value="Dambulla Clock Tower">Dambulla</option>
-                            </select>
-                        </div>
-
-                        <!-- Field 3: Transport Mode -->
-                        <div class="col-md-3">
-                            <label class="form-label fw-semibold text-secondary small mb-1">
-                                <i class="bi bi-car-front text-success me-1"></i> {{ __('messages.transport_mode') }}
-                            </label>
-                            <select name="transport_mode" class="form-select form-select-lg bg-white border-light-subtle shadow-sm fs-6">
-                                <option value="Car/Van" selected>Car / Van (Comfort)</option>
-                                <option value="Motorbike/Tuk">Motorbike / Tuk Tuk (Agile)</option>
-                                <option value="Public Bus">Public Bus (Economical)</option>
-                            </select>
-                        </div>
-
-                        <!-- Field 4: Meal Break Toggle & Submit Button -->
-                        <div class="col-md-3">
-                            <div class="d-flex flex-column gap-2">
-                                <div class="form-check form-switch mb-1">
-                                    <input class="form-check-input" type="checkbox" name="meal_break" value="1" id="mealBreakSwitch" checked>
-                                    <label class="form-check-label fw-semibold text-secondary small" for="mealBreakSwitch">
-                                        <i class="bi bi-cup-hot text-warning me-1"></i> Meal Break (45m)
-                                    </label>
-                                </div>
-                                <button type="submit" class="btn btn-primary-custom btn-lg w-100 shadow-sm fw-bold fs-6">
-                                    <i class="bi bi-play-circle-fill me-1"></i> {{ __('messages.start_planning') }}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-
-        <!-- 4. Main Content Area (2/3 and 1/3 Layout Grid) -->
+        <!-- 3. Main Content Area (2/3 and 1/3 Layout Grid) -->
         <div class="row g-4 mb-5">
             <!-- Left (2/3 Width): 6 Major Destination Cards -->
             <div class="col-lg-8">
@@ -302,8 +229,77 @@
                 </div>
             </div>
 
-            <!-- Right (1/3 Width - Sidebar Widgets): Latest Blogs & Latest News -->
+            <!-- Right (1/3 Width - Sidebar): Smart Day-Trip Planner Widget + Latest Blogs + Latest News -->
             <div class="col-lg-4">
+                
+                <!-- Smart Day-Trip Planner Widget (Placed Above Latest Blogs, Exact 1/3 Width, Database-Driven) -->
+                <div class="card card-custom border-0 shadow-sm p-4 mb-4" style="background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border-top: 4px solid var(--primary-emerald) !important;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle small">
+                            <i class="bi bi-database-check me-1"></i> Data-Verified
+                        </span>
+                        <span class="small text-muted" style="font-size: 0.72rem;">
+                            <i class="bi bi-clock-history text-success"></i> Real Metrics
+                        </span>
+                    </div>
+
+                    <h5 class="fw-bold text-dark mb-1">
+                        <i class="bi bi-calendar2-range text-success me-1"></i> Smart Day-Trip Planner
+                    </h5>
+                    <p class="small text-secondary mb-3" style="font-size: 0.8rem; line-height: 1.4;">
+                        යෙදවුමේ ඇති ගමනාන්ත, රැඳෙන කාලය, ගමන් කාලය සහ පොදු ප්‍රවාහන දත්ත ඇසුරෙන්ම ඔබේ සංචාරය සැලසුම් කරන්න.
+                    </p>
+
+                    <form action="{{ route('planner.index') }}" method="GET">
+                        <!-- Field 1: Trip Date -->
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold text-secondary mb-1">
+                                <i class="bi bi-calendar3 text-success me-1"></i> {{ __('messages.trip_date') }}
+                            </label>
+                            <input type="date" name="date" class="form-control form-control-sm bg-white" value="{{ date('Y-m-d') }}" required>
+                        </div>
+
+                        <!-- Field 2: Start Location -->
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold text-secondary mb-1">
+                                <i class="bi bi-geo-alt text-success me-1"></i> {{ __('messages.start_location') }}
+                            </label>
+                            <select name="start_location" class="form-select form-select-sm bg-white">
+                                <option value="Bakamuna Town" selected>Bakamuna Town (Hub)</option>
+                                <option value="Elahera Anicut Junction">Elahera Anicut Junction</option>
+                                <option value="Matale Central">Matale Town</option>
+                                <option value="Polonnaruwa Station">Polonnaruwa</option>
+                                <option value="Dambulla Clock Tower">Dambulla</option>
+                            </select>
+                        </div>
+
+                        <!-- Field 3: Transport Mode -->
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold text-secondary mb-1">
+                                <i class="bi bi-car-front text-success me-1"></i> {{ __('messages.transport_mode') }}
+                            </label>
+                            <select name="transport_mode" class="form-select form-select-sm bg-white">
+                                <option value="Car/Van" selected>Car / Van (Comfort)</option>
+                                <option value="Motorbike/Tuk">Motorbike / Tuk Tuk (Agile)</option>
+                                <option value="Public Bus">Public Bus (Transit)</option>
+                            </select>
+                        </div>
+
+                        <!-- Field 4: Meal Break Toggle -->
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" name="meal_break" value="1" id="mealBreakSwitchSidebar" checked>
+                            <label class="form-check-label small fw-semibold text-secondary" for="mealBreakSwitchSidebar">
+                                <i class="bi bi-cup-hot text-warning me-1"></i> Meal Break (45 mins)
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary-custom btn-sm w-100 shadow-sm fw-bold py-2">
+                            <i class="bi bi-play-circle-fill me-1"></i> {{ __('messages.start_planning') }}
+                        </button>
+                    </form>
+                </div>
+
                 <!-- Sidebar Widget 1: Latest Community Blog Posts -->
                 <div class="card card-custom border-0 shadow-sm p-4 mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">

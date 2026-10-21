@@ -16,7 +16,7 @@ class ElaheraSirisaraTest extends TestCase
         $response = $this->get('/');
         $response->assertStatus(200);
         $response->assertSee('Elahera Sirisara');
-        $response->assertSee('Smart Day-Trip Quick Planner');
+        $response->assertSee('Smart Day-Trip Planner');
     }
 
     /**
