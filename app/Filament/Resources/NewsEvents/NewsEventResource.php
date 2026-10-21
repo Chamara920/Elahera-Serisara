@@ -9,6 +9,7 @@ use App\Filament\Resources\NewsEvents\Schemas\NewsEventForm;
 use App\Filament\Resources\NewsEvents\Tables\NewsEventsTable;
 use App\Models\NewsEvent;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +19,17 @@ class NewsEventResource extends Resource
 {
     protected static ?string $model = NewsEvent::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBellAlert;
+
+    protected static string|UnitEnum|null $navigationGroup = 'ප්‍රජා අංශය (Community)';
+
+    protected static ?string $navigationLabel = 'පුවත් සහ සිදුවීම් (News & Events)';
+
+    protected static ?string $modelLabel = 'පුවත් / සිදුවීම';
+
+    protected static ?string $pluralModelLabel = 'පුවත් සහ සිදුවීම්';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

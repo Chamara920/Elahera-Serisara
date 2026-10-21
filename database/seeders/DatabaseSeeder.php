@@ -110,7 +110,10 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        // 4. Destinations
+        // 4. Destination Categories
+        $this->call(DestinationCategorySeeder::class);
+
+        // 5. Destinations
         // Destination 1: Elahera Ancient Anicut (Has SI translation)
         $d1 = Destination::create([
             'title_en' => 'Elahera Ancient Anicut',

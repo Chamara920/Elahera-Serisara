@@ -9,6 +9,7 @@ use App\Filament\Resources\ContactMessages\Schemas\ContactMessageForm;
 use App\Filament\Resources\ContactMessages\Tables\ContactMessagesTable;
 use App\Models\ContactMessage;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +19,17 @@ class ContactMessageResource extends Resource
 {
     protected static ?string $model = ContactMessage::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
+
+    protected static string|UnitEnum|null $navigationGroup = 'ප්‍රජා අංශය (Community)';
+
+    protected static ?string $navigationLabel = 'පණිවිඩ (Contact Messages)';
+
+    protected static ?string $modelLabel = 'පණිවිඩය';
+
+    protected static ?string $pluralModelLabel = 'පණිවිඩ';
+
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {

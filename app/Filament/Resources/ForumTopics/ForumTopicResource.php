@@ -9,6 +9,7 @@ use App\Filament\Resources\ForumTopics\Schemas\ForumTopicForm;
 use App\Filament\Resources\ForumTopics\Tables\ForumTopicsTable;
 use App\Models\ForumTopic;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +19,17 @@ class ForumTopicResource extends Resource
 {
     protected static ?string $model = ForumTopic::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
+
+    protected static string|UnitEnum|null $navigationGroup = 'ප්‍රජා අංශය (Community)';
+
+    protected static ?string $navigationLabel = 'ප්‍රජා සංසදය (Forum Topics)';
+
+    protected static ?string $modelLabel = 'සංසද මාතෘකාව';
+
+    protected static ?string $pluralModelLabel = 'ප්‍රජා සංසදය';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {

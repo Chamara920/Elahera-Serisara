@@ -9,6 +9,7 @@ use App\Filament\Resources\Destinations\Schemas\DestinationForm;
 use App\Filament\Resources\Destinations\Tables\DestinationsTable;
 use App\Models\Destination;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +19,17 @@ class DestinationResource extends Resource
 {
     protected static ?string $model = Destination::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMapPin;
+
+    protected static string|UnitEnum|null $navigationGroup = 'සංචාරක ගමනාන්ත & ප්‍රවාහනය';
+
+    protected static ?string $navigationLabel = 'සියලු සංචාරක ගමනාන්ත (Destinations)';
+
+    protected static ?string $modelLabel = 'ගමනාන්තය';
+
+    protected static ?string $pluralModelLabel = 'සංචාරක ගමනාන්ත';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

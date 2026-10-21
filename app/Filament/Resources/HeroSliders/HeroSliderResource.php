@@ -9,6 +9,7 @@ use App\Filament\Resources\HeroSliders\Schemas\HeroSliderForm;
 use App\Filament\Resources\HeroSliders\Tables\HeroSlidersTable;
 use App\Models\HeroSlider;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +19,17 @@ class HeroSliderResource extends Resource
 {
     protected static ?string $model = HeroSlider::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
+
+    protected static string|UnitEnum|null $navigationGroup = 'මුල් පිටුව';
+
+    protected static ?string $navigationLabel = 'hero slider';
+
+    protected static ?string $modelLabel = 'Hero Slider';
+
+    protected static ?string $pluralModelLabel = 'Hero Sliders';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

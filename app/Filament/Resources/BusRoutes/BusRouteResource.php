@@ -9,6 +9,7 @@ use App\Filament\Resources\BusRoutes\Schemas\BusRouteForm;
 use App\Filament\Resources\BusRoutes\Tables\BusRoutesTable;
 use App\Models\BusRoute;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +19,17 @@ class BusRouteResource extends Resource
 {
     protected static ?string $model = BusRoute::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
+
+    protected static string|UnitEnum|null $navigationGroup = 'සංචාරක ගමනාන්ත & ප්‍රවාහනය';
+
+    protected static ?string $navigationLabel = 'බස් කාලසටහන් (Bus Routes)';
+
+    protected static ?string $modelLabel = 'බස් මාර්ගය';
+
+    protected static ?string $pluralModelLabel = 'බස් කාලසටහන්';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {

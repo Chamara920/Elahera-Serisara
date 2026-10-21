@@ -26,6 +26,7 @@ class Destination extends Model
         'description_en',
         'description_si',
         'category',
+        'category_id',
         'category_si',
         'route_zone',
         'featured_image',
@@ -173,6 +174,14 @@ class Destination extends Model
     public function getGoogleMapsUrl(): string
     {
         return "https://www.google.com/maps/dir/?api=1&destination={$this->latitude},{$this->longitude}";
+    }
+
+    /**
+     * Category relationship.
+     */
+    public function destinationCategory(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(DestinationCategory::class, 'category_id');
     }
 
     /**

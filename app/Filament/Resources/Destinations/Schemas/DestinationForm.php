@@ -60,7 +60,21 @@ class DestinationForm
 
                 Section::make('Classification & Location')
                     ->schema([
+                        Select::make('category_id')
+                            ->label('Destination Category (ගමනාන්ත කාණ්ඩය)')
+                            ->relationship('destinationCategory', 'name_en')
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $cat = \App\Models\DestinationCategory::find($state);
+                                if ($cat) {
+                                    $set('category', $cat->name_en);
+                                    $set('category_si', $cat->name_si);
+                                }
+                            }),
                         Select::make('category')
+                            ->label('Category Code / Label')
                             ->options([
                                 'Nature & Wildlife' => 'Nature & Wildlife (සොබාදහම සහ වනජීවී)',
                                 'Waterfalls' => 'Waterfalls (දියඇලි)',
