@@ -167,4 +167,19 @@ class BlogController extends Controller
 
         return back()->with('success', 'Your comment has been added.');
     }
+
+    /**
+     * Delete / Remove a blog comment (Admin privilege).
+     */
+    public function destroyComment($id)
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized. Only administrators can delete comments.');
+        }
+
+        $comment = BlogComment::findOrFail($id);
+        $comment->delete();
+
+        return back()->with('success', 'Comment removed successfully.');
+    }
 }

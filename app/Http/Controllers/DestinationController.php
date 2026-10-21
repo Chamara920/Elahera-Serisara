@@ -121,4 +121,19 @@ class DestinationController extends Controller
 
         return back()->with('success', 'Thank you! Your review has been posted.');
     }
+
+    /**
+     * Delete / Remove a user review and rating (Admin privilege).
+     */
+    public function destroyReview($id)
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized. Only administrators can delete reviews.');
+        }
+
+        $review = DestinationReview::findOrFail($id);
+        $review->delete();
+
+        return back()->with('success', 'User comment and rating removed successfully.');
+    }
 }

@@ -35,6 +35,9 @@ Route::get('/destinations/{slug}', [DestinationController::class, 'show'])->name
 Route::post('/destinations/{id}/review', [DestinationController::class, 'storeReview'])
     ->middleware('auth')
     ->name('destinations.review');
+Route::delete('/destinations/reviews/{id}', [DestinationController::class, 'destroyReview'])
+    ->middleware('auth')
+    ->name('destinations.reviews.destroy');
 
 // Smart Trip Planner
 Route::get('/trip-planner', [TripPlannerController::class, 'index'])->name('planner.index');
@@ -53,6 +56,9 @@ Route::get('/blog/create', [BlogController::class, 'create'])->name('blog.create
 Route::post('/blog/store', [BlogController::class, 'store'])->name('blog.store');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::post('/blog/{id}/comment', [BlogController::class, 'storeComment'])->name('blog.comment');
+Route::delete('/blog/comments/{id}', [BlogController::class, 'destroyComment'])
+    ->middleware('auth')
+    ->name('blog.comments.destroy');
 
 // Forum (Community Q&A)
 Route::get('/forum', [ForumController::class, 'index'])->name('forum.index');

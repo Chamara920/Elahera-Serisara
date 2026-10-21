@@ -178,7 +178,18 @@
                         @forelse($reviews as $rev)
                             <div class="p-3 bg-light rounded-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <div class="fw-bold text-dark">{{ $rev->user->name }}</div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-bold text-dark">{{ $rev->user->name }}</span>
+                                        @if(auth()->check() && auth()->user()->isAdmin())
+                                            <form action="{{ route('destinations.reviews.destroy', $rev->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user comment and rating?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size: 0.72rem;" title="Delete this review & rating">
+                                                    <i class="bi bi-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                     <div class="text-warning small">
                                         @for($s = 1; $s <= 5; $s++)
                                             <i class="bi bi-star{{ $s <= $rev->rating ? '-fill' : '' }}"></i>
