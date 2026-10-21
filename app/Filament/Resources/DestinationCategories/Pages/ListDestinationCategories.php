@@ -14,7 +14,7 @@ class ListDestinationCategories extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('නව Category එකක් එක් කරන්න (Add New Category)'),
+                ->label('Add New Category'),
         ];
     }
 }

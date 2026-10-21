@@ -10,12 +10,12 @@
                             💾
                         </div>
                         <div>
-                            <h3 class="font-bold text-base text-slate-900 dark:text-slate-100">ක්ෂණික දත්ත ගබඩා Backup එකක් ලබාගන්න</h3>
-                            <p class="text-xs text-slate-500">Create Full Database Backup (.SQL)</p>
+                            <h3 class="font-bold text-base text-slate-900 dark:text-slate-100">Create Full Database Backup</h3>
+                            <p class="text-xs text-slate-500">Export Entire Database as .SQL</p>
                         </div>
                     </div>
                     <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">
-                        දැනට පද්ධතියේ පවතින සියලුම දත්ත (ගමනාන්ත, පින්තූර සබැඳි, පරිශීලකයින්, බස් කාලසටහන්, බ්ලොග් සහ පෝරම දත්ත) එක් ක්ලික් එකකින් ආරක්ෂිත SQL ගොනුවක් ලෙස සුරකින්න.
+                        Generate a complete snapshot of all destinations, bus routes, blog posts, forum messages, user accounts, and system configuration in a secure SQL file.
                     </p>
                 </div>
 
@@ -25,8 +25,8 @@
                         wire:click="createBackup" 
                         wire:loading.attr="disabled"
                         class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold text-sm shadow-sm transition disabled:opacity-50">
-                        <span wire:loading.remove wire:target="createBackup">🚀 Generate Backup Now (දැන් Backup කරන්න)</span>
-                        <span wire:loading wire:target="createBackup">⏳ Backup සකස් වෙමින් පවතී...</span>
+                        <span wire:loading.remove wire:target="createBackup">🚀 Generate Backup Now</span>
+                        <span wire:loading wire:target="createBackup">⏳ Generating backup...</span>
                     </button>
                 </div>
             </div>
@@ -39,12 +39,12 @@
                             📤
                         </div>
                         <div>
-                            <h3 class="font-bold text-base text-slate-900 dark:text-slate-100">SQL ගොනුවකින් Restore කරන්න</h3>
-                            <p class="text-xs text-slate-500">Upload & Restore from External .SQL File</p>
+                            <h3 class="font-bold text-base text-slate-900 dark:text-slate-100">Restore from SQL File</h3>
+                            <p class="text-xs text-slate-500">Upload & Restore External .SQL File</p>
                         </div>
                     </div>
                     <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">
-                        ඔබේ පරිගණකයේ ඇති පෙර සුරකින ලද SQL Backup ගොනුවක් තෝරා පද්ධතියේ දත්ත ගබඩාව වෙත කෙලින්ම ප්‍රතිස්ථාපනය කරන්න.
+                        Upload a previously exported database backup from your computer to restore all tables and data immediately.
                     </p>
                 </div>
 
@@ -61,10 +61,10 @@
                         <button 
                             type="submit" 
                             wire:loading.attr="disabled"
-                            wire:confirm="අවධානයයි! මෙම ගොනුව Restore කිරීමෙන් පසු දැනට ඇති සියලු දත්ත ප්‍රතිස්ථාපනය වේ. ඔබට ඉදිරියට යාමට අවශ්‍යද?"
+                            wire:confirm="Warning! Restoring will overwrite existing database records with the contents of this SQL file. Do you wish to proceed?"
                             class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs shadow-sm transition disabled:opacity-50">
                             <span wire:loading.remove wire:target="restoreUploadedFile">⚠️ Upload & Restore Now</span>
-                            <span wire:loading wire:target="restoreUploadedFile">⏳ Restore වෙමින් පවතී...</span>
+                            <span wire:loading wire:target="restoreUploadedFile">⏳ Restoring database...</span>
                         </button>
                     @endif
                 </form>
@@ -76,7 +76,7 @@
             <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
                 <div class="flex items-center gap-2">
                     <span class="text-lg">🗄️</span>
-                    <h3 class="font-bold text-base text-slate-900 dark:text-slate-100">පවතින Backup ගොනු ලැයිස්තුව (Existing Database Backups)</h3>
+                    <h3 class="font-bold text-base text-slate-900 dark:text-slate-100">Available Database Backups</h3>
                     <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                         {{ count($this->backups) }} Backups
                     </span>
@@ -86,18 +86,18 @@
             @if(empty($this->backups))
                 <div class="py-12 text-center text-slate-500 dark:text-slate-400">
                     <p class="text-3xl mb-2">📁</p>
-                    <p class="font-medium text-sm">තවමත් Backup ගොනු කිසිවක් සකස් කර නොමැත.</p>
-                    <p class="text-xs text-slate-400 mt-1">ඉහත "Generate Backup Now" බොත්තම ඔබා පළමු backup එක සකස් කරන්න.</p>
+                    <p class="font-medium text-sm">No backup files found yet.</p>
+                    <p class="text-xs text-slate-400 mt-1">Click "Generate Backup Now" above to create your first database snapshot.</p>
                 </div>
             @else
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             <tr>
-                                <th class="px-4 py-3 rounded-l-lg">ගොනුවේ නම (File Name)</th>
-                                <th class="px-4 py-3">ප්‍රමාණය (Size)</th>
-                                <th class="px-4 py-3">දිනය සහ වේලාව (Date & Time)</th>
-                                <th class="px-4 py-3 text-right rounded-r-lg">ක්‍රියා (Actions)</th>
+                                <th class="px-4 py-3 rounded-l-lg">File Name</th>
+                                <th class="px-4 py-3">File Size</th>
+                                <th class="px-4 py-3">Created Date & Time</th>
+                                <th class="px-4 py-3 text-right rounded-r-lg">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -121,7 +121,7 @@
                                             type="button" 
                                             wire:click="downloadBackup('{{ $backup['name'] }}')"
                                             class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition"
-                                            title="බාගත කරන්න (Download)">
+                                            title="Download SQL File">
                                             ⬇️ Download
                                         </button>
 
@@ -129,9 +129,9 @@
                                         <button 
                                             type="button" 
                                             wire:click="restoreBackup('{{ $backup['name'] }}')"
-                                            wire:confirm="අවධානයයි! මෙම backup එක ({{ $backup['name'] }}) මඟින් දත්ත ගබඩාව Restore කිරීමට ඔබට අවශ්‍ය බව තහවුරු කරන්න. දැනට ඇති නව දත්ත ප්‍රතිස්ථාපනය වනු ඇත."
+                                            wire:confirm="Warning! Are you sure you want to restore the database from {{ $backup['name'] }}? Existing data will be overwritten."
                                             class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 transition"
-                                            title="ප්‍රතිස්ථාපනය (Restore)">
+                                            title="Restore Database">
                                             🔄 Restore
                                         </button>
 
@@ -139,9 +139,9 @@
                                         <button 
                                             type="button" 
                                             wire:click="deleteBackup('{{ $backup['name'] }}')"
-                                            wire:confirm="මෙම Backup ගොනුව ({{ $backup['name'] }}) ස්ථිරවම මකා දැමීමට ඔබට අවශ්‍යද?"
+                                            wire:confirm="Are you sure you want to permanently delete backup {{ $backup['name'] }}?"
                                             class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 transition"
-                                            title="මකන්න (Delete)">
+                                            title="Delete Backup File">
                                             🗑️ Delete
                                         </button>
                                     </td>

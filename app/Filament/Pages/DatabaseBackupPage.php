@@ -15,11 +15,11 @@ class DatabaseBackupPage extends Page
 {
     use WithFileUploads;
 
-    protected static string|UnitEnum|null $navigationGroup = 'දත්ත ගබඩාව (Database)';
+    protected static string|UnitEnum|null $navigationGroup = 'Database';
 
-    protected static ?string $navigationLabel = 'Backup සහ Restore';
+    protected static ?string $navigationLabel = 'Backup & Restore';
 
-    protected static ?string $title = 'දත්ත ගබඩාව Backup සහ Restore (Database Backup & Restore)';
+    protected static ?string $title = 'Database Backup & Restore';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCircleStack;
 
@@ -47,13 +47,13 @@ class DatabaseBackupPage extends Page
             $filename = $service->createBackup();
 
             Notification::make()
-                ->title('Backup සාර්ථකව නිමවන ලදී (Backup Created)')
-                ->body("ගොනුවේ නම: {$filename}")
+                ->title('Backup created successfully')
+                ->body("File name: {$filename}")
                 ->success()
                 ->send();
         } catch (\Exception $e) {
             Notification::make()
-                ->title('Backup අසාර්ථක විය (Backup Failed)')
+                ->title('Backup generation failed')
                 ->body($e->getMessage())
                 ->danger()
                 ->send();
@@ -67,7 +67,7 @@ class DatabaseBackupPage extends Page
 
         if (!File::exists($filePath)) {
             Notification::make()
-                ->title('ගොනුව හමු නොවීය')
+                ->title('Backup file not found')
                 ->danger()
                 ->send();
             return null;
@@ -85,13 +85,13 @@ class DatabaseBackupPage extends Page
             $service->restoreBackup($filePath);
 
             Notification::make()
-                ->title('දත්ත ගබඩාව සාර්ථකව Restore කරන ලදී (Database Restored)')
-                ->body("{$filename} ගොනුවෙන් දත්ත සාර්ථකව ප්‍රතිස්ථාපනය කෙරිණි.")
+                ->title('Database restored successfully')
+                ->body("Database successfully restored from {$filename}.")
                 ->success()
                 ->send();
         } catch (\Exception $e) {
             Notification::make()
-                ->title('Restore අසාර්ථක විය (Restore Failed)')
+                ->title('Database restoration failed')
                 ->body($e->getMessage())
                 ->danger()
                 ->send();
@@ -105,12 +105,12 @@ class DatabaseBackupPage extends Page
 
         if ($deleted) {
             Notification::make()
-                ->title('Backup ගොනුව සාර්ථකව මකා දමන ලදී (Backup Deleted)')
+                ->title('Backup file deleted successfully')
                 ->success()
                 ->send();
         } else {
             Notification::make()
-                ->title('ගොනුව මකා දැමීමට නොහැකි විය')
+                ->title('Could not delete backup file')
                 ->danger()
                 ->send();
         }
@@ -131,12 +131,12 @@ class DatabaseBackupPage extends Page
             $this->reset('uploadedFile');
 
             Notification::make()
-                ->title('Upload කළ SQL ගොනුවෙන් දත්ත ගබඩාව සාර්ථකව Restore කරන ලදී')
+                ->title('Database successfully restored from uploaded SQL file')
                 ->success()
                 ->send();
         } catch (\Exception $e) {
             Notification::make()
-                ->title('Upload Restore අසාර්ථක විය')
+                ->title('Upload restoration failed')
                 ->body($e->getMessage())
                 ->danger()
                 ->send();

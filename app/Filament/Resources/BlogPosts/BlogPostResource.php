@@ -21,13 +21,13 @@ class BlogPostResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
-    protected static string|UnitEnum|null $navigationGroup = 'ප්‍රජා අංශය (Community)';
+    protected static string|UnitEnum|null $navigationGroup = 'Community';
 
-    protected static ?string $navigationLabel = 'බ්ලොග් ලිපි (Blog Posts)';
+    protected static ?string $navigationLabel = 'Blog Posts';
 
-    protected static ?string $modelLabel = 'බ්ලොග් ලිපිය';
+    protected static ?string $modelLabel = 'Blog Post';
 
-    protected static ?string $pluralModelLabel = 'බ්ලොග් ලිපි';
+    protected static ?string $pluralModelLabel = 'Blog Posts';
 
     protected static ?int $navigationSort = 1;
 

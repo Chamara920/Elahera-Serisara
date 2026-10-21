@@ -21,13 +21,13 @@ class DestinationResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMapPin;
 
-    protected static string|UnitEnum|null $navigationGroup = 'සංචාරක ගමනාන්ත & ප්‍රවාහනය';
+    protected static string|UnitEnum|null $navigationGroup = 'Destinations & Transport';
 
-    protected static ?string $navigationLabel = 'සියලු සංචාරක ගමනාන්ත (Destinations)';
+    protected static ?string $navigationLabel = 'Destinations';
 
-    protected static ?string $modelLabel = 'ගමනාන්තය';
+    protected static ?string $modelLabel = 'Destination';
 
-    protected static ?string $pluralModelLabel = 'සංචාරක ගමනාන්ත';
+    protected static ?string $pluralModelLabel = 'Destinations';
 
     protected static ?int $navigationSort = 1;
 

@@ -21,13 +21,13 @@ class BusRouteResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
 
-    protected static string|UnitEnum|null $navigationGroup = 'සංචාරක ගමනාන්ත & ප්‍රවාහනය';
+    protected static string|UnitEnum|null $navigationGroup = 'Destinations & Transport';
 
-    protected static ?string $navigationLabel = 'බස් කාලසටහන් (Bus Routes)';
+    protected static ?string $navigationLabel = 'Bus Routes';
 
-    protected static ?string $modelLabel = 'බස් මාර්ගය';
+    protected static ?string $modelLabel = 'Bus Route';
 
-    protected static ?string $pluralModelLabel = 'බස් කාලසටහන්';
+    protected static ?string $pluralModelLabel = 'Bus Routes';
 
     protected static ?int $navigationSort = 2;
 

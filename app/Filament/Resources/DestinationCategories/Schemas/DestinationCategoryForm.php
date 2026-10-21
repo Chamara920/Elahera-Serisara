@@ -13,29 +13,29 @@ class DestinationCategoryForm
     {
         return $schema
             ->components([
-                Section::make('Category Information (වර්ගීකරණ විස්තර)')
+                Section::make('Category Information')
                     ->schema([
                         TextInput::make('name_en')
                             ->label('Category Name (English)')
                             ->required()
                             ->maxLength(255),
                         TextInput::make('name_si')
-                            ->label('Category Name (Sinhala) - නම සිංහලෙන්')
+                            ->label('Category Name (Sinhala)')
                             ->maxLength(255),
                         TextInput::make('slug')
-                            ->label('Slug')
+                            ->label('URL Slug')
                             ->unique(ignoreRecord: true)
                             ->helperText('URL identifier (leave blank to generate from English name)'),
                         TextInput::make('icon')
-                            ->label('Heroicon / Icon Class')
+                            ->label('Icon / Heroicon Class')
                             ->default('heroicon-o-tag')
                             ->placeholder('heroicon-o-tag'),
                     ])->columns(2),
 
-                Section::make('Ordering & Display')
+                Section::make('Ordering & Visibility')
                     ->schema([
                         TextInput::make('sort_order')
-                            ->label('Sort Order (අනුපිළිවෙල)')
+                            ->label('Sort Order')
                             ->numeric()
                             ->default(0),
                         Toggle::make('is_active')

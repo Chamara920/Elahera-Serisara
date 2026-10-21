@@ -21,13 +21,13 @@ class ForumTopicResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
 
-    protected static string|UnitEnum|null $navigationGroup = 'ප්‍රජා අංශය (Community)';
+    protected static string|UnitEnum|null $navigationGroup = 'Community';
 
-    protected static ?string $navigationLabel = 'ප්‍රජා සංසදය (Forum Topics)';
+    protected static ?string $navigationLabel = 'Forum Topics';
 
-    protected static ?string $modelLabel = 'සංසද මාතෘකාව';
+    protected static ?string $modelLabel = 'Forum Topic';
 
-    protected static ?string $pluralModelLabel = 'ප්‍රජා සංසදය';
+    protected static ?string $pluralModelLabel = 'Forum Topics';
 
     protected static ?int $navigationSort = 2;
 

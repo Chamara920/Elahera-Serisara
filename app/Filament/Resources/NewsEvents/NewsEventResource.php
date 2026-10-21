@@ -21,13 +21,13 @@ class NewsEventResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBellAlert;
 
-    protected static string|UnitEnum|null $navigationGroup = 'ප්‍රජා අංශය (Community)';
+    protected static string|UnitEnum|null $navigationGroup = 'Community';
 
-    protected static ?string $navigationLabel = 'පුවත් සහ සිදුවීම් (News & Events)';
+    protected static ?string $navigationLabel = 'News & Events';
 
-    protected static ?string $modelLabel = 'පුවත් / සිදුවීම';
+    protected static ?string $modelLabel = 'News / Event';
 
-    protected static ?string $pluralModelLabel = 'පුවත් සහ සිදුවීම්';
+    protected static ?string $pluralModelLabel = 'News & Events';
 
     protected static ?int $navigationSort = 3;
 

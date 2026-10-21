@@ -17,7 +17,7 @@ class FilamentAdminTest extends TestCase
     }
 
     /**
-     * Test administrator can access Filament dashboard and sees categorized menus.
+     * Test administrator can access Filament dashboard and sees categorized menus in English.
      */
     public function test_admin_user_can_access_filament_dashboard(): void
     {
@@ -26,33 +26,36 @@ class FilamentAdminTest extends TestCase
 
         $response = $this->actingAs($admin)->get('/admin');
         $response->assertStatus(200);
-        $response->assertSee('hero slider');
-        $response->assertSee('මුල් පිටුව');
-        $response->assertSee('මුල් පිටුවේ දර්ශනය විය යුතු සංචාරක ගමනාන්ත');
-        $response->assertSee('සංචාරක ගමනාන්ත Category එකතු කිරීමට');
-        $response->assertSee('Backup සහ Restore');
+        $response->assertSee('Elahera Sirisara Admin');
+        $response->assertSee('Home Page');
+        $response->assertSee('Hero Sliders');
+        $response->assertSee('Homepage Destinations');
+        $response->assertSee('Destination Categories');
+        $response->assertSee('Destinations &amp; Transport', false);
+        $response->assertSee('Database');
+        $response->assertSee('Backup &amp; Restore', false);
     }
 
     /**
-     * Test admin can access homepage destinations management page.
+     * Test admin can access homepage destinations management page in English.
      */
     public function test_admin_can_access_homepage_destinations_page(): void
     {
         $admin = User::where('role', 'admin')->first();
         $response = $this->actingAs($admin)->get('/admin/homepage-destinations');
         $response->assertStatus(200);
-        $response->assertSee('මුල් පිටුවේ දර්ශනය වන සංචාරක ගමනාන්ත');
+        $response->assertSee('Featured Homepage Destinations');
     }
 
     /**
-     * Test admin can access database backup and restore page.
+     * Test admin can access database backup and restore page in English.
      */
     public function test_admin_can_access_database_backup_page(): void
     {
         $admin = User::where('role', 'admin')->first();
         $response = $this->actingAs($admin)->get('/admin/database-backup-restore');
         $response->assertStatus(200);
-        $response->assertSee('Generate Backup Now');
+        $response->assertSee('Create Full Database Backup');
     }
 
     /**

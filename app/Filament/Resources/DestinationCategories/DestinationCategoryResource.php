@@ -21,13 +21,13 @@ class DestinationCategoryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static string|UnitEnum|null $navigationGroup = 'මුල් පිටුව';
+    protected static string|UnitEnum|null $navigationGroup = 'Home Page';
 
-    protected static ?string $navigationLabel = 'සංචාරක ගමනාන්ත Category එකතු කිරීමට';
+    protected static ?string $navigationLabel = 'Destination Categories';
 
-    protected static ?string $modelLabel = 'ගමනාන්ත කාණ්ඩය';
+    protected static ?string $modelLabel = 'Destination Category';
 
-    protected static ?string $pluralModelLabel = 'සංචාරක ගමනාන්ත Categories';
+    protected static ?string $pluralModelLabel = 'Destination Categories';
 
     protected static ?int $navigationSort = 3;
 

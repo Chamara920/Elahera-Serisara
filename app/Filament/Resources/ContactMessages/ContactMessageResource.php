@@ -21,13 +21,13 @@ class ContactMessageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
-    protected static string|UnitEnum|null $navigationGroup = 'ප්‍රජා අංශය (Community)';
+    protected static string|UnitEnum|null $navigationGroup = 'Community';
 
-    protected static ?string $navigationLabel = 'පණිවිඩ (Contact Messages)';
+    protected static ?string $navigationLabel = 'Contact Messages';
 
-    protected static ?string $modelLabel = 'පණිවිඩය';
+    protected static ?string $modelLabel = 'Contact Message';
 
-    protected static ?string $pluralModelLabel = 'පණිවිඩ';
+    protected static ?string $pluralModelLabel = 'Contact Messages';
 
     protected static ?int $navigationSort = 4;
 

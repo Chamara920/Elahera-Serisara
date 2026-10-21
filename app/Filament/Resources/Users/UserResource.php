@@ -21,13 +21,13 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static string|UnitEnum|null $navigationGroup = 'පද්ධතිය (System)';
+    protected static string|UnitEnum|null $navigationGroup = 'System';
 
-    protected static ?string $navigationLabel = 'පරිශීලකයින් (Users)';
+    protected static ?string $navigationLabel = 'Users';
 
-    protected static ?string $modelLabel = 'පරිශීලකයා';
+    protected static ?string $modelLabel = 'User';
 
-    protected static ?string $pluralModelLabel = 'පරිශීලකයින්';
+    protected static ?string $pluralModelLabel = 'Users';
 
     protected static ?int $navigationSort = 1;
 

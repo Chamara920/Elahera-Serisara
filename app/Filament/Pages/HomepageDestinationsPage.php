@@ -22,11 +22,11 @@ class HomepageDestinationsPage extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static string|UnitEnum|null $navigationGroup = 'මුල් පිටුව';
+    protected static string|UnitEnum|null $navigationGroup = 'Home Page';
 
-    protected static ?string $navigationLabel = 'මුල් පිටුවේ දර්ශනය විය යුතු සංචාරක ගමනාන්ත';
+    protected static ?string $navigationLabel = 'Homepage Destinations';
 
-    protected static ?string $title = 'මුල් පිටුවේ දර්ශනය වන සංචාරක ගමනාන්ත';
+    protected static ?string $title = 'Featured Homepage Destinations';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSparkles;
 
@@ -42,41 +42,41 @@ class HomepageDestinationsPage extends Page implements HasTable
             ->query(Destination::query()->orderBy('is_featured', 'desc')->orderBy('featured_priority', 'asc'))
             ->columns([
                 ImageColumn::make('featured_image')
-                    ->label('රූපය')
+                    ->label('Thumbnail')
                     ->circular(),
                 TextColumn::make('title_en')
-                    ->label('ගමනාන්තය (English Title)')
+                    ->label('Destination (English Title)')
                     ->description(fn (Destination $record): ?string => $record->title_si)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('category')
-                    ->label('වර්ගය (Category)')
+                    ->label('Category')
                     ->badge()
                     ->color('info'),
                 ToggleColumn::make('is_featured')
-                    ->label('මුල් පිටුවේ පෙන්වන්න (Show on Homepage)')
+                    ->label('Show on Homepage')
                     ->afterStateUpdated(function ($record, $state) {
                         Notification::make()
-                            ->title($state ? 'ගමනාන්තය මුල් පිටුවට එක් කරන ලදී' : 'ගමනාන්තය මුල් පිටුවෙන් ඉවත් කරන ලදී')
+                            ->title($state ? 'Destination added to homepage' : 'Destination removed from homepage')
                             ->success()
                             ->send();
                     }),
                 TextInputColumn::make('featured_priority')
-                    ->label('අනුපිළිවෙල (Sort Order)')
+                    ->label('Sort Order (Priority)')
                     ->rules(['numeric', 'min:0'])
                     ->afterStateUpdated(function () {
                         Notification::make()
-                            ->title('අනුපිළිවෙල සාර්ථකව යාවත්කාලීන විය')
+                            ->title('Sort order updated successfully')
                             ->success()
                             ->send();
                     }),
                 TextColumn::make('views_count')
-                    ->label('නැරඹුම් (Views)')
+                    ->label('Views')
                     ->sortable(),
             ])
             ->recordActions([
                 \Filament\Actions\Action::make('edit')
-                    ->label('සංස්කරණය')
+                    ->label('Edit')
                     ->icon(Heroicon::OutlinedPencilSquare)
                     ->url(fn (Destination $record): string => DestinationResource::getUrl('edit', ['record' => $record])),
             ]);
@@ -86,13 +86,13 @@ class HomepageDestinationsPage extends Page implements HasTable
     {
         return [
             Action::make('preview_home')
-                ->label('මුල් පිටුව නරඹන්න (View Homepage)')
+                ->label('View Homepage')
                 ->icon(Heroicon::OutlinedEye)
                 ->color('gray')
                 ->url('/')
                 ->openUrlInNewTab(),
             Action::make('create_destination')
-                ->label('නව ගමනාන්තයක් එකතු කරන්න (Add Destination)')
+                ->label('Add New Destination')
                 ->icon(Heroicon::OutlinedPlus)
                 ->color('primary')
                 ->url(DestinationResource::getUrl('create')),

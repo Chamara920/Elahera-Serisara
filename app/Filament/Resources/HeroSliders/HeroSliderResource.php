@@ -21,9 +21,9 @@ class HeroSliderResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
-    protected static string|UnitEnum|null $navigationGroup = 'මුල් පිටුව';
+    protected static string|UnitEnum|null $navigationGroup = 'Home Page';
 
-    protected static ?string $navigationLabel = 'hero slider';
+    protected static ?string $navigationLabel = 'Hero Sliders';
 
     protected static ?string $modelLabel = 'Hero Slider';
 
