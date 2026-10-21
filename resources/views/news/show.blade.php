@@ -62,7 +62,18 @@
                             @forelse($item->comments as $comment)
                                 <div class="p-3 bg-light rounded-3">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <div class="fw-bold text-dark small">{{ $comment->user->name }}</div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold text-dark small">{{ $comment->user->name }}</span>
+                                            @if(auth()->check() && auth()->user()->isAdmin())
+                                                <form action="{{ route('news.comments.destroy', $comment->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size: 0.72rem;" title="Delete this comment">
+                                                        <i class="bi bi-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                         <span class="text-muted small" style="font-size: 0.72rem;">{{ $comment->created_at->diffForHumans() }}</span>
                                     </div>
                                     <p class="small text-secondary mb-0">{{ $comment->comment }}</p>

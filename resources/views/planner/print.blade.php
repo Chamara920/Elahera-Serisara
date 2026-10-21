@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Day Trip Itinerary - Elahera Sirisara</title>
+    <title>Day Trip Itinerary - Elahera Serisara</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #ffffff; color: #1e293b; padding: 2rem; }
@@ -24,7 +24,7 @@
 
         <div class="print-header d-flex justify-content-between align-items-center">
             <div>
-                <h2 class="fw-bold text-success mb-1">Elahera Sirisara</h2>
+                <h2 class="fw-bold text-success mb-1">Elahera Serisara</h2>
                 <div class="text-muted small">Discover • Explore • Experience | Day Trip Plan</div>
             </div>
             <div class="text-end">
@@ -72,7 +72,7 @@
         </div>
 
         <div class="p-3 bg-light rounded border text-muted small">
-            <strong>Travel Notice:</strong> Elahera Sirisara provides this itinerary for exploratory convenience. Travel times may vary based on weather conditions and traffic. Please respect local wildlife guidelines and irrigation canal safety signs.
+            <strong>Travel Notice:</strong> Elahera Serisara provides this itinerary for exploratory convenience. Travel times may vary based on weather conditions and traffic. Please respect local wildlife guidelines and irrigation canal safety signs.
         </div>
     </div>
 </body>

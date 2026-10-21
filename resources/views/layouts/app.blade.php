@@ -243,11 +243,12 @@
 
         /* Footer */
         .footer-main {
-            background: #0f172a;
+            background: linear-gradient(rgba(15, 23, 42, 0.90), rgba(15, 23, 42, 0.94)), url('/images/main/footer_background.jpg') center/cover no-repeat;
             color: #94a3b8;
             margin-top: auto;
-            padding: 4.5rem 0 2rem 0;
+            padding: 3rem 0 1.25rem 0;
             border-top: 4px solid var(--primary-emerald);
+            position: relative;
         }
 
         .footer-title {
@@ -295,9 +296,9 @@
         }
 
         .footer-bottom {
-            border-top: 1px solid #1e293b;
-            padding-top: 1.75rem;
-            margin-top: 3.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.25rem;
+            margin-top: 2rem;
             font-size: 0.88rem;
         }
     </style>
@@ -312,15 +313,15 @@
             <div class="container-xl">
                 <!-- Left: Brand / Logo -->
                 <a class="navbar-brand navbar-brand-logo" href="{{ route('home') }}">
-                    <img src="{{ asset('images/logo.svg') }}" alt="Elahera Sirisara" height="46">
+                    <img src="{{ asset('images/logo.svg') }}" alt="Elahera Serisara" height="46">
                 </a>
 
                 <!-- Mobile Toggle Button -->
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSirisara" aria-controls="navbarSirisara" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSerisara" aria-controls="navbarSerisara" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarSirisara">
+                <div class="collapse navbar-collapse" id="navbarSerisara">
                     <!-- Center: Navigation Menu -->
                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center">
                         <li class="nav-item">
@@ -508,7 +509,7 @@
                 <!-- Col 1: Brand & About -->
                 <div class="col-lg-3 col-md-6">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <img src="{{ asset('images/logo.svg') }}" alt="Elahera Sirisara" height="42" class="bg-white p-1 rounded-3">
+                        <img src="{{ asset('images/logo.svg') }}" alt="Elahera Serisara" height="42" class="bg-white p-1 rounded-3">
                     </div>
                     <div class="fw-bold text-white fs-5 mb-1">{{ __('messages.brand_name') }}</div>
                     <div class="small text-success fw-bold text-uppercase letter-spacing-1 mb-2">{{ __('messages.tagline') }}</div>
@@ -524,11 +525,9 @@
                 <div class="col-lg-3 col-md-6">
                     <h5 class="footer-title">{{ __('messages.quick_links') }}</h5>
                     <ul class="footer-links">
-                        <li><a href="{{ route('home') }}"><i class="bi bi-chevron-right text-success small"></i> {{ __('messages.explore_home') }}</a></li>
                         <li><a href="{{ route('destinations.index') }}"><i class="bi bi-chevron-right text-success small"></i> {{ __('messages.destinations') }}</a></li>
                         <li><a href="{{ route('planner.index') }}"><i class="bi bi-chevron-right text-success small"></i> {{ __('messages.trip_planner') }}</a></li>
                         <li><a href="{{ route('map.index') }}"><i class="bi bi-chevron-right text-success small"></i> {{ __('messages.interactive_map') }}</a></li>
-                        <li><a href="{{ route('guide.index') }}"><i class="bi bi-chevron-right text-success small"></i> {{ __('messages.travel_guide') }}</a></li>
                         <li><a href="{{ route('transport.index') }}"><i class="bi bi-chevron-right text-success small"></i> {{ __('messages.public_transport') }}</a></li>
                         <li><a href="{{ route('emergency.index') }}"><i class="bi bi-chevron-right text-danger small"></i> {{ __('messages.emergency_info') }}</a></li>
                     </ul>
@@ -572,7 +571,7 @@
             <!-- Bottom Copyright -->
             <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
                 <div class="text-secondary small">
-                    &copy; {{ date('Y') }} <strong>Elahera Sirisara (ඇලහැර සිරිසර)</strong>. All rights reserved.
+                    &copy; {{ date('Y') }} <strong>Elahera Serisara (ඇලහැර සැරිසර)</strong>. All rights reserved.
                 </div>
                 <div class="d-flex gap-3 text-secondary small">
                     <a href="{{ route('about') }}" class="text-secondary text-decoration-none">About</a>

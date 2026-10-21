@@ -26,7 +26,7 @@ class FilamentAdminTest extends TestCase
 
         $response = $this->actingAs($admin)->get('/admin');
         $response->assertStatus(200);
-        $response->assertSee('Elahera Sirisara Admin');
+        $response->assertSee('Elahera Serisara Admin');
         $response->assertSee('Home Page');
         $response->assertSee('Hero Sliders');
         $response->assertSee('Homepage Destinations');
@@ -34,6 +34,28 @@ class FilamentAdminTest extends TestCase
         $response->assertSee('Destinations &amp; Transport', false);
         $response->assertSee('Database');
         $response->assertSee('Backup &amp; Restore', false);
+        $response->assertSee('Blog Comments');
+        $response->assertSee('News &amp; Event Comments', false);
+    }
+
+    /**
+     * Test admin can access blog comments resource in Filament.
+     */
+    public function test_admin_can_access_blog_comments_resource(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $response = $this->actingAs($admin)->get('/admin/blog-comments');
+        $response->assertStatus(200);
+    }
+
+    /**
+     * Test admin can access news event comments resource in Filament.
+     */
+    public function test_admin_can_access_news_event_comments_resource(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $response = $this->actingAs($admin)->get('/admin/news-event-comments');
+        $response->assertStatus(200);
     }
 
     /**

@@ -43,7 +43,7 @@
             @empty
                 <div class="carousel-item active" style="height: 480px; background: linear-gradient(135deg, #064e3b, #047857);">
                     <div class="carousel-caption d-flex flex-column justify-content-center h-100 text-center text-white">
-                        <h1 class="display-4 fw-bold">Elahera Sirisara</h1>
+                        <h1 class="display-4 fw-bold">Elahera Serisara</h1>
                         <p class="lead">Discover ancient irrigation marvels and peaceful waterways.</p>
                         <div>
                             <a href="{{ route('planner.index') }}" class="btn btn-warning btn-lg fw-bold px-4">Start Planning</a>

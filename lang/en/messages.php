@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'brand_name' => 'Elahera Sirisara',
+    'brand_name' => 'Elahera Serisara',
     'tagline' => 'Discover • Explore • Experience',
-    'brand_description' => 'Elahera Sirisara is your comprehensive digital guide to ancient irrigation masterworks, scenic waterways, nature reserves, and cultural heritage along the historic Amban Ganga valley.',
+    'brand_description' => 'Elahera Serisara is your comprehensive digital guide to ancient irrigation masterworks, scenic waterways, nature reserves, and cultural heritage along the historic Amban Ganga valley.',
 
     // Navigation
     'home' => 'Home',

@@ -73,6 +73,9 @@ Route::get('/news/create', [NewsEventController::class, 'create'])->name('news.c
 Route::post('/news/store', [NewsEventController::class, 'store'])->name('news.store');
 Route::get('/news/{slug}', [NewsEventController::class, 'show'])->name('news.show');
 Route::post('/news/{id}/comment', [NewsEventController::class, 'storeComment'])->name('news.comment');
+Route::delete('/news/comments/{id}', [NewsEventController::class, 'destroyComment'])
+    ->middleware('auth')
+    ->name('news.comments.destroy');
 
 // Travel Guide & Emergency Directory
 Route::get('/travel-guide', [TravelGuideController::class, 'index'])->name('guide.index');

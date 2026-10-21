@@ -88,6 +88,51 @@ class ReviewCommentModerationTest extends TestCase
     }
 
     /**
+     * Test admin can delete news/event comments.
+     */
+    public function test_admin_can_delete_news_event_comment(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $member = User::where('role', 'community_member')->first();
+        $news = \App\Models\NewsEvent::first();
+
+        $comment = \App\Models\NewsEventComment::create([
+            'news_event_id' => $news->id,
+            'user_id' => $member->id,
+            'comment' => 'Great initiative for local tourism!',
+        ]);
+
+        $this->assertDatabaseHas('news_event_comments', ['id' => $comment->id]);
+
+        $response = $this->actingAs($admin)->delete(route('news.comments.destroy', $comment->id));
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('news_event_comments', ['id' => $comment->id]);
+    }
+
+    /**
+     * Test regular user cannot delete news comments.
+     */
+    public function test_regular_user_cannot_delete_news_event_comment(): void
+    {
+        $member = User::where('role', 'community_member')->first();
+        $news = \App\Models\NewsEvent::first();
+
+        $comment = \App\Models\NewsEventComment::create([
+            'news_event_id' => $news->id,
+            'user_id' => $member->id,
+            'comment' => 'Regular user comment.',
+        ]);
+
+        $response = $this->actingAs($member)->delete(route('news.comments.destroy', $comment->id));
+        $response->assertStatus(403);
+
+        $this->assertDatabaseHas('news_event_comments', ['id' => $comment->id]);
+        $comment->delete();
+    }
+
+    /**
      * Test admin can access Reviews & Ratings in Filament Admin panel.
      */
     public function test_admin_can_access_filament_destination_reviews(): void

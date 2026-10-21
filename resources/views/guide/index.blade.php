@@ -74,7 +74,7 @@
                 <div class="col-lg-8">
                     <h3 class="fw-bold text-dark mb-2">Our Community Contributor Guidelines</h3>
                     <p class="text-secondary small mb-3 leading-relaxed">
-                        Elahera Sirisara thrives on firsthand insights from passionate travelers and locals. When publishing blog posts or submitting events:
+                        Elahera Serisara thrives on firsthand insights from passionate travelers and locals. When publishing blog posts or submitting events:
                     </p>
                     <ul class="small text-secondary mb-0">
                         <li>Provide accurate travel timings and realistic stay durations.</li>

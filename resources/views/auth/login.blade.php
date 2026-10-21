@@ -9,9 +9,9 @@
             <div class="col-md-5">
                 <div class="card card-custom border-0 shadow p-4 p-md-5">
                     <div class="text-center mb-4">
-                        <img src="{{ asset('images/logo.svg') }}" alt="Elahera Sirisara" height="50" class="mb-3">
+                        <img src="{{ asset('images/logo.svg') }}" alt="Elahera Serisara" height="50" class="mb-3">
                         <h3 class="fw-bold text-dark mb-1">Welcome Back</h3>
-                        <p class="text-secondary small mb-0">Sign in to your Elahera Sirisara Community account</p>
+                        <p class="text-secondary small mb-0">Sign in to your Elahera Serisara Community account</p>
                     </div>
 
                     <form action="{{ route('login') }}" method="POST">

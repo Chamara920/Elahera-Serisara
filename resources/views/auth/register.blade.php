@@ -9,7 +9,7 @@
             <div class="col-md-6">
                 <div class="card card-custom border-0 shadow p-4 p-md-5">
                     <div class="text-center mb-4">
-                        <img src="{{ asset('images/logo.svg') }}" alt="Elahera Sirisara" height="50" class="mb-3">
+                        <img src="{{ asset('images/logo.svg') }}" alt="Elahera Serisara" height="50" class="mb-3">
                         <h3 class="fw-bold text-dark mb-1">Create Community Account</h3>
                         <p class="text-secondary small mb-0">Save custom trips, write blog stories, and participate in traveler forums</p>
                     </div>

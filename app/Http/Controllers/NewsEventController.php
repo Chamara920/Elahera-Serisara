@@ -142,4 +142,19 @@ class NewsEventController extends Controller
 
         return back()->with('success', 'Comment added successfully.');
     }
+
+    /**
+     * Delete / Remove a news/event comment (Admin privilege).
+     */
+    public function destroyComment($id)
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized. Only administrators can delete comments.');
+        }
+
+        $comment = NewsEventComment::findOrFail($id);
+        $comment->delete();
+
+        return back()->with('success', 'Comment removed successfully.');
+    }
 }

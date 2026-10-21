@@ -27,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('Elahera Sirisara Admin')
+            ->brandName('Elahera Serisara Admin')
             ->login()
             ->colors([
                 'primary' => Color::Emerald,
