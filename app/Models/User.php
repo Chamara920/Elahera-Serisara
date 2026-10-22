@@ -32,6 +32,8 @@ class User extends Authenticatable implements FilamentUser
         'avatar',
         'phone',
         'bio',
+        'security_question',
+        'security_answer',
     ];
 
     /**
@@ -42,6 +44,7 @@ class User extends Authenticatable implements FilamentUser
     protected $hidden = [
         'password',
         'remember_token',
+        'security_answer',
     ];
 
     /**
@@ -111,6 +114,50 @@ class User extends Authenticatable implements FilamentUser
     public function destinationReviews(): HasMany
     {
         return $this->hasMany(DestinationReview::class);
+    }
+
+    /**
+     * Predefined security questions for community users.
+     *
+     * @return array<string, array{en: string, si: string}>
+     */
+    public static function defaultSecurityQuestions(): array
+    {
+        return [
+            'What is your primary school name?' => [
+                'en' => 'What is your primary school name?',
+                'si' => 'ඔබේ ප්‍රාථමික පාසලේ නම කුමක්ද?',
+            ],
+            'What is your mother\'s maiden name?' => [
+                'en' => 'What is your mother\'s maiden name?',
+                'si' => 'ඔබේ මවගේ විවාහයට පෙර නම කුමක්ද?',
+            ],
+            'What was the name of your first pet?' => [
+                'en' => 'What was the name of your first pet?',
+                'si' => 'ඔබේ පළමු සුරතලාගේ නම කුමක්ද?',
+            ],
+            'What is your favorite travel destination in Sri Lanka?' => [
+                'en' => 'What is your favorite travel destination in Sri Lanka?',
+                'si' => 'ඔබ ප්‍රියතම ශ්‍රී ලාංකික සංචාරක ගමනාන්තය කුමක්ද?',
+            ],
+            'In what city or town were you born?' => [
+                'en' => 'In what city or town were you born?',
+                'si' => 'ඔබ උපන් නගරය කුමක්ද?',
+            ],
+        ];
+    }
+
+    /**
+     * Check if provided answer matches the hashed security answer (case-insensitive & trimmed).
+     */
+    public function verifySecurityAnswer(?string $answer): bool
+    {
+        if (empty($this->security_answer) || empty($answer)) {
+            return false;
+        }
+
+        $normalized = mb_strtolower(trim($answer));
+        return \Illuminate\Support\Facades\Hash::check($normalized, $this->security_answer);
     }
 
     /**

@@ -9,7 +9,7 @@
             <div class="col-md-6">
                 <div class="card card-custom border-0 shadow p-4 p-md-5">
                     <div class="text-center mb-4">
-                        <img src="{{ asset('images/logo.svg') }}" alt="Elahera Serisara" height="50" class="mb-3">
+                        <img src="{{ asset('images/logo.jpg') }}" alt="Elahera Serisara" height="54" class="mb-3 rounded-2 shadow-sm object-fit-contain">
                         <h3 class="fw-bold text-dark mb-1">Create Community Account</h3>
                         <p class="text-secondary small mb-0">Save custom trips, write blog stories, and participate in traveler forums</p>
                     </div>
@@ -38,6 +38,36 @@
                             <div class="col-md-6">
                                 <label class="form-label small fw-semibold text-dark">Confirm Password</label>
                                 <input type="password" name="password_confirmation" class="form-control" placeholder="Repeat password" required>
+                            </div>
+                        </div>
+
+                        <!-- Security Question for Password Recovery -->
+                        <div class="card bg-light border-0 p-3 mb-3 rounded-3">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-shield-lock-fill text-success"></i>
+                                <span class="fw-bold text-dark small">Security Question for Password Recovery (මුරපදය නැවත ලබාගැනීමට ආරක්ෂක ප්‍රශ්නය)</span>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small text-secondary">Select a Security Question</label>
+                                <select name="security_question" class="form-select form-select-sm" required>
+                                    <option value="" disabled {{ old('security_question') ? '' : 'selected' }}>-- Choose a Question / ආරක්ෂක ප්‍රශ්නයක් තෝරන්න --</option>
+                                    @php
+                                        $locale = app()->getLocale();
+                                        $questions = $securityQuestions ?? \App\Models\User::defaultSecurityQuestions();
+                                    @endphp
+                                    @foreach($questions as $key => $q)
+                                        <option value="{{ $key }}" {{ old('security_question') === $key ? 'selected' : '' }}>
+                                            {{ $locale === 'si' ? $q['si'] . ' (' . $q['en'] . ')' : $q['en'] . ' (' . $q['si'] . ')' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('security_question') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            </div>
+                            <div>
+                                <label class="form-label small text-secondary">Your Answer (ඔබේ පිළිතුර)</label>
+                                <input type="text" name="security_answer" class="form-control form-control-sm" placeholder="e.g. Mahasen Central College" value="{{ old('security_answer') }}" required>
+                                <div class="form-text text-muted" style="font-size: 0.72rem;">Remember this answer; it will be required if you ever need to reset your password.</div>
+                                @error('security_answer') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
                         </div>
 

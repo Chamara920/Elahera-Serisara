@@ -89,6 +89,9 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.forgot');
+Route::post('/forgot-password/find', [AuthController::class, 'verifyForgotPasswordAccount'])->name('password.find');
+Route::post('/forgot-password/reset', [AuthController::class, 'resetPasswordWithSecurityAnswer'])->name('password.reset.security');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Authenticated User Dashboard

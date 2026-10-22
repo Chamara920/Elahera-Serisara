@@ -17,28 +17,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Create System Administrator Account
-        User::firstOrCreate(
-            ['email' => 'admin@elaheraserisara.lk'],
-            [
-                'name' => 'System Administrator',
-                'password' => Hash::make('password123'),
-                'role' => 'admin',
-                'phone' => '+94 66 225 6100',
-                'bio' => 'System Administrator for Elahera Serisara Tourism Platform.',
-            ]
-        );
+        // 1. Create System Administrator Account from .env configuration
+        $adminEmail = env('ADMIN_EMAIL', 'admin@elaheraserisara.lk');
+        $adminPassword = env('ADMIN_PASSWORD', 'password123');
+        $adminName = env('ADMIN_NAME', 'System Administrator');
 
-        User::firstOrCreate(
-            ['email' => 'admin@elaherasirisara.lk'],
-            [
-                'name' => 'System Administrator',
-                'password' => Hash::make('password123'),
-                'role' => 'admin',
-                'phone' => '+94 66 225 6100',
-                'bio' => 'System Administrator for Elahera Serisara Tourism Platform.',
-            ]
-        );
+        $admin = User::firstOrNew(['email' => $adminEmail]);
+        $admin->name = $adminName;
+        $admin->password = Hash::make($adminPassword);
+        $admin->role = 'admin';
+        $admin->phone = '+94 66 225 6100';
+        $admin->bio = 'System Administrator for Elahera Serisara Tourism Platform.';
+        $admin->security_question = 'What is your primary school name?';
+        $admin->security_answer = Hash::make(mb_strtolower('Admin School'));
+        $admin->save();
 
         // 2. Base Categories (Optional classification taxonomy)
         $this->call(DestinationCategorySeeder::class);

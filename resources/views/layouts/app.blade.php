@@ -8,7 +8,7 @@
     <title>@yield('title', __('messages.brand_name')) - {{ __('messages.tagline') }}</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('images/logo.svg') }}">
+    <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.jpg') }}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,12 +28,15 @@
             --primary-emerald: #059669;
             --primary-dark: #064e3b;
             --primary-light: #10b981;
-            --accent-amber: #d97706;
+            --primary-soft: #ecfdf5;
+            --accent-amber: #f59e0b;
+            --accent-gold: #d97706;
             --accent-cyan: #0284c7;
             --bg-light: #f8fafc;
+            --bg-surface: #ffffff;
             --text-dark: #0f172a;
             --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
-            --hover-shadow: 0 20px 30px -10px rgba(5, 150, 105, 0.15);
+            --hover-shadow: 0 20px 30px -10px rgba(5, 150, 105, 0.18);
         }
 
         body {
@@ -43,43 +46,68 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            line-height: 1.6;
         }
 
         /* Top Bar & Navbar */
         .navbar-main {
-            background: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 0.75rem 0;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+            padding: 0.65rem 0;
             transition: all 0.3s ease;
             position: sticky;
             top: 0;
             z-index: 1030;
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
         }
 
         .navbar-brand-logo {
             display: flex;
             align-items: center;
             text-decoration: none;
-            gap: 12px;
+            gap: 10px;
         }
 
         .navbar-brand-logo img {
-            height: 48px;
+            height: 44px;
             width: auto;
+            object-fit: contain;
         }
 
         .nav-link {
             font-weight: 600;
-            font-size: 0.95rem;
-            color: #334155 !important;
-            padding: 0.5rem 0.9rem !important;
+            font-size: 0.90rem;
+            color: #1e293b !important;
+            padding: 0.45rem 0.75rem !important;
             border-radius: 8px;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover {
             color: var(--primary-emerald) !important;
             background-color: #ecfdf5;
+            transform: translateY(-1px);
+        }
+
+        .nav-link.active {
+            color: #047857 !important;
+            background-color: #ecfdf5;
+            font-weight: 700;
+            box-shadow: inset 0 -2px 0 var(--primary-emerald);
+        }
+
+        .search-header-input {
+            transition: all 0.25s ease;
+            border-color: #cbd5e1;
+            font-size: 0.84rem;
+        }
+
+        .search-header-input:focus {
+            border-color: var(--primary-emerald);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+            width: 220px !important;
+            background-color: #ffffff !important;
         }
 
         .dropdown-menu {
@@ -103,8 +131,8 @@
 
         /* User Profile Button */
         .btn-user-profile {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -112,34 +140,34 @@
             background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
             color: var(--primary-emerald);
             border: 2px solid #a7f3d0;
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.12);
         }
 
         .btn-user-profile:hover {
             transform: scale(1.05);
             border-color: var(--primary-emerald);
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
         }
 
         /* Language Switcher */
         .lang-switch-btn {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 700;
-            padding: 0.35rem 0.65rem;
-            border-radius: 6px;
+            padding: 0.25rem 0.55rem;
+            border-radius: 20px;
             text-decoration: none;
             color: #475569;
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
+            background: transparent;
             transition: all 0.2s;
         }
 
         .lang-switch-btn.active {
             background: var(--primary-emerald);
             color: #ffffff;
-            border-color: var(--primary-emerald);
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.3);
         }
 
         /* Card Styles */
@@ -160,25 +188,28 @@
 
         /* Badges */
         .badge-category {
-            background-color: #ecfdf5;
-            color: var(--primary-emerald);
-            font-weight: 600;
-            padding: 0.35rem 0.75rem;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            color: #047857;
+            font-weight: 700;
+            padding: 0.35rem 0.8rem;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             border: 1px solid #a7f3d0;
+            box-shadow: 0 2px 5px rgba(5, 150, 105, 0.08);
         }
 
         .badge-rating {
-            background: #fef3c7;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             color: #92400e;
             font-weight: 700;
-            padding: 0.35rem 0.65rem;
+            padding: 0.35rem 0.7rem;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            border: 1px solid #fcd34d;
+            box-shadow: 0 2px 5px rgba(217, 119, 6, 0.1);
         }
 
         /* Buttons */
@@ -187,16 +218,17 @@
             border: none;
             color: white;
             font-weight: 600;
-            padding: 0.65rem 1.4rem;
+            padding: 0.6rem 1.35rem;
             border-radius: 10px;
-            transition: all 0.25s ease;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.22);
         }
 
         .btn-primary-custom:hover {
             background: linear-gradient(135deg, #047857 0%, var(--primary-dark) 100%);
             color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(5, 150, 105, 0.32);
         }
 
         .btn-outline-custom {
@@ -204,7 +236,7 @@
             color: var(--primary-emerald);
             background: transparent;
             font-weight: 600;
-            padding: 0.6rem 1.3rem;
+            padding: 0.55rem 1.25rem;
             border-radius: 10px;
             transition: all 0.25s ease;
         }
@@ -338,8 +370,8 @@
         <nav class="navbar navbar-expand-lg navbar-main">
             <div class="container-xl">
                 <!-- Left: Brand / Logo -->
-                <a class="navbar-brand navbar-brand-logo" href="{{ route('home') }}">
-                    <img src="{{ asset('images/logo.svg') }}" alt="Elahera Serisara" height="46">
+                <a class="navbar-brand navbar-brand-logo py-0 me-3 me-xl-4" href="{{ route('home') }}">
+                    <img src="{{ asset('images/logo.jpg') }}" alt="Elahera Serisara" height="44" class="rounded-2 shadow-sm border object-fit-contain">
                 </a>
 
                 <!-- Mobile Toggle Button -->
@@ -348,8 +380,8 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSerisara">
-                    <!-- Center: Navigation Menu -->
-                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center">
+                    <!-- Right-Aligned Navigation Menu -->
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-1 gap-xl-1">
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
                                 <i class="bi bi-house-door me-1"></i> {{ __('messages.home') }}
@@ -415,16 +447,16 @@
                         </li>
                     </ul>
 
-                    <!-- Right: Search, Language Switcher & Interactive User Control -->
-                    <div class="d-flex align-items-center gap-3">
+                    <!-- Right Controls: Search, Language Switcher & Interactive User Control -->
+                    <div class="d-flex align-items-center gap-2 gap-lg-3 ms-lg-3 mt-2 mt-lg-0">
                         <!-- Global Search Box -->
-                        <form action="{{ route('search') }}" method="GET" class="d-none d-lg-block position-relative" style="width: 200px;">
-                            <input type="text" name="q" class="form-control form-control-sm rounded-pill ps-4 bg-light border" placeholder="{{ __('messages.search_placeholder') }}" value="{{ request('q') }}">
-                            <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted small"></i>
+                        <form action="{{ route('search') }}" method="GET" class="d-none d-lg-block position-relative" style="width: 190px;">
+                            <input type="text" name="q" class="form-control form-control-sm rounded-pill ps-4 bg-light border search-header-input" placeholder="{{ __('messages.search_placeholder') }}" value="{{ request('q') }}">
+                            <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-2.5 text-muted small"></i>
                         </form>
 
                         <!-- Language Switcher (EN / SI) -->
-                        <div class="d-flex align-items-center gap-1">
+                        <div class="d-flex align-items-center gap-1 bg-light p-1 rounded-pill border">
                             <a href="{{ route('locale.switch', 'en') }}" class="lang-switch-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}" title="English">EN</a>
                             <a href="{{ route('locale.switch', 'si') }}" class="lang-switch-btn {{ app()->getLocale() === 'si' ? 'active' : '' }}" title="සිංහල">සිං</a>
                         </div>
@@ -535,7 +567,7 @@
                 <!-- Col 1: Brand & About -->
                 <div class="col-lg-3 col-md-6">
                     <div class="d-flex align-items-center gap-2 mb-1.5">
-                        <img src="{{ asset('images/logo.svg') }}" alt="Elahera Serisara" height="28" class="bg-white p-1 rounded-2">
+                        <img src="{{ asset('images/logo.jpg') }}" alt="Elahera Serisara" height="32" class="bg-white p-0.5 rounded-2 shadow-sm object-fit-contain border">
                     </div>
                     <div class="fw-bold text-white mb-0" style="font-size: 0.85rem;">{{ __('messages.brand_name') }}</div>
                     <div class="text-success fw-bold text-uppercase letter-spacing-1 mb-1" style="font-size: 0.62rem;">{{ __('messages.tagline') }}</div>
@@ -594,16 +626,10 @@
                 </div>
             </div>
 
-            <!-- Bottom Copyright -->
-            <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center gap-1">
-                <div class="text-secondary" style="font-size: 0.68rem;">
+            <!-- Bottom Copyright (Centered) -->
+            <div class="footer-bottom text-center">
+                <div class="text-secondary" style="font-size: 0.72rem;">
                     &copy; {{ date('Y') }} <strong>Elahera Serisara (ඇලහැර සැරිසර)</strong>. All rights reserved.
-                </div>
-                <div class="d-flex gap-3 text-secondary" style="font-size: 0.68rem;">
-                    <a href="{{ route('about') }}" class="text-secondary text-decoration-none hover-emerald">About</a>
-                    <a href="{{ route('guide.index') }}" class="text-secondary text-decoration-none hover-emerald">Guide</a>
-                    <a href="{{ route('emergency.index') }}" class="text-secondary text-decoration-none hover-emerald">Emergency</a>
-                    <a href="/admin" class="text-secondary text-decoration-none hover-emerald" target="_blank">Admin Portal</a>
                 </div>
             </div>
         </div>

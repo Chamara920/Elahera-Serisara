@@ -48,6 +48,30 @@
                         </div>
 
                         <hr class="my-4">
+                        <h6 class="fw-bold text-dark mb-2">Security Question (For Password Recovery)</h6>
+                        <div class="card bg-light border-0 p-3 mb-3 rounded-3">
+                            <div class="mb-2">
+                                <label class="form-label small text-secondary">Security Question</label>
+                                <select name="security_question" class="form-select form-select-sm">
+                                    <option value="">-- Choose or Update Security Question --</option>
+                                    @php
+                                        $locale = app()->getLocale();
+                                        $questions = $securityQuestions ?? \App\Models\User::defaultSecurityQuestions();
+                                    @endphp
+                                    @foreach($questions as $key => $q)
+                                        <option value="{{ $key }}" {{ old('security_question', $user->security_question) === $key ? 'selected' : '' }}>
+                                            {{ $locale === 'si' ? $q['si'] . ' (' . $q['en'] . ')' : $q['en'] . ' (' . $q['si'] . ')' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label small text-secondary">Security Answer (Leave blank to keep existing answer)</label>
+                                <input type="text" name="security_answer" class="form-control form-control-sm" placeholder="{{ $user->security_answer ? '•••••••• (Security answer is already configured)' : 'Enter your secret answer' }}">
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
                         <h6 class="fw-bold text-dark mb-2">Change Password (Leave blank to keep unchanged)</h6>
 
                         <div class="row g-2 mb-4">

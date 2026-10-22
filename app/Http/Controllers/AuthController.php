@@ -57,7 +57,8 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('home');
         }
-        return view('auth.register');
+        $securityQuestions = User::defaultSecurityQuestions();
+        return view('auth.register', compact('securityQuestions'));
     }
 
     /**
@@ -71,6 +72,8 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
             'bio' => 'nullable|string|max:1000',
+            'security_question' => 'required|string|max:255',
+            'security_answer' => 'required|string|min:2|max:255',
         ]);
 
         $user = User::create([
@@ -80,11 +83,97 @@ class AuthController extends Controller
             'role' => 'community_member',
             'phone' => $validated['phone'] ?? null,
             'bio' => $validated['bio'] ?? null,
+            'security_question' => $validated['security_question'],
+            'security_answer' => Hash::make(mb_strtolower(trim($validated['security_answer']))),
         ]);
 
         Auth::login($user);
 
-        return redirect()->route('home')->with('success', 'Registration successful! Welcome to the Elahera Sirisara community.');
+        return redirect()->route('home')->with('success', 'Registration successful! Welcome to the Elahera Serisara community.');
+    }
+
+    /**
+     * Show forgot password page (Security Question based recovery).
+     */
+    public function showForgotPassword()
+    {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
+
+        $email = session('reset_user_email');
+        $question = null;
+
+        if ($email) {
+            $user = User::where('email', $email)->first();
+            if ($user && !empty($user->security_question)) {
+                $question = $user->security_question;
+            }
+        }
+
+        return view('auth.forgot-password', compact('email', 'question'));
+    }
+
+    /**
+     * Look up user account by email to fetch security question.
+     */
+    public function verifyForgotPasswordAccount(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withErrors([
+                'email' => 'No account was found with this email address.',
+            ])->onlyInput('email');
+        }
+
+        if (empty($user->security_question) || empty($user->security_answer)) {
+            return back()->withErrors([
+                'email' => 'No security questions have been set for this account. Please contact system administrators.',
+            ])->onlyInput('email');
+        }
+
+        return redirect()->route('password.forgot')
+            ->with('reset_user_email', $user->email)
+            ->with('success', 'Account found! Please answer your security question below to reset your password.');
+    }
+
+    /**
+     * Verify security answer and reset user password.
+     */
+    public function resetPasswordWithSecurityAnswer(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'security_answer' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withErrors([
+                'email' => 'User account not found.',
+            ]);
+        }
+
+        if (!$user->verifySecurityAnswer($request->security_answer)) {
+            return back()->withErrors([
+                'security_answer' => 'The security answer you provided is incorrect. Please try again.',
+            ])->with('reset_user_email', $user->email);
+        }
+
+        // Answer is correct, update password!
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        session()->forget('reset_user_email');
+
+        return redirect()->route('login')->with('success', 'Your password has been successfully reset! You can now log in with your new password.');
     }
 
     /**
@@ -105,7 +194,8 @@ class AuthController extends Controller
     public function profile()
     {
         $user = Auth::user();
-        return view('user.profile', compact('user'));
+        $securityQuestions = User::defaultSecurityQuestions();
+        return view('user.profile', compact('user', 'securityQuestions'));
     }
 
     /**
@@ -119,6 +209,8 @@ class AuthController extends Controller
             'phone' => 'nullable|string|max:20',
             'bio' => 'nullable|string|max:1000',
             'password' => 'nullable|string|min:8|confirmed',
+            'security_question' => 'nullable|string|max:255',
+            'security_answer' => 'nullable|string|min:2|max:255',
         ]);
 
         $user->name = $validated['name'];
@@ -127,6 +219,11 @@ class AuthController extends Controller
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
+        }
+
+        if (!empty($validated['security_question']) && !empty($validated['security_answer'])) {
+            $user->security_question = $validated['security_question'];
+            $user->security_answer = Hash::make(mb_strtolower(trim($validated['security_answer'])));
         }
 
         $user->save();
