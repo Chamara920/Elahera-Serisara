@@ -237,9 +237,11 @@
                                         @endif
 
                                         <h6 class="fw-bold text-success">About & History</h6>
-                                        <p class="text-secondary small leading-relaxed mb-4">
-                                            {{ $dest->getLocalizedDescription() }}
-                                        </p>
+                                        <div class="text-secondary small leading-relaxed mb-4 rich-text-content">
+                                            {!! Str::contains($dest->getLocalizedDescription(), ['<p>', '<br>', '<div>', '<h1>', '<h2>', '<h3>', '<h4>', '<h5>', '<h6>', '<ul>', '<ol>', '<strong>', '<em>', '<li>', '<blockquote>']) 
+                                                ? $dest->getLocalizedDescription() 
+                                                : nl2br(e($dest->getLocalizedDescription())) !!}
+                                        </div>
 
                                         <div class="row g-3 mb-4">
                                             <div class="col-md-4">

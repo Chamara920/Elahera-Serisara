@@ -89,8 +89,10 @@
                     <h4 class="fw-bold text-dark mb-3">
                         <i class="bi bi-book-half text-success me-2"></i> About & Historical Significance
                     </h4>
-                    <div class="text-secondary leading-relaxed fs-6 mb-4" style="line-height: 1.8;">
-                        {!! nl2br(e($destination->getLocalizedDescription())) !!}
+                    <div class="text-secondary leading-relaxed fs-6 mb-4 rich-text-content" style="line-height: 1.8;">
+                        {!! Str::contains($destination->getLocalizedDescription(), ['<p>', '<br>', '<div>', '<h1>', '<h2>', '<h3>', '<h4>', '<h5>', '<h6>', '<ul>', '<ol>', '<strong>', '<em>', '<li>', '<blockquote>']) 
+                            ? $destination->getLocalizedDescription() 
+                            : nl2br(e($destination->getLocalizedDescription())) !!}
                     </div>
 
                     <!-- Gallery Thumbnails (if any) -->

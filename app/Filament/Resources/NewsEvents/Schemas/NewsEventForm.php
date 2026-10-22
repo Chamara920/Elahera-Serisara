@@ -4,6 +4,7 @@ namespace App\Filament\Resources\NewsEvents\Schemas;
 
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -43,9 +44,24 @@ class NewsEventForm
                         TextInput::make('location')
                             ->label('Location / Venue')
                             ->placeholder('e.g. Elahera Mahaweli Ground, Bakamuna'),
-                        Textarea::make('content')
+                        RichEditor::make('content')
+                            ->label('News / Event Content')
                             ->required()
-                            ->rows(8)
+                            ->toolbarButtons([
+                                'blockquote',
+                                'bold',
+                                'bulletList',
+                                'codeBlock',
+                                'h2',
+                                'h3',
+                                'italic',
+                                'link',
+                                'orderedList',
+                                'redo',
+                                'strike',
+                                'underline',
+                                'undo',
+                            ])
                             ->columnSpanFull(),
                         FileUpload::make('featured_image')
                             ->image()

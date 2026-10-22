@@ -244,4 +244,31 @@ class ElaheraSirisaraTest extends TestCase
         $this->assertEquals('Test Nature', $destination->category);
         $this->assertEquals('පරීක්ෂණ සොබාදහම', $destination->category_si);
     }
+
+    /**
+     * Test Admin resource create pages load with RichEditor for admin user.
+     */
+    public function test_admin_create_pages_render_rich_editor(): void
+    {
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@elaherasirisara.lk'],
+            [
+                'name' => 'System Admin',
+                'password' => bcrypt('Admin@12345'),
+                'role' => 'admin',
+            ]
+        );
+
+        $this->actingAs($admin)
+            ->get('/admin/destinations/create')
+            ->assertStatus(200);
+
+        $this->actingAs($admin)
+            ->get('/admin/blog-posts/create')
+            ->assertStatus(200);
+
+        $this->actingAs($admin)
+            ->get('/admin/news-events/create')
+            ->assertStatus(200);
+    }
 }

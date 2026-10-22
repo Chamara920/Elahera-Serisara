@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\BlogPosts\Schemas;
 
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -33,9 +34,24 @@ class BlogPostForm
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->columnSpanFull(),
-                        Textarea::make('content')
+                        RichEditor::make('content')
+                            ->label('Article Content')
                             ->required()
-                            ->rows(10)
+                            ->toolbarButtons([
+                                'blockquote',
+                                'bold',
+                                'bulletList',
+                                'codeBlock',
+                                'h2',
+                                'h3',
+                                'italic',
+                                'link',
+                                'orderedList',
+                                'redo',
+                                'strike',
+                                'underline',
+                                'undo',
+                            ])
                             ->columnSpanFull(),
                         FileUpload::make('featured_image')
                             ->image()

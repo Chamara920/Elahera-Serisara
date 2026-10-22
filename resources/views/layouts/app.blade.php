@@ -246,6 +246,37 @@
             color: white;
         }
 
+        /* Rich Text Content Formatting */
+        .rich-text-content p {
+            margin-bottom: 1rem;
+        }
+        .rich-text-content h2, .rich-text-content h3, .rich-text-content h4 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .rich-text-content ul, .rich-text-content ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .rich-text-content li {
+            margin-bottom: 0.35rem;
+        }
+        .rich-text-content blockquote {
+            border-left: 4px solid var(--primary-emerald);
+            padding-left: 1rem;
+            margin: 1.25rem 0;
+            color: #475569;
+            font-style: italic;
+        }
+        .rich-text-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
         /* Sticky Color Time Meter Bar */
         .sticky-time-meter {
             position: sticky;

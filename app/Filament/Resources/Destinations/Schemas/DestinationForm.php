@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Destinations\Schemas;
 
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -49,10 +50,24 @@ class DestinationForm
                             ->required()
                             ->rows(3)
                             ->columnSpanFull(),
-                        Textarea::make('description_en')
+                        RichEditor::make('description_en')
                             ->label('Full Description & History (English)')
                             ->required()
-                            ->rows(6)
+                            ->toolbarButtons([
+                                'blockquote',
+                                'bold',
+                                'bulletList',
+                                'codeBlock',
+                                'h2',
+                                'h3',
+                                'italic',
+                                'link',
+                                'orderedList',
+                                'redo',
+                                'strike',
+                                'underline',
+                                'undo',
+                            ])
                             ->columnSpanFull(),
                     ])->columns(2),
 
@@ -69,9 +84,23 @@ class DestinationForm
                             ->label('Short Description (Sinhala Translation)')
                             ->rows(3)
                             ->columnSpanFull(),
-                        Textarea::make('description_si')
+                        RichEditor::make('description_si')
                             ->label('Full Description (Sinhala Translation)')
-                            ->rows(6)
+                            ->toolbarButtons([
+                                'blockquote',
+                                'bold',
+                                'bulletList',
+                                'codeBlock',
+                                'h2',
+                                'h3',
+                                'italic',
+                                'link',
+                                'orderedList',
+                                'redo',
+                                'strike',
+                                'underline',
+                                'undo',
+                            ])
                             ->columnSpanFull(),
                     ])->columns(2),
 

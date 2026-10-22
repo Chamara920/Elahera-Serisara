@@ -50,8 +50,10 @@
                         </div>
                     @endif
 
-                    <div class="fs-6 leading-relaxed text-secondary mb-5" style="line-height: 1.9;">
-                        {!! nl2br(e($post->content)) !!}
+                    <div class="fs-6 leading-relaxed text-secondary mb-5 rich-text-content" style="line-height: 1.9;">
+                        {!! Str::contains($post->content, ['<p>', '<br>', '<div>', '<h1>', '<h2>', '<h3>', '<h4>', '<h5>', '<h6>', '<ul>', '<ol>', '<strong>', '<em>', '<li>', '<blockquote>']) 
+                            ? $post->content 
+                            : nl2br(e($post->content)) !!}
                     </div>
 
                     <!-- Comments Section -->
