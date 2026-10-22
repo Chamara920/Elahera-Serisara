@@ -30,9 +30,6 @@
                 <!-- Destination List Items -->
                 <div class="flex-grow-1 overflow-y-auto p-2 d-flex flex-column gap-2" id="mapSidebarList">
                     @foreach($destinations as $dest)
-                        @php
-                            $mImg = $dest->featured_image ? (file_exists(public_path($dest->featured_image)) ? asset($dest->featured_image) : asset('images/destinations/anicut.svg')) : asset('images/destinations/anicut.svg');
-                        @endphp
                         <div class="p-2.5 rounded-3 bg-light border map-item-card cursor-pointer" 
                             data-id="{{ $dest->id }}"
                             data-title="{{ $dest->getLocalizedTitle() }}"
@@ -41,7 +38,7 @@
                             data-lng="{{ $dest->longitude }}"
                             style="cursor: pointer; transition: all 0.2s;">
                             <div class="d-flex gap-2.5 align-items-center">
-                                <img src="{{ $mImg }}" class="rounded-2 object-fit-cover flex-shrink-0" width="54" height="54" alt="{{ $dest->getLocalizedTitle() }}">
+                                <img src="{{ $dest->getFeaturedImageUrl() }}" class="rounded-2 object-fit-cover flex-shrink-0" width="54" height="54" alt="{{ $dest->getLocalizedTitle() }}">
                                 <div class="overflow-hidden">
                                     <span class="badge bg-white text-success border small mb-1" style="font-size: 0.68rem;">{{ $dest->getLocalizedCategory() }}</span>
                                     <h6 class="fw-bold mb-0 text-dark text-truncate" style="font-size: 0.85rem;">{{ $dest->getLocalizedTitle() }}</h6>
@@ -88,7 +85,7 @@
         destinations.forEach(dest => {
             const popupContent = `
                 <div style="max-width: 260px;">
-                    <img src="${dest.featured_image ? '/'+dest.featured_image : '/images/destinations/anicut.svg'}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
+                    <img src="${dest.featured_image_url || '/images/destinations/anicut.svg'}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
                     <span style="font-size: 11px; background: #ecfdf5; color: #059669; padding: 2px 8px; border-radius: 12px; font-weight: bold;">${dest.category}</span>
                     <h6 style="font-weight: bold; margin: 6px 0 4px 0; color: #0f172a;">${dest.title_en}</h6>
                     <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">${dest.short_description_en ? dest.short_description_en.substring(0, 90) + '...' : ''}</p>

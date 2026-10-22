@@ -6,10 +6,7 @@
 
     <!-- 1. Hero Banner & Header -->
     <div class="position-relative text-white" style="height: 440px; background-color: #064e3b; overflow: hidden;">
-        @php
-            $heroImage = $destination->featured_image ? (file_exists(public_path($destination->featured_image)) ? asset($destination->featured_image) : asset('images/destinations/anicut.svg')) : asset('images/destinations/anicut.svg');
-        @endphp
-        <img src="{{ $heroImage }}" class="w-100 h-100 object-fit-cover opacity-60 position-absolute top-0 start-0" alt="{{ $destination->getLocalizedTitle() }}">
+        <img src="{{ $destination->getFeaturedImageUrl() }}" class="w-100 h-100 object-fit-cover opacity-60 position-absolute top-0 start-0" alt="{{ $destination->getLocalizedTitle() }}">
         <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(15, 23, 42, 0.9) 100%);"></div>
 
         <div class="container-xl position-relative h-100 d-flex flex-column justify-content-end pb-5">
@@ -97,15 +94,15 @@
                     </div>
 
                     <!-- Gallery Thumbnails (if any) -->
-                    @if(!empty($destination->gallery_images) && is_array($destination->gallery_images))
+                    @php $galleryUrls = $destination->getGalleryImageUrls(); @endphp
+                    @if(!empty($galleryUrls))
                         <h5 class="fw-bold text-dark mb-3">Photo Gallery</h5>
                         <div class="row g-2 mb-4">
-                            @foreach($destination->gallery_images as $gImg)
-                                @php
-                                    $gPath = file_exists(public_path($gImg)) ? asset($gImg) : asset('images/destinations/anicut1.svg');
-                                @endphp
+                            @foreach($galleryUrls as $gUrl)
                                 <div class="col-6 col-md-4">
-                                    <img src="{{ $gPath }}" class="rounded-3 w-100 object-fit-cover shadow-sm" style="height: 140px;" alt="Gallery photo">
+                                    <a href="{{ $gUrl }}" target="_blank" class="d-block overflow-hidden rounded-3 shadow-sm border">
+                                        <img src="{{ $gUrl }}" class="rounded-3 w-100 object-fit-cover hover-scale" style="height: 140px; transition: transform 0.25s ease;" alt="Gallery photo">
+                                    </a>
                                 </div>
                             @endforeach
                         </div>
@@ -351,11 +348,8 @@
 
                         <div class="d-flex flex-column gap-3">
                             @foreach($nearbyDestinations as $near)
-                                @php
-                                    $nImg = $near->featured_image ? (file_exists(public_path($near->featured_image)) ? asset($near->featured_image) : asset('images/destinations/anicut.svg')) : asset('images/destinations/anicut.svg');
-                                @endphp
                                 <div class="d-flex gap-3 align-items-center">
-                                    <img src="{{ $nImg }}" class="rounded-3 object-fit-cover flex-shrink-0" width="70" height="70" alt="{{ $near->getLocalizedTitle() }}">
+                                    <img src="{{ $near->getFeaturedImageUrl() }}" class="rounded-3 object-fit-cover flex-shrink-0" width="70" height="70" alt="{{ $near->getLocalizedTitle() }}">
                                     <div>
                                         <h6 class="fw-bold mb-1" style="font-size: 0.88rem;">
                                             <a href="{{ route('destinations.show', $near->slug) }}" class="text-dark text-decoration-none hover-success">

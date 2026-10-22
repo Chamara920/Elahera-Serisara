@@ -174,10 +174,7 @@
                         <div class="col">
                             <div class="card card-custom h-100">
                                 <div class="position-relative overflow-hidden" style="height: 200px;">
-                                    @php
-                                        $imageSrc = $dest->featured_image ? (file_exists(public_path($dest->featured_image)) ? asset($dest->featured_image) : asset('images/destinations/anicut.svg')) : asset('images/destinations/anicut.svg');
-                                    @endphp
-                                    <img src="{{ $imageSrc }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $dest->getLocalizedTitle() }}">
+                                    <img src="{{ $dest->getFeaturedImageUrl() }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $dest->getLocalizedTitle() }}">
                                     <span class="position-absolute top-0 start-0 m-3 badge-category shadow-sm">
                                         {{ $dest->getLocalizedCategory() }}
                                     </span>
@@ -244,10 +241,10 @@
                     </div>
 
                     <h5 class="fw-bold text-dark mb-1">
-                        <i class="bi bi-calendar2-range text-success me-1"></i> Smart Day-Trip Planner
+                        <i class="bi bi-calendar2-range text-success me-1"></i> {{ __('messages.smart_trip_planner') }}
                     </h5>
                     <p class="small text-secondary mb-3" style="font-size: 0.8rem; line-height: 1.4;">
-                        යෙදවුමේ ඇති ගමනාන්ත, රැඳෙන කාලය, ගමන් කාලය සහ පොදු ප්‍රවාහන දත්ත ඇසුරෙන්ම ඔබේ සංචාරය සැලසුම් කරන්න.
+                        {{ __('messages.planner_widget_desc') }}
                     </p>
 
                     <form action="{{ route('planner.index') }}" method="GET">
@@ -312,10 +309,7 @@
                     <div class="d-flex flex-column gap-3">
                         @forelse($latestBlogs as $blog)
                             <div class="d-flex gap-3 align-items-start">
-                                @php
-                                    $blogImg = $blog->featured_image ? (file_exists(public_path($blog->featured_image)) ? asset($blog->featured_image) : asset('images/blog/blog1.svg')) : asset('images/blog/blog1.svg');
-                                @endphp
-                                <img src="{{ $blogImg }}" class="rounded-3 object-fit-cover flex-shrink-0" width="68" height="68" alt="{{ $blog->title }}">
+                                <img src="{{ $blog->getFeaturedImageUrl() }}" class="rounded-3 object-fit-cover flex-shrink-0" width="68" height="68" alt="{{ $blog->title }}">
                                 <div>
                                     <span class="badge bg-light text-secondary border small mb-1" style="font-size: 0.7rem;">{{ $blog->category?->name_en ?: 'Travel' }}</span>
                                     <h6 class="fw-semibold mb-1" style="font-size: 0.88rem; line-height: 1.3;">

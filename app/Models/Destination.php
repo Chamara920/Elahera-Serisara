@@ -80,8 +80,12 @@ class Destination extends Model
         'views_count' => 'integer',
     ];
 
+    protected $appends = [
+        'featured_image_url',
+    ];
+
     /**
-     * Auto-generate slug if not provided.
+     * Auto-generate slug if not provided and sync category names.
      */
     protected static function booted()
     {
@@ -90,6 +94,78 @@ class Destination extends Model
                 $destination->slug = Str::slug($destination->title_en);
             }
         });
+
+        static::saving(function ($destination) {
+            if ($destination->category_id && empty($destination->category)) {
+                $cat = DestinationCategory::find($destination->category_id);
+                if ($cat) {
+                    $destination->category = $cat->name_en;
+                    if (empty($destination->category_si)) {
+                        $destination->category_si = $cat->name_si;
+                    }
+                }
+            } elseif (empty($destination->category_id) && !empty($destination->category)) {
+                $cat = DestinationCategory::where('name_en', $destination->category)->first();
+                if ($cat) {
+                    $destination->category_id = $cat->id;
+                    if (empty($destination->category_si)) {
+                        $destination->category_si = $cat->name_si;
+                    }
+                }
+            }
+        });
+    }
+
+    public function getFeaturedImageUrlAttribute(): string
+    {
+        return $this->getFeaturedImageUrl();
+    }
+
+    /**
+     * Resolve public web URL for the featured image.
+     */
+    public function getFeaturedImageUrl(): string
+    {
+        if (!empty($this->featured_image)) {
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->featured_image)) {
+                return \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image);
+            }
+            if (file_exists(public_path('storage/' . $this->featured_image))) {
+                return asset('storage/' . $this->featured_image);
+            }
+            if (file_exists(public_path($this->featured_image))) {
+                return asset($this->featured_image);
+            }
+        }
+        return asset('images/destinations/anicut.svg');
+    }
+
+    /**
+     * Resolve public web URLs for gallery images array.
+     *
+     * @return list<string>
+     */
+    public function getGalleryImageUrls(): array
+    {
+        if (empty($this->gallery_images) || !is_array($this->gallery_images)) {
+            return [];
+        }
+
+        $urls = [];
+        foreach ($this->gallery_images as $img) {
+            if (empty($img)) continue;
+
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($img)) {
+                $urls[] = \Illuminate\Support\Facades\Storage::disk('public')->url($img);
+            } elseif (file_exists(public_path('storage/' . $img))) {
+                $urls[] = asset('storage/' . $img);
+            } elseif (file_exists(public_path($img))) {
+                $urls[] = asset($img);
+            } else {
+                $urls[] = asset('images/destinations/anicut1.svg');
+            }
+        }
+        return $urls;
     }
 
     /**

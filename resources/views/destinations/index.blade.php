@@ -15,11 +15,8 @@
 
             <div class="carousel-inner">
                 @foreach($sliderDestinations as $i => $sDest)
-                    @php
-                        $sImg = $sDest->featured_image ? (file_exists(public_path($sDest->featured_image)) ? asset($sDest->featured_image) : asset('images/destinations/anicut.svg')) : asset('images/destinations/anicut.svg');
-                    @endphp
                     <div class="carousel-item {{ $i === 0 ? 'active' : '' }}" style="height: 420px; background-color: #064e3b;">
-                        <img src="{{ $sImg }}" class="d-block w-100 h-100 object-fit-cover opacity-75" alt="{{ $sDest->getLocalizedTitle() }}">
+                        <img src="{{ $sDest->getFeaturedImageUrl() }}" class="d-block w-100 h-100 object-fit-cover opacity-75" alt="{{ $sDest->getLocalizedTitle() }}">
                         <div class="carousel-caption d-flex flex-column justify-content-center h-100 text-start text-white pb-5 px-3 px-md-5" style="max-width: 800px; left: 8%; right: auto;">
                             <span class="badge bg-warning text-dark fw-bold px-3 py-1.5 rounded-pill mb-2 align-self-start shadow-sm" style="font-size: 0.78rem;">
                                 Top Rated Destination
@@ -117,10 +114,7 @@
                 <div class="col">
                     <div class="card card-custom h-100 d-flex flex-column">
                         <div class="position-relative overflow-hidden" style="height: 210px;">
-                            @php
-                                $img = $dest->featured_image ? (file_exists(public_path($dest->featured_image)) ? asset($dest->featured_image) : asset('images/destinations/anicut.svg')) : asset('images/destinations/anicut.svg');
-                            @endphp
-                            <img src="{{ $img }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $dest->getLocalizedTitle() }}">
+                            <img src="{{ $dest->getFeaturedImageUrl() }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $dest->getLocalizedTitle() }}">
                             <span class="position-absolute top-0 start-0 m-3 badge-category shadow-sm">
                                 {{ $dest->getLocalizedCategory() }}
                             </span>

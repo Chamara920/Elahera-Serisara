@@ -44,7 +44,7 @@
 
                     @if($item->featured_image)
                         <div class="mb-4 rounded-3 overflow-hidden" style="max-height: 400px;">
-                            <img src="{{ file_exists(public_path($item->featured_image)) ? asset($item->featured_image) : asset('images/news/news1.svg') }}" class="w-100 h-100 object-fit-cover" alt="{{ $item->title }}">
+                            <img src="{{ $item->getFeaturedImageUrl() }}" class="w-100 h-100 object-fit-cover" alt="{{ $item->title }}">
                         </div>
                     @endif
 

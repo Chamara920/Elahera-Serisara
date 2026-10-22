@@ -55,4 +55,23 @@ class NewsEvent extends Model
     {
         return $this->hasMany(NewsEventComment::class);
     }
+
+    /**
+     * Resolve public web URL for the featured image.
+     */
+    public function getFeaturedImageUrl(): string
+    {
+        if (!empty($this->featured_image)) {
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->featured_image)) {
+                return \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image);
+            }
+            if (file_exists(public_path('storage/' . $this->featured_image))) {
+                return asset('storage/' . $this->featured_image);
+            }
+            if (file_exists(public_path($this->featured_image))) {
+                return asset($this->featured_image);
+            }
+        }
+        return asset('images/news/news1.svg');
+    }
 }

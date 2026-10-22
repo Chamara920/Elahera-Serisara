@@ -50,14 +50,11 @@
                 <!-- Articles Feed -->
                 <div class="d-flex flex-column gap-4 mb-5">
                     @forelse($posts as $post)
-                        @php
-                            $pImg = $post->featured_image ? (file_exists(public_path($post->featured_image)) ? asset($post->featured_image) : asset('images/blog/blog1.svg')) : asset('images/blog/blog1.svg');
-                        @endphp
                         <div class="card card-custom border-0 shadow-sm overflow-hidden">
                             <div class="row g-0 align-items-center">
                                 <div class="col-md-5">
                                     <a href="{{ route('blog.show', $post->slug) }}">
-                                        <img src="{{ $pImg }}" class="w-100 h-100 object-fit-cover" style="min-height: 220px; max-height: 240px;" alt="{{ $post->title }}">
+                                        <img src="{{ $post->getFeaturedImageUrl() }}" class="w-100 h-100 object-fit-cover" style="min-height: 220px; max-height: 240px;" alt="{{ $post->title }}">
                                     </a>
                                 </div>
                                 <div class="col-md-7">

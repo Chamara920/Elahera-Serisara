@@ -82,24 +82,40 @@ class DestinationForm
                             ->relationship('destinationCategory', 'name_en')
                             ->searchable()
                             ->preload()
+                            ->createOptionForm([
+                                TextInput::make('name_en')
+                                    ->label('Category Name (English)')
+                                    ->required()
+                                    ->maxLength(255),
+                                TextInput::make('name_si')
+                                    ->label('Category Name (Sinhala)')
+                                    ->maxLength(255),
+                            ])
+                            ->createOptionUsing(function (array $data): int {
+                                $cat = \App\Models\DestinationCategory::create([
+                                    'name_en' => $data['name_en'],
+                                    'name_si' => $data['name_si'] ?? null,
+                                    'slug' => \Illuminate\Support\Str::slug($data['name_en']),
+                                    'is_active' => true,
+                                ]);
+                                return $cat->id;
+                            })
                             ->live()
                             ->afterStateUpdated(function ($state, callable $set) {
                                 $cat = \App\Models\DestinationCategory::find($state);
                                 if ($cat) {
                                     $set('category', $cat->name_en);
-                                    $set('category_si', $cat->name_si);
+                                    if (!empty($cat->name_si)) {
+                                        $set('category_si', $cat->name_si);
+                                    }
                                 }
                             }),
-                        Select::make('category')
+                        TextInput::make('category')
                             ->label('Category Code / Label')
-                            ->options([
-                                'Nature & Wildlife' => 'Nature & Wildlife',
-                                'Waterfalls' => 'Waterfalls',
-                                'Viewpoints' => 'Viewpoints',
-                                'Historical & Cultural' => 'Historical & Cultural',
-                                'Canals & Lakes' => 'Canals & Lakes',
-                            ])
-                            ->default('Nature & Wildlife')
+                            ->helperText('Auto-populated from Destination Category, or type custom label')
+                            ->datalist(function () {
+                                return \App\Models\DestinationCategory::pluck('name_en')->filter()->values()->toArray();
+                            })
                             ->required(),
                         Select::make('route_zone')
                             ->label('Route Zone')

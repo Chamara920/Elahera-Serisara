@@ -35,13 +35,10 @@
         <!-- News Grid -->
         <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3 mb-5">
             @forelse($items as $item)
-                @php
-                    $nImg = $item->featured_image ? (file_exists(public_path($item->featured_image)) ? asset($item->featured_image) : asset('images/news/news1.svg')) : asset('images/news/news1.svg');
-                @endphp
                 <div class="col">
                     <div class="card card-custom h-100 d-flex flex-column border-0 shadow-sm overflow-hidden">
                         <div class="position-relative overflow-hidden" style="height: 180px;">
-                            <img src="{{ $nImg }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $item->title }}">
+                            <img src="{{ $item->getFeaturedImageUrl() }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $item->title }}">
                             <span class="position-absolute top-0 start-0 m-3 badge {{ $item->type === 'event' ? 'bg-warning text-dark' : 'bg-primary' }} text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">
                                 {{ $item->type }}
                             </span>

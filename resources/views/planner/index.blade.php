@@ -42,15 +42,15 @@
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
             <div>
                 <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-2.5 py-1 rounded-pill small mb-1">
-                    <i class="bi bi-database-check me-1"></i> Database-Driven Transit Planning
+                    <i class="bi bi-database-check me-1"></i> {{ __('messages.database_driven_transit') }}
                 </span>
-                <h4 class="fw-bold text-dark mb-0">Smart Day-Trip Planner</h4>
+                <h4 class="fw-bold text-dark mb-0">{{ __('messages.smart_trip_planner') }}</h4>
                 <p class="text-secondary small mb-0">
-                    සියලු සංචාරක සැලසුම් කිරීම් යෙදවුමේ ඇති සංචාරක ගමනාන්ත, රැඳෙන කාලය, ගමන් කාලය සහ පොදු ප්‍රවාහන දත්ත ඇසුරෙන්ම සිදුකෙරේ.
+                    {{ __('messages.planner_page_subtitle') }}
                 </p>
             </div>
             <div class="text-muted small mt-2 mt-md-0">
-                <i class="bi bi-shield-check text-success me-1"></i> Verified Regional Corridor Metrics
+                <i class="bi bi-shield-check text-success me-1"></i> {{ __('messages.verified_regional_corridor') }}
             </div>
         </div>
 
@@ -59,14 +59,14 @@
             <div class="row g-3 align-items-end">
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-secondary mb-1">
-                        <i class="bi bi-calendar-event text-success me-1"></i> Trip Date
+                        <i class="bi bi-calendar-event text-success me-1"></i> {{ __('messages.trip_date_label') }}
                     </label>
                     <input type="date" id="cfgDate" class="form-control form-control-sm" value="{{ $tripDate }}">
                 </div>
 
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-secondary mb-1">
-                        <i class="bi bi-geo-alt-fill text-success me-1"></i> Start Point
+                        <i class="bi bi-geo-alt-fill text-success me-1"></i> {{ __('messages.start_point_label') }}
                     </label>
                     <select id="cfgStartLocation" class="form-select form-select-sm">
                         <option value="Bakamuna Town" {{ $startLocation == 'Bakamuna Town' ? 'selected' : '' }}>Bakamuna Town (Hub)</option>
@@ -79,26 +79,26 @@
 
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-secondary mb-1">
-                        <i class="bi bi-play-circle text-primary me-1"></i> Start Time
+                        <i class="bi bi-play-circle text-primary me-1"></i> {{ __('messages.start_time_label') }}
                     </label>
                     <input type="time" id="cfgStartTime" class="form-control form-control-sm" value="{{ $startTime }}">
                 </div>
 
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-secondary mb-1">
-                        <i class="bi bi-stop-circle text-danger me-1"></i> End Time
+                        <i class="bi bi-stop-circle text-danger me-1"></i> {{ __('messages.end_time_label') }}
                     </label>
                     <input type="time" id="cfgEndTime" class="form-control form-control-sm" value="{{ $endTime }}">
                 </div>
 
                 <div class="col-md-2">
                     <label class="form-label small fw-bold text-secondary mb-1">
-                        <i class="bi bi-car-front text-info me-1"></i> Transport
+                        <i class="bi bi-car-front text-info me-1"></i> {{ __('messages.transport_label') }}
                     </label>
                     <select id="cfgTransportMode" class="form-select form-select-sm">
-                        <option value="Car/Van" {{ $transportMode == 'Car/Van' ? 'selected' : '' }}>Car / Van (1.0x)</option>
-                        <option value="Motorbike/Tuk" {{ $transportMode == 'Motorbike/Tuk' ? 'selected' : '' }}>Motorbike / Tuk (1.2x)</option>
-                        <option value="Public Bus" {{ $transportMode == 'Public Bus' ? 'selected' : '' }}>Public Bus (1.5x)</option>
+                        <option value="Car/Van" {{ $transportMode == 'Car/Van' ? 'selected' : '' }}>{{ __('messages.car_van') }}</option>
+                        <option value="Motorbike/Tuk" {{ $transportMode == 'Motorbike/Tuk' ? 'selected' : '' }}>{{ __('messages.motorbike_tuk') }}</option>
+                        <option value="Public Bus" {{ $transportMode == 'Public Bus' ? 'selected' : '' }}>{{ __('messages.public_bus') }}</option>
                     </select>
                 </div>
 
@@ -106,7 +106,7 @@
                     <div class="form-check form-switch pt-1">
                         <input class="form-check-input" type="checkbox" id="cfgMealBreak" {{ $mealBreak ? 'checked' : '' }}>
                         <label class="form-check-label small fw-bold text-secondary" for="cfgMealBreak">
-                            Meal Break (45m)
+                            {{ __('messages.meal_break') }}
                         </label>
                     </div>
                 </div>
@@ -122,11 +122,11 @@
                 <!-- Filter Pills -->
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                     <h5 class="fw-bold mb-0 text-dark">
-                        Select Destinations to Add
+                        {{ __('messages.select_destinations_to_add') }}
                     </h5>
                     <div class="d-flex flex-wrap gap-1" id="categoryFilterContainer">
                         <button type="button" class="btn btn-sm btn-outline-success active rounded-pill px-3 py-1 filter-cat-btn" data-category="all">
-                            All Categories
+                            {{ __('messages.all_categories') }}
                         </button>
                         @foreach($categories as $cat)
                             <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 filter-cat-btn" data-category="{{ $cat }}">
@@ -139,13 +139,10 @@
                 <!-- Destinations Cards Grid -->
                 <div class="row g-3 row-cols-1 row-cols-md-2" id="plannerDestinationsGrid">
                     @foreach($destinations as $dest)
-                        @php
-                            $img = $dest->featured_image ? (file_exists(public_path($dest->featured_image)) ? asset($dest->featured_image) : asset('images/destinations/anicut.svg')) : asset('images/destinations/anicut.svg');
-                        @endphp
                         <div class="col destination-planner-card" data-category="{{ $dest->category }}" data-id="{{ $dest->id }}">
                             <div class="card card-custom h-100 position-relative">
                                 <div class="position-relative overflow-hidden" style="height: 160px;">
-                                    <img src="{{ $img }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $dest->getLocalizedTitle() }}">
+                                    <img src="{{ $dest->getFeaturedImageUrl() }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $dest->getLocalizedTitle() }}">
                                     <span class="position-absolute top-0 start-0 m-2 badge-category shadow-sm" style="font-size: 0.72rem;">
                                         {{ $dest->getLocalizedCategory() }}
                                     </span>
@@ -229,7 +226,7 @@
                                     </div>
                                     <div class="modal-body p-4">
                                         <div class="position-relative mb-3 rounded-3 overflow-hidden" style="max-height: 280px;">
-                                            <img src="{{ $img }}" class="w-100 h-100 object-fit-cover" alt="{{ $dest->getLocalizedTitle() }}">
+                                            <img src="{{ $dest->getFeaturedImageUrl() }}" class="w-100 h-100 object-fit-cover" alt="{{ $dest->getLocalizedTitle() }}">
                                         </div>
 
                                         @if($dest->needsSinhalaNotice())

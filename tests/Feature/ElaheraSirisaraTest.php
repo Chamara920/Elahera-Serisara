@@ -170,4 +170,78 @@ class ElaheraSirisaraTest extends TestCase
         $response->assertSee('Elahera Serisara');
         $response->assertSee('Discover • Explore • Experience');
     }
+
+    /**
+     * Test Planner Bilingual Localization on Home and Planner pages.
+     */
+    public function test_planner_localization_bilingual(): void
+    {
+        // In English: should see English planner subtitle
+        $enResponse = $this->withSession(['locale' => 'en'])->get('/');
+        $enResponse->assertStatus(200);
+        $enResponse->assertSee('Plan your journey seamlessly using verified destinations');
+
+        // In Sinhala: should see Sinhala planner subtitle
+        $siResponse = $this->withSession(['locale' => 'si'])->get('/');
+        $siResponse->assertStatus(200);
+        $siResponse->assertSee('යෙදවුමේ ඇති ගමනාන්ත, රැඳෙන කාලය, ගමන් කාලය සහ පොදු ප්‍රවාහන දත්ත ඇසුරෙන්ම ඔබේ සංචාරය සැලසුම් කරන්න.');
+
+        // Planner Index page in English
+        $enPlanner = $this->withSession(['locale' => 'en'])->get('/trip-planner');
+        $enPlanner->assertStatus(200);
+        $enPlanner->assertSee('Database-Driven Transit Planning');
+
+        // Planner Index page in Sinhala
+        $siPlanner = $this->withSession(['locale' => 'si'])->get('/trip-planner');
+        $siPlanner->assertStatus(200);
+        $siPlanner->assertSee('දත්ත පදනම් කරගත් ප්‍රවාහන සැලසුම්කරණය');
+    }
+
+    /**
+     * Test Destination image helpers and fallback.
+     */
+    public function test_destination_image_resolution(): void
+    {
+        $dest = new Destination([
+            'title_en' => 'Test Destination',
+            'featured_image' => null,
+            'gallery_images' => null,
+        ]);
+        $this->assertStringContainsString('anicut.svg', $dest->getFeaturedImageUrl());
+        $this->assertEmpty($dest->getGalleryImageUrls());
+
+        $dest->gallery_images = ['destinations/test1.jpg'];
+        $gallery = $dest->getGalleryImageUrls();
+        $this->assertCount(1, $gallery);
+    }
+
+    /**
+     * Test Category auto-sync on Destination save.
+     */
+    public function test_destination_category_auto_sync(): void
+    {
+        $cat = \App\Models\DestinationCategory::firstOrCreate(
+            ['slug' => 'test-nature-category'],
+            ['name_en' => 'Test Nature', 'name_si' => 'පරීක්ෂණ සොබාදහම', 'is_active' => true]
+        );
+
+        $destination = new Destination([
+            'title_en' => 'Auto Sync Destination',
+            'slug' => 'auto-sync-dest-' . uniqid(),
+            'short_description_en' => 'Testing auto sync',
+            'description_en' => 'Testing auto sync description',
+            'category_id' => $cat->id,
+            'route_zone' => 'Zone A - Bakamuna Route',
+            'distance_km' => 5,
+            'travel_time_minutes' => 10,
+            'stay_duration_minutes' => 30,
+            'latitude' => 7.9,
+            'longitude' => 80.8,
+            'is_active' => true,
+        ]);
+        $destination->save();
+
+        $this->assertEquals('Test Nature', $destination->category);
+        $this->assertEquals('පරීක්ෂණ සොබාදහම', $destination->category_si);
+    }
 }
