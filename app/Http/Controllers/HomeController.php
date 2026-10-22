@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\BlogPost;
+use App\Models\BusRoute;
 use App\Models\Destination;
+use App\Models\DestinationCategory;
 use App\Models\HeroSlider;
 use App\Models\NewsEvent;
 use Illuminate\Http\Request;
@@ -54,7 +56,21 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        return view('home', compact('sliders', 'featuredDestinations', 'latestBlogs', 'latestNews'));
+        // 5. Featured Destination Categories for Homepage Interactive Filter
+        $categories = DestinationCategory::where('is_active', true)
+            ->orderBy('sort_order')
+            ->take(8)
+            ->get();
+
+        // 6. Corridor Highlights & Live Stats
+        $stats = [
+            'destinations' => Destination::where('is_active', true)->count(),
+            'categories' => DestinationCategory::where('is_active', true)->count(),
+            'bus_routes' => BusRoute::where('is_active', true)->count(),
+            'stories' => BlogPost::where('is_approved', true)->count(),
+        ];
+
+        return view('home', compact('sliders', 'featuredDestinations', 'latestBlogs', 'latestNews', 'categories', 'stats'));
     }
 
     /**
