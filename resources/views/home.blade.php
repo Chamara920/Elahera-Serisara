@@ -5,9 +5,9 @@
 @section('content')
 
     <!-- 1. Full-Width Hero Slider (Admin Controlled via Filament) -->
-    <div id="heroCarousel" class="carousel slide carousel-fade shadow-sm" data-bs-ride="carousel" data-bs-interval="6000">
+    <div id="heroCarousel" class="carousel slide carousel-fade shadow-sm position-relative" data-bs-ride="carousel" data-bs-interval="6000">
         <!-- Indicators -->
-        <div class="carousel-indicators">
+        <div class="carousel-indicators" style="bottom: 85px;">
             @foreach($sliders as $index => $slider)
                 <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ $index }}" class="{{ $index === 0 ? 'active' : '' }}" aria-label="Slide {{ $index + 1 }}"></button>
             @endforeach
@@ -16,10 +16,7 @@
         <div class="carousel-inner">
             @forelse($sliders as $index => $slider)
                 <div class="carousel-item {{ $index === 0 ? 'active' : '' }}" style="height: 520px; min-height: 400px; background-color: #064e3b;">
-                    @php
-                        $sliderImage = $slider->image ? (file_exists(public_path($slider->image)) ? asset($slider->image) : asset('images/sliders/slider1.jpg')) : asset('images/sliders/slider1.jpg');
-                    @endphp
-                    <img src="{{ $sliderImage }}" class="d-block w-100 h-100 object-fit-cover opacity-75" alt="{{ $slider->getLocalizedTitle() }}">
+                    <img src="{{ $slider->getImageUrl() }}" class="d-block w-100 h-100 object-fit-cover opacity-75" alt="{{ $slider->getLocalizedTitle() }}">
                     <div class="carousel-caption d-flex flex-column justify-content-center h-100 text-start text-white pb-5 px-3 px-md-5" style="max-width: 850px; left: 8%; right: auto;">
                         <span class="badge bg-warning text-dark fw-bold text-uppercase px-3 py-2 rounded-pill mb-3 align-self-start shadow-sm" style="font-size: 0.8rem; letter-spacing: 1px;">
                             <i class="bi bi-star-fill text-dark me-1"></i> Featured Experience
@@ -54,109 +51,100 @@
         </div>
 
         <!-- Controls -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" style="z-index: 10;">
             <span class="carousel-control-prev-icon rounded-circle bg-dark bg-opacity-50 p-3" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" style="z-index: 10;">
             <span class="carousel-control-next-icon rounded-circle bg-dark bg-opacity-50 p-3" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
     </div>
 
 
-    <div class="container-xl py-5">
-
-        <!-- 2. Quick Access Cards Bar (5 Cards with Image Backgrounds) -->
-        <div class="mb-5">
-            <div class="d-flex justify-content-between align-items-end mb-3">
-                <div>
-                    <h6 class="text-success text-uppercase fw-bold letter-spacing-1 mb-1">Quick Access Hub</h6>
-                    <h2 class="fw-bold fs-3 text-dark mb-0">Explore Elahera Corridor</h2>
-                </div>
+    <!-- 2. Quick Access Cards Bar (Overlapping Bottom of Hero Slider) -->
+    <div class="container-xl position-relative" style="margin-top: -70px; z-index: 20;">
+        <div class="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-5">
+            <!-- Card 1: Destinations -->
+            <div class="col">
+                <a href="{{ route('destinations.index') }}" class="text-decoration-none">
+                    <div class="card card-custom h-100 border-0 shadow-lg position-relative overflow-hidden text-white" style="min-height: 180px; border-radius: 16px; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.85) 100%), url('{{ asset('images/main/Destinations.jpg') }}') center/cover;">
+                        <div class="card-body d-flex flex-column justify-content-end p-3">
+                            <div class="bg-success text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 36px; height: 36px;">
+                                <i class="bi bi-geo-alt-fill fs-6"></i>
+                            </div>
+                            <h5 class="fw-bold mb-1 text-white">{{ __('messages.destinations') }}</h5>
+                            <p class="small text-light opacity-80 mb-0" style="font-size: 0.75rem;">Heritage & Waterfalls</p>
+                        </div>
+                    </div>
+                </a>
             </div>
 
-            <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
-                <!-- Card 1: Destinations -->
-                <div class="col">
-                    <a href="{{ route('destinations.index') }}" class="text-decoration-none">
-                        <div class="card card-custom h-100 border-0 shadow-sm position-relative overflow-hidden text-white" style="min-height: 180px; background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('{{ asset('images/cards/card_destinations.svg') }}') center/cover;">
-                            <div class="card-body d-flex flex-column justify-content-end p-3">
-                                <div class="bg-success text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center mb-2" style="width: 36px; height: 36px;">
-                                    <i class="bi bi-geo-alt-fill fs-6"></i>
-                                </div>
-                                <h5 class="fw-bold mb-1 text-white">Destinations</h5>
-                                <p class="small text-light opacity-75 mb-0" style="font-size: 0.75rem;">Heritage & Waterfalls</p>
+            <!-- Card 2: Interactive Map -->
+            <div class="col">
+                <a href="{{ route('map.index') }}" class="text-decoration-none">
+                    <div class="card card-custom h-100 border-0 shadow-lg position-relative overflow-hidden text-white" style="min-height: 180px; border-radius: 16px; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.85) 100%), url('{{ asset('images/main/Interactive Map.jpg') }}') center/cover;">
+                        <div class="card-body d-flex flex-column justify-content-end p-3">
+                            <div class="bg-primary text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 36px; height: 36px;">
+                                <i class="bi bi-map-fill fs-6"></i>
                             </div>
+                            <h5 class="fw-bold mb-1 text-white">{{ __('messages.interactive_map') }}</h5>
+                            <p class="small text-light opacity-80 mb-0" style="font-size: 0.75rem;">GPS & Navigation</p>
                         </div>
-                    </a>
-                </div>
+                    </div>
+                </a>
+            </div>
 
-                <!-- Card 2: Interactive Map -->
-                <div class="col">
-                    <a href="{{ route('map.index') }}" class="text-decoration-none">
-                        <div class="card card-custom h-100 border-0 shadow-sm position-relative overflow-hidden text-white" style="min-height: 180px; background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('{{ asset('images/cards/card_map.svg') }}') center/cover;">
-                            <div class="card-body d-flex flex-column justify-content-end p-3">
-                                <div class="bg-primary text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center mb-2" style="width: 36px; height: 36px;">
-                                    <i class="bi bi-map-fill fs-6"></i>
-                                </div>
-                                <h5 class="fw-bold mb-1 text-white">Interactive Map</h5>
-                                <p class="small text-light opacity-75 mb-0" style="font-size: 0.75rem;">GPS & Navigation</p>
+            <!-- Card 3: Travel Guide -->
+            <div class="col">
+                <a href="{{ route('guide.index') }}" class="text-decoration-none">
+                    <div class="card card-custom h-100 border-0 shadow-lg position-relative overflow-hidden text-white" style="min-height: 180px; border-radius: 16px; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.85) 100%), url('{{ asset('images/main/travel guide.jpg') }}') center/cover;">
+                        <div class="card-body d-flex flex-column justify-content-end p-3">
+                            <div class="bg-warning text-dark rounded-circle p-2 d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 36px; height: 36px;">
+                                <i class="bi bi-journal-check fs-6"></i>
                             </div>
+                            <h5 class="fw-bold mb-1 text-white">{{ __('messages.travel_guide') }}</h5>
+                            <p class="small text-light opacity-80 mb-0" style="font-size: 0.75rem;">Tips, Safety & Packing</p>
                         </div>
-                    </a>
-                </div>
+                    </div>
+                </a>
+            </div>
 
-                <!-- Card 3: Travel Guide -->
-                <div class="col">
-                    <a href="{{ route('guide.index') }}" class="text-decoration-none">
-                        <div class="card card-custom h-100 border-0 shadow-sm position-relative overflow-hidden text-white" style="min-height: 180px; background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('{{ asset('images/cards/card_guide.svg') }}') center/cover;">
-                            <div class="card-body d-flex flex-column justify-content-end p-3">
-                                <div class="bg-warning text-dark rounded-circle p-2 d-inline-flex align-items-center justify-content-center mb-2" style="width: 36px; height: 36px;">
-                                    <i class="bi bi-journal-check fs-6"></i>
-                                </div>
-                                <h5 class="fw-bold mb-1 text-white">Travel Guide</h5>
-                                <p class="small text-light opacity-75 mb-0" style="font-size: 0.75rem;">Tips, Safety & Packing</p>
+            <!-- Card 4: Public Transport -->
+            <div class="col">
+                <a href="{{ route('transport.index') }}" class="text-decoration-none">
+                    <div class="card card-custom h-100 border-0 shadow-lg position-relative overflow-hidden text-white" style="min-height: 180px; border-radius: 16px; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.85) 100%), url('{{ asset('images/main/Public Transport.jpg') }}') center/cover;">
+                        <div class="card-body d-flex flex-column justify-content-end p-3">
+                            <div class="bg-danger text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 36px; height: 36px;">
+                                <i class="bi bi-bus-front-fill fs-6"></i>
                             </div>
+                            <h5 class="fw-bold mb-1 text-white">{{ __('messages.public_transport') }}</h5>
+                            <p class="small text-light opacity-80 mb-0" style="font-size: 0.75rem;">Bakamuna Bus Schedule</p>
                         </div>
-                    </a>
-                </div>
+                    </div>
+                </a>
+            </div>
 
-                <!-- Card 4: Public Transport -->
-                <div class="col">
-                    <a href="{{ route('transport.index') }}" class="text-decoration-none">
-                        <div class="card card-custom h-100 border-0 shadow-sm position-relative overflow-hidden text-white" style="min-height: 180px; background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('{{ asset('images/cards/card_transport.svg') }}') center/cover;">
-                            <div class="card-body d-flex flex-column justify-content-end p-3">
-                                <div class="bg-danger text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center mb-2" style="width: 36px; height: 36px;">
-                                    <i class="bi bi-bus-front-fill fs-6"></i>
-                                </div>
-                                <h5 class="fw-bold mb-1 text-white">Public Transport</h5>
-                                <p class="small text-light opacity-75 mb-0" style="font-size: 0.75rem;">Bakamuna Bus Schedule</p>
+            <!-- Card 5: Emergency Information -->
+            <div class="col">
+                <a href="{{ route('emergency.index') }}" class="text-decoration-none">
+                    <div class="card card-custom h-100 border-0 shadow-lg position-relative overflow-hidden text-white" style="min-height: 180px; border-radius: 16px; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.85) 100%), url('{{ asset('images/main/Emergency Info.jpg') }}') center/cover;">
+                        <div class="card-body d-flex flex-column justify-content-end p-3">
+                            <div class="bg-danger text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 36px; height: 36px;">
+                                <i class="bi bi-telephone-plus-fill fs-6"></i>
                             </div>
+                            <h5 class="fw-bold mb-1 text-white">{{ __('messages.emergency_info') }}</h5>
+                            <p class="small text-light opacity-80 mb-0" style="font-size: 0.75rem;">Hospitals & Police 24/7</p>
                         </div>
-                    </a>
-                </div>
-
-                <!-- Card 5: Emergency Information -->
-                <div class="col">
-                    <a href="{{ route('emergency.index') }}" class="text-decoration-none">
-                        <div class="card card-custom h-100 border-0 shadow-sm position-relative overflow-hidden text-white" style="min-height: 180px; background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('{{ asset('images/cards/card_emergency.svg') }}') center/cover;">
-                            <div class="card-body d-flex flex-column justify-content-end p-3">
-                                <div class="bg-danger text-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center mb-2" style="width: 36px; height: 36px;">
-                                    <i class="bi bi-telephone-plus-fill fs-6"></i>
-                                </div>
-                                <h5 class="fw-bold mb-1 text-white">Emergency Info</h5>
-                                <p class="small text-light opacity-75 mb-0" style="font-size: 0.75rem;">Hospitals & Police 24/7</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
+                    </div>
+                </a>
             </div>
         </div>
+    </div>
 
 
-        <!-- 3. Main Content Area (2/3 and 1/3 Layout Grid) -->
-        <div class="row g-4 mb-5">
+    <!-- 3. Main Content Area (2/3 and 1/3 Layout Grid) -->
+    <div class="container-xl pt-5 pb-5">
             <!-- Left (2/3 Width): 6 Major Destination Cards -->
             <div class="col-lg-8">
                 <div class="d-flex justify-content-between align-items-center mb-4">

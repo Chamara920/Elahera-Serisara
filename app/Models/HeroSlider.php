@@ -66,4 +66,23 @@ class HeroSlider extends Model
         }
         return $this->button2_text_en ?: 'Explore Destinations';
     }
+
+    /**
+     * Resolve public web URL for the slider image.
+     */
+    public function getImageUrl(): string
+    {
+        if (!empty($this->image)) {
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->image)) {
+                return \Illuminate\Support\Facades\Storage::disk('public')->url($this->image);
+            }
+            if (file_exists(public_path('storage/' . $this->image))) {
+                return asset('storage/' . $this->image);
+            }
+            if (file_exists(public_path($this->image))) {
+                return asset($this->image);
+            }
+        }
+        return asset('images/sliders/slider1.jpg');
+    }
 }
