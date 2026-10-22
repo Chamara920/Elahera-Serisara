@@ -34,6 +34,17 @@ class Destination extends Model
         'distance_km',
         'travel_time_minutes',
         'stay_duration_minutes',
+        'opening_time',
+        'closing_time',
+        'is_always_open',
+        'closed_days',
+        'closure_notes',
+        'best_months',
+        'moderate_months',
+        'not_recommended_months',
+        'ticket_price_min',
+        'ticket_price_max',
+        'ticket_price_range',
         'safety_alerts_en',
         'safety_alerts_si',
         'packing_list_en',
@@ -55,6 +66,13 @@ class Destination extends Model
         'distance_km' => 'float',
         'travel_time_minutes' => 'integer',
         'stay_duration_minutes' => 'integer',
+        'is_always_open' => 'boolean',
+        'closed_days' => 'array',
+        'best_months' => 'array',
+        'moderate_months' => 'array',
+        'not_recommended_months' => 'array',
+        'ticket_price_min' => 'float',
+        'ticket_price_max' => 'float',
         'latitude' => 'float',
         'longitude' => 'float',
         'is_featured' => 'boolean',
@@ -198,6 +216,95 @@ class Destination extends Model
     public function averageRating(): float
     {
         return round($this->reviews()->where('is_approved', true)->avg('rating') ?: 4.8, 1);
+    }
+
+    /**
+     * Get formatted visiting hours string.
+     */
+    public function getFormattedOpeningHours(): string
+    {
+        if ($this->is_always_open) {
+            return 'Open 24/7 (Always Open)';
+        }
+
+        $open = $this->opening_time ? substr($this->opening_time, 0, 5) : '06:00';
+        $close = $this->closing_time ? substr($this->closing_time, 0, 5) : '18:00';
+
+        return "{$open} - {$close}";
+    }
+
+    /**
+     * Check if destination is open at a specific time string (e.g. "09:30").
+     */
+    public function isOpenAt(string $timeString): bool
+    {
+        if ($this->is_always_open) {
+            return true;
+        }
+
+        $check = substr($timeString, 0, 5);
+        $open = $this->opening_time ? substr($this->opening_time, 0, 5) : '06:00';
+        $close = $this->closing_time ? substr($this->closing_time, 0, 5) : '18:00';
+
+        return ($check >= $open && $check <= $close);
+    }
+
+    /**
+     * Check if destination is usually closed on a given day (e.g. "Monday").
+     */
+    public function isClosedOnDay(string $dayName): bool
+    {
+        if (empty($this->closed_days) || !is_array($this->closed_days)) {
+            return false;
+        }
+
+        return in_array($dayName, $this->closed_days, true);
+    }
+
+    /**
+     * Get seasonal suitability for a given month (e.g., 'January', 'July', or current month).
+     * Returns: 'best', 'moderate', 'not_recommended', or 'normal'.
+     */
+    public function getSeasonalStatusForMonth(?string $month = null): string
+    {
+        $monthName = $month ?: date('F');
+
+        $best = (array) ($this->best_months ?? []);
+        $moderate = (array) ($this->moderate_months ?? []);
+        $notRecommended = (array) ($this->not_recommended_months ?? []);
+
+        if (in_array($monthName, $best, true)) {
+            return 'best';
+        }
+
+        if (in_array($monthName, $notRecommended, true)) {
+            return 'not_recommended';
+        }
+
+        if (in_array($monthName, $moderate, true)) {
+            return 'moderate';
+        }
+
+        return 'normal';
+    }
+
+    /**
+     * Get formatted ticket price string.
+     */
+    public function getFormattedTicketPrice(): string
+    {
+        if (!empty($this->ticket_price_range)) {
+            return $this->ticket_price_range;
+        }
+
+        if ($this->ticket_price_min > 0 || $this->ticket_price_max > 0) {
+            if ($this->ticket_price_min == $this->ticket_price_max) {
+                return 'LKR ' . number_format($this->ticket_price_min);
+            }
+            return 'LKR ' . number_format($this->ticket_price_min) . ' - ' . number_format($this->ticket_price_max);
+        }
+
+        return 'Free Entry';
     }
 
     /**

@@ -91,6 +91,69 @@ class FilamentAdminTest extends TestCase
     }
 
     /**
+     * Test admin can access destination creation page with operational hours and seasonal sections in English.
+     */
+    public function test_admin_can_access_destinations_create_page(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $response = $this->actingAs($admin)->get('/admin/destinations/create');
+        $response->assertStatus(200);
+        $response->assertSee('Visiting Hours &amp; Weekly Schedule', false);
+        $response->assertSee('12-Month Seasonal Suitability', false);
+        $response->assertSee('Ticket Pricing &amp; Entrance Fees', false);
+        $response->assertSee('Opening Time');
+        $response->assertSee('Closing Time');
+        $response->assertSee('Closed Days / Weekly Holidays', false);
+    }
+
+    /**
+     * Test destination model operational hours, closed days, and seasonal calculations.
+     */
+    public function test_destination_operational_and_seasonal_attributes(): void
+    {
+        $destination = \App\Models\Destination::create([
+            'title_en' => 'Wasgamuwa Park Corridor',
+            'slug' => 'wasgamuwa-park-corridor',
+            'short_description_en' => 'Wildlife reserve corridor near Elahera.',
+            'description_en' => 'Scenic elephant watching and river biodiversity.',
+            'category' => 'Nature & Wildlife',
+            'route_zone' => 'Zone C - Wildlife & Angamedilla',
+            'distance_km' => 18,
+            'travel_time_minutes' => 30,
+            'stay_duration_minutes' => 120,
+            'opening_time' => '06:00',
+            'closing_time' => '18:00',
+            'is_always_open' => false,
+            'closed_days' => ['Monday', 'Full Moon Poya Days'],
+            'closure_notes' => 'Closed on Poya days for wildlife sanctuary rest',
+            'best_months' => ['July', 'August', 'September'],
+            'moderate_months' => ['January', 'February', 'March'],
+            'not_recommended_months' => ['November', 'December'],
+            'ticket_price_min' => 150,
+            'ticket_price_max' => 600,
+            'ticket_price_range' => 'LKR 150 - LKR 600',
+            'latitude' => 7.9123,
+            'longitude' => 80.8954,
+            'is_active' => true,
+        ]);
+
+        $this->assertEquals('06:00 - 18:00', $destination->getFormattedOpeningHours());
+        $this->assertTrue($destination->isOpenAt('10:00'));
+        $this->assertFalse($destination->isOpenAt('05:30'));
+        $this->assertFalse($destination->isOpenAt('19:00'));
+
+        $this->assertTrue($destination->isClosedOnDay('Monday'));
+        $this->assertFalse($destination->isClosedOnDay('Tuesday'));
+
+        $this->assertEquals('best', $destination->getSeasonalStatusForMonth('August'));
+        $this->assertEquals('not_recommended', $destination->getSeasonalStatusForMonth('November'));
+        $this->assertEquals('moderate', $destination->getSeasonalStatusForMonth('February'));
+        $this->assertEquals('normal', $destination->getSeasonalStatusForMonth('April'));
+
+        $this->assertEquals('LKR 150 - LKR 600', $destination->getFormattedTicketPrice());
+    }
+
+    /**
      * Test community member cannot access Filament admin panel.
      */
     public function test_community_member_forbidden_from_admin_panel(): void

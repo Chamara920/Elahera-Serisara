@@ -152,10 +152,16 @@
                             </p>
 
                             <!-- Quick Stats -->
-                            <div class="d-flex align-items-center justify-content-between pt-3 border-top text-muted small mb-3">
+                            <div class="d-flex align-items-center justify-content-between pt-3 border-top text-muted small mb-2">
                                 <span><i class="bi bi-signpost-2 text-success me-1"></i> {{ $dest->distance_km }} km</span>
                                 <span><i class="bi bi-stopwatch text-primary me-1"></i> {{ $dest->stay_duration_minutes }}m</span>
                                 <span><i class="bi bi-chat-text text-secondary me-1"></i> {{ $dest->reviewsCount() }} reviews</span>
+                            </div>
+
+                            <!-- Operating Hours & Entrance Fee -->
+                            <div class="d-flex align-items-center justify-content-between mb-3 text-muted small" style="font-size: 0.74rem;">
+                                <span class="text-truncate me-1"><i class="bi bi-clock text-primary me-1"></i> {{ $dest->getFormattedOpeningHours() }}</span>
+                                <span class="text-success fw-bold text-nowrap"><i class="bi bi-ticket-perforated me-1"></i> {{ $dest->getFormattedTicketPrice() }}</span>
                             </div>
 
                             <div class="d-flex gap-2">

@@ -38,18 +38,24 @@
             <table class="table table-bordered align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th style="width: 60px;">#</th>
+                        <th style="width: 50px;">#</th>
                         <th>Destination</th>
-                        <th>Category</th>
-                        <th>Stay Duration</th>
-                        <th>Drive Time</th>
+                        <th>Hours & Closure</th>
+                        <th>Entrance Fee</th>
+                        <th>Stay</th>
+                        <th>Drive</th>
                         <th>Key Guidance</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @php $totalEstMin = 0; $totalEstMax = 0; @endphp
                     @foreach($stops as $idx => $stop)
                         @php
                             $d = $destinations->get($stop['id']);
+                            if ($d) {
+                                $totalEstMin += ($d->ticket_price_min ?: 0);
+                                $totalEstMax += ($d->ticket_price_max ?: 0);
+                            }
                         @endphp
                         <tr>
                             <td class="text-center fw-bold">{{ $idx + 1 }}</td>
@@ -59,7 +65,19 @@
                                     <div class="small text-muted">Halt: {{ $d->nearest_bus_stop }}</div>
                                 @endif
                             </td>
-                            <td><span class="badge bg-secondary">{{ $d ? $d->category : 'Attraction' }}</span></td>
+                            <td class="small">
+                                @if($d)
+                                    <div><strong>{{ $d->getFormattedOpeningHours() }}</strong></div>
+                                    @if(!empty($d->closed_days))
+                                        <div class="text-danger" style="font-size: 0.75rem;">Closed: {{ implode(', ', $d->closed_days) }}</div>
+                                    @endif
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td class="small fw-semibold text-success">
+                                {{ $d ? $d->getFormattedTicketPrice() : 'Free' }}
+                            </td>
                             <td>{{ $stop['stay'] }} mins</td>
                             <td>{{ $stop['travel'] }} mins</td>
                             <td class="small text-danger">
@@ -68,6 +86,21 @@
                         </tr>
                     @endforeach
                 </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <th colspan="3" class="text-end">Total Estimated Ticket Costs:</th>
+                        <th class="text-success">
+                            @if($totalEstMin == 0 && $totalEstMax == 0)
+                                Free Entry
+                            @elseif($totalEstMin == $totalEstMax)
+                                LKR {{ number_format($totalEstMin) }}
+                            @else
+                                LKR {{ number_format($totalEstMin) }} - {{ number_format($totalEstMax) }}
+                            @endif
+                        </th>
+                        <th colspan="3"></th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
 

@@ -171,10 +171,18 @@
                                                 <strong>⚠️ Alert:</strong> {{ $dest->getLocalizedSafetyAlerts() }}
                                             </div>
                                         @endif
-                                        <div class="d-flex justify-content-between text-muted">
+                                        <div class="d-flex justify-content-between text-muted mb-1">
                                             <span><i class="bi bi-signpost-2"></i> {{ $dest->distance_km }} km</span>
                                             <span><i class="bi bi-stopwatch"></i> Stay: {{ $dest->stay_duration_minutes }}m</span>
                                             <span><i class="bi bi-car-front"></i> Drive: {{ $dest->travel_time_minutes }}m</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center text-muted border-top pt-1 mt-1" style="font-size: 0.72rem;">
+                                            <span class="text-truncate me-1" title="{{ $dest->getFormattedOpeningHours() }}">
+                                                <i class="bi bi-clock text-primary me-1"></i> {{ $dest->getFormattedOpeningHours() }}
+                                            </span>
+                                            <span class="text-success fw-bold text-nowrap">
+                                                <i class="bi bi-ticket-perforated me-1"></i> {{ $dest->getFormattedTicketPrice() }}
+                                            </span>
                                         </div>
                                     </div>
 
@@ -190,7 +198,18 @@
                                             data-stay="{{ $dest->stay_duration_minutes }}"
                                             data-travel="{{ $dest->travel_time_minutes }}"
                                             data-lat="{{ $dest->latitude }}"
-                                            data-lng="{{ $dest->longitude }}">
+                                            data-lng="{{ $dest->longitude }}"
+                                            data-open="{{ $dest->opening_time ?: '06:00' }}"
+                                            data-close="{{ $dest->closing_time ?: '18:00' }}"
+                                            data-always-open="{{ $dest->is_always_open ? '1' : '0' }}"
+                                            data-closed-days="{{ json_encode($dest->closed_days ?? []) }}"
+                                            data-closure-notes="{{ $dest->closure_notes ?? '' }}"
+                                            data-best-months="{{ json_encode($dest->best_months ?? []) }}"
+                                            data-moderate-months="{{ json_encode($dest->moderate_months ?? []) }}"
+                                            data-not-rec-months="{{ json_encode($dest->not_recommended_months ?? []) }}"
+                                            data-price-min="{{ $dest->ticket_price_min ?? 0 }}"
+                                            data-price-max="{{ $dest->ticket_price_max ?? 0 }}"
+                                            data-price-range="{{ $dest->getFormattedTicketPrice() }}">
                                             <i class="bi bi-plus-lg me-1"></i> Add
                                         </button>
                                     </div>
@@ -246,6 +265,33 @@
                                             </div>
                                         </div>
 
+                                        <!-- Visiting Hours, Tickets & Seasonality Box -->
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-md-6">
+                                                <div class="p-3 bg-light rounded-3 h-100">
+                                                    <h6 class="fw-bold text-success mb-2"><i class="bi bi-clock-history me-1"></i> Visiting Hours & Tickets</h6>
+                                                    <div class="small mb-1"><strong>Hours:</strong> {{ $dest->getFormattedOpeningHours() }}</div>
+                                                    <div class="small mb-1 text-danger"><strong>Closed:</strong> {{ !empty($dest->closed_days) ? implode(', ', $dest->closed_days) : 'Open Daily' }}</div>
+                                                    @if($dest->closure_notes)
+                                                        <div class="small text-muted mb-1"><em>{{ $dest->closure_notes }}</em></div>
+                                                    @endif
+                                                    <div class="small text-success fw-bold"><strong>Entrance Fee:</strong> {{ $dest->getFormattedTicketPrice() }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="p-3 bg-light rounded-3 h-100">
+                                                    <h6 class="fw-bold text-info-emphasis mb-2"><i class="bi bi-calendar3 me-1"></i> 12-Month Seasonality</h6>
+                                                    <div class="small mb-1"><span class="badge bg-success me-1">Best</span> {{ !empty($dest->best_months) ? implode(', ', $dest->best_months) : 'All Year' }}</div>
+                                                    @if(!empty($dest->moderate_months))
+                                                        <div class="small mb-1"><span class="badge bg-warning text-dark me-1">Moderate</span> {{ implode(', ', $dest->moderate_months) }}</div>
+                                                    @endif
+                                                    @if(!empty($dest->not_recommended_months))
+                                                        <div class="small text-danger"><span class="badge bg-danger me-1">Not Recommended</span> {{ implode(', ', $dest->not_recommended_months) }}</div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                                             <a href="{{ $dest->getGoogleMapsUrl() }}" target="_blank" class="btn btn-outline-success btn-sm">
                                                 <i class="bi bi-google me-1"></i> Open in Google Maps
@@ -257,7 +303,18 @@
                                                 data-stay="{{ $dest->stay_duration_minutes }}"
                                                 data-travel="{{ $dest->travel_time_minutes }}"
                                                 data-lat="{{ $dest->latitude }}"
-                                                data-lng="{{ $dest->longitude }}">
+                                                data-lng="{{ $dest->longitude }}"
+                                                data-open="{{ $dest->opening_time ?: '06:00' }}"
+                                                data-close="{{ $dest->closing_time ?: '18:00' }}"
+                                                data-always-open="{{ $dest->is_always_open ? '1' : '0' }}"
+                                                data-closed-days="{{ json_encode($dest->closed_days ?? []) }}"
+                                                data-closure-notes="{{ $dest->closure_notes ?? '' }}"
+                                                data-best-months="{{ json_encode($dest->best_months ?? []) }}"
+                                                data-moderate-months="{{ json_encode($dest->moderate_months ?? []) }}"
+                                                data-not-rec-months="{{ json_encode($dest->not_recommended_months ?? []) }}"
+                                                data-price-min="{{ $dest->ticket_price_min ?? 0 }}"
+                                                data-price-max="{{ $dest->ticket_price_max ?? 0 }}"
+                                                data-price-range="{{ $dest->getFormattedTicketPrice() }}">
                                                 <i class="bi bi-plus-lg me-1"></i> Add to Trip
                                             </button>
                                         </div>
@@ -298,6 +355,10 @@
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="small fw-bold text-secondary">Route Preview</span>
                                 <span class="small text-muted" id="routeDistanceDisplay">0 km total</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-1.5 bg-light rounded-2 border">
+                                <span class="small fw-semibold text-secondary" style="font-size: 0.76rem;"><i class="bi bi-ticket-perforated text-success me-1"></i> Total Est. Tickets:</span>
+                                <span class="small fw-bold text-success" id="totalTicketFeesDisplay">Free</span>
                             </div>
                             <div id="plannerLeafletMap" style="height: 180px; border-radius: 10px; border: 1px solid #e2e8f0;"></div>
                         </div>
@@ -388,6 +449,22 @@
                 const lat = parseFloat(this.getAttribute('data-lat'));
                 const lng = parseFloat(this.getAttribute('data-lng'));
 
+                const openTime = this.getAttribute('data-open') || '06:00';
+                const closeTime = this.getAttribute('data-close') || '18:00';
+                const alwaysOpen = this.getAttribute('data-always-open') === '1';
+                let closedDays = [];
+                try { closedDays = JSON.parse(this.getAttribute('data-closed-days') || '[]'); } catch(e){}
+                const closureNotes = this.getAttribute('data-closure-notes') || '';
+                let bestMonths = [];
+                try { bestMonths = JSON.parse(this.getAttribute('data-best-months') || '[]'); } catch(e){}
+                let moderateMonths = [];
+                try { moderateMonths = JSON.parse(this.getAttribute('data-moderate-months') || '[]'); } catch(e){}
+                let notRecMonths = [];
+                try { notRecMonths = JSON.parse(this.getAttribute('data-not-rec-months') || '[]'); } catch(e){}
+                const priceMin = parseFloat(this.getAttribute('data-price-min')) || 0;
+                const priceMax = parseFloat(this.getAttribute('data-price-max')) || 0;
+                const priceRange = this.getAttribute('data-price-range') || 'Free Entry';
+
                 // Prevent duplicates
                 if (tripStops.some(s => s.id === id)) {
                     alert('This destination is already added to your day trip!');
@@ -400,7 +477,18 @@
                     stay: stay,
                     travel: travel,
                     lat: lat,
-                    lng: lng
+                    lng: lng,
+                    open: openTime,
+                    close: closeTime,
+                    alwaysOpen: alwaysOpen,
+                    closedDays: closedDays,
+                    closureNotes: closureNotes,
+                    bestMonths: bestMonths,
+                    moderateMonths: moderateMonths,
+                    notRecMonths: notRecMonths,
+                    priceMin: priceMin,
+                    priceMax: priceMax,
+                    priceRange: priceRange
                 });
 
                 renderTimeline();
@@ -408,8 +496,9 @@
         });
 
         // Configuration Change listeners
-        ['cfgStartTime', 'cfgEndTime', 'cfgTransportMode', 'cfgMealBreak'].forEach(id => {
-            document.getElementById(id).addEventListener('change', renderTimeline);
+        ['cfgDate', 'cfgStartTime', 'cfgEndTime', 'cfgTransportMode', 'cfgMealBreak'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('change', renderTimeline);
         });
 
         // Render Timeline & Recalculate Time Meter
@@ -427,6 +516,8 @@
                 googleMapsBtn.classList.add('disabled');
                 updateMeter(0, 0, 0, 0, 600);
                 clearMapRoute();
+                const ticketDisplayEl = document.getElementById('totalTicketFeesDisplay');
+                if (ticketDisplayEl) ticketDisplayEl.textContent = 'Free';
                 return;
             }
 
@@ -438,6 +529,19 @@
             const endTimeStr = document.getElementById('cfgEndTime').value || '18:00';
             const hasMealBreak = document.getElementById('cfgMealBreak').checked;
             const transportMode = document.getElementById('cfgTransportMode').value;
+            const tripDateInput = document.getElementById('cfgDate').value;
+
+            // Date analysis for Closed Days & Seasonality
+            let tripDayName = '';
+            let tripMonthName = '';
+            if (tripDateInput) {
+                const dateParts = tripDateInput.split('-').map(Number);
+                const dt = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+                const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                tripDayName = dayNames[dt.getDay()];
+                tripMonthName = monthNames[dt.getMonth()];
+            }
 
             // Transport multiplier
             let travelMultiplier = 1.0;
@@ -452,6 +556,8 @@
             let currentMinutes = startParts[0] * 60 + startParts[1];
             let totalTravel = 0;
             let totalStay = 0;
+            let totalTicketMin = 0;
+            let totalTicketMax = 0;
             const mealMinutes = hasMealBreak ? 45 : 0;
 
             listEl.innerHTML = '';
@@ -461,10 +567,56 @@
                 totalTravel += adjTravel;
                 currentMinutes += adjTravel;
 
+                const arrMinutesVal = currentMinutes;
                 const arrivalTime = formatTimeMinutes(currentMinutes);
                 totalStay += stop.stay;
                 currentMinutes += stop.stay;
+                const depMinutesVal = currentMinutes;
                 const departureTime = formatTimeMinutes(currentMinutes);
+
+                totalTicketMin += (stop.priceMin || 0);
+                totalTicketMax += (stop.priceMax || 0);
+
+                // 1. Check Operating Hours
+                let hoursWarningHtml = '';
+                if (!stop.alwaysOpen && stop.open && stop.close) {
+                    const openParts = stop.open.split(':').map(Number);
+                    const closeParts = stop.close.split(':').map(Number);
+                    const openMin = openParts[0] * 60 + openParts[1];
+                    const closeMin = closeParts[0] * 60 + closeParts[1];
+
+                    if (arrMinutesVal < openMin || depMinutesVal > closeMin) {
+                        hoursWarningHtml = `
+                            <div class="alert alert-danger py-1 px-2 my-1 border-0 rounded-2 small d-flex align-items-center gap-1.5" style="font-size: 0.70rem; line-height: 1.3;">
+                                <i class="bi bi-clock-history text-danger fs-6"></i>
+                                <span><strong>Hours Alert:</strong> Open ${stop.open} - ${stop.close}. Planned visit (${arrivalTime} - ${departureTime}) falls outside hours.</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                // 2. Check Closed Days
+                let closedDayWarningHtml = '';
+                if (stop.closedDays && tripDayName && stop.closedDays.includes(tripDayName)) {
+                    closedDayWarningHtml = `
+                        <div class="alert alert-warning py-1 px-2 my-1 border-0 rounded-2 small d-flex align-items-center gap-1.5" style="font-size: 0.70rem; line-height: 1.3;">
+                            <i class="bi bi-calendar-x text-warning fs-6"></i>
+                            <span><strong>Closed Day Warning:</strong> Usually closed on <strong>${tripDayName}s</strong>${stop.closureNotes ? ' (' + stop.closureNotes + ')' : ''}.</span>
+                        </div>
+                    `;
+                }
+
+                // 3. Seasonal Badging
+                let seasonBadgeHtml = '';
+                if (tripMonthName) {
+                    if (stop.bestMonths && stop.bestMonths.includes(tripMonthName)) {
+                        seasonBadgeHtml = `<span class="badge bg-success bg-opacity-10 text-success border border-success-subtle" style="font-size: 0.68rem;"><i class="bi bi-star-fill text-warning me-1"></i> Best Season (${tripMonthName})</span>`;
+                    } else if (stop.notRecMonths && stop.notRecMonths.includes(tripMonthName)) {
+                        seasonBadgeHtml = `<span class="badge bg-danger bg-opacity-10 text-danger border border-danger-subtle" style="font-size: 0.68rem;"><i class="bi bi-cloud-rain-heavy-fill text-danger me-1"></i> Not Recommended (${tripMonthName})</span>`;
+                    } else if (stop.moderateMonths && stop.moderateMonths.includes(tripMonthName)) {
+                        seasonBadgeHtml = `<span class="badge bg-warning bg-opacity-10 text-warning-emphasis border border-warning-subtle" style="font-size: 0.68rem;"><i class="bi bi-cloud-sun text-warning me-1"></i> Moderate Season (${tripMonthName})</span>`;
+                    }
+                }
 
                 // Insert meal break after 2nd stop if requested
                 let mealBreakHtml = '';
@@ -481,7 +633,10 @@
                 item.className = 'p-2.5 rounded-3 bg-light border d-flex flex-column gap-1';
                 item.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
-                        <span class="badge bg-success rounded-pill" style="font-size: 0.72rem;">Stop ${idx + 1}</span>
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-success rounded-pill" style="font-size: 0.72rem;">Stop ${idx + 1}</span>
+                            ${seasonBadgeHtml}
+                        </div>
                         <div class="btn-group btn-group-sm">
                             <button type="button" class="btn btn-outline-secondary py-0 px-1.5 duration-minus-btn" data-index="${idx}" title="Decrease Stay (-15m)">-</button>
                             <span class="badge bg-white text-dark border px-2 d-flex align-items-center" style="font-size: 0.75rem;">${stop.stay}m</span>
@@ -492,11 +647,34 @@
                         </div>
                     </div>
                     <div class="fw-bold small text-dark text-truncate">${stop.title}</div>
-                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.73rem;">
+                    ${hoursWarningHtml}
+                    ${closedDayWarningHtml}
+                    <div class="d-flex justify-content-between align-items-center text-muted" style="font-size: 0.73rem;">
                         <span><i class="bi bi-car-front text-primary"></i> ${adjTravel}m drive</span>
                         <span><i class="bi bi-clock text-success"></i> ${arrivalTime} - ${departureTime}</span>
+                        <span class="text-success fw-semibold"><i class="bi bi-ticket-perforated"></i> ${stop.priceRange}</span>
                     </div>
                 `;
+
+                listEl.appendChild(item);
+                if (mealBreakHtml) {
+                    const mbEl = document.createElement('div');
+                    mbEl.innerHTML = mealBreakHtml;
+                    listEl.appendChild(mbEl.firstElementChild);
+                }
+            });
+
+            // Update Total Estimated Entrance Fees Display
+            const ticketDisplayEl = document.getElementById('totalTicketFeesDisplay');
+            if (ticketDisplayEl) {
+                if (totalTicketMin === 0 && totalTicketMax === 0) {
+                    ticketDisplayEl.textContent = 'Free Entry';
+                } else if (totalTicketMin === totalTicketMax) {
+                    ticketDisplayEl.textContent = 'LKR ' + Math.round(totalTicketMin).toLocaleString();
+                } else {
+                    ticketDisplayEl.textContent = 'LKR ' + Math.round(totalTicketMin).toLocaleString() + ' - ' + Math.round(totalTicketMax).toLocaleString();
+                }
+            }
 
                 listEl.appendChild(item);
                 if (mealBreakHtml) {

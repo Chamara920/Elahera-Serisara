@@ -37,6 +37,14 @@ class DestinationsTable
                 TextColumn::make('distance_km')
                     ->suffix(' km')
                     ->sortable(),
+                TextColumn::make('opening_time')
+                    ->label('Visiting Hours')
+                    ->formatStateUsing(fn ($record) => $record->getFormattedOpeningHours())
+                    ->toggleable(),
+                TextColumn::make('ticket_price_range')
+                    ->label('Entrance Fee')
+                    ->formatStateUsing(fn ($record) => $record->getFormattedTicketPrice())
+                    ->toggleable(),
                 IconColumn::make('is_featured')
                     ->label('Featured')
                     ->boolean()

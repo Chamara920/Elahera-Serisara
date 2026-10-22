@@ -244,9 +244,60 @@
             </div>
 
 
-            <!-- Right 1/3 Sidebar: Map & Directions, Public Transport & Nearby Recommendations -->
+            <!-- Right 1/3 Sidebar: Visiting Schedule, Tickets, Map & Transport -->
             <div class="col-lg-4">
                 
+                <!-- Visiting Hours, Tickets & Seasonality Widget -->
+                <div class="card card-custom border-0 shadow-sm p-4 mb-4">
+                    <h5 class="fw-bold text-dark mb-3">
+                        <i class="bi bi-clock-history text-success me-2"></i> Visiting Schedule & Fees
+                    </h5>
+                    <ul class="list-unstyled small mb-3">
+                        <li class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="text-muted"><i class="bi bi-clock me-1 text-primary"></i> Operating Hours:</span>
+                            <span class="fw-bold text-dark">{{ $destination->getFormattedOpeningHours() }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="text-muted"><i class="bi bi-calendar-x me-1 text-danger"></i> Closed Days:</span>
+                            <span class="fw-semibold text-danger">{{ !empty($destination->closed_days) ? implode(', ', $destination->closed_days) : 'None (Open Everyday)' }}</span>
+                        </li>
+                        @if($destination->closure_notes)
+                            <li class="py-1.5 text-danger small border-bottom">
+                                <i class="bi bi-exclamation-circle me-1"></i> {{ $destination->closure_notes }}
+                            </li>
+                        @endif
+                        <li class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="text-muted"><i class="bi bi-ticket-perforated me-1 text-success"></i> Entrance Fee:</span>
+                            <span class="fw-bold text-success">{{ $destination->getFormattedTicketPrice() }}</span>
+                        </li>
+                    </ul>
+
+                    <!-- 12-Month Seasonality Assessment -->
+                    <h6 class="fw-bold text-dark small mb-2"><i class="bi bi-calendar3 me-1 text-info"></i> Best Seasons to Visit</h6>
+                    <div class="d-flex flex-column gap-1.5 small mb-1">
+                        @if(!empty($destination->best_months))
+                            <div class="d-flex align-items-start gap-1">
+                                <span class="badge bg-success text-white me-1 flex-shrink-0">★ Best</span>
+                                <span class="text-secondary" style="font-size: 0.78rem;">{{ implode(', ', $destination->best_months) }}</span>
+                            </div>
+                        @else
+                            <div class="text-muted" style="font-size: 0.78rem;">Suitable year-round.</div>
+                        @endif
+                        @if(!empty($destination->moderate_months))
+                            <div class="d-flex align-items-start gap-1">
+                                <span class="badge bg-warning text-dark me-1 flex-shrink-0">Moderate</span>
+                                <span class="text-secondary" style="font-size: 0.78rem;">{{ implode(', ', $destination->moderate_months) }}</span>
+                            </div>
+                        @endif
+                        @if(!empty($destination->not_recommended_months))
+                            <div class="d-flex align-items-start gap-1">
+                                <span class="badge bg-danger text-white me-1 flex-shrink-0">⚠️ Not Recommended</span>
+                                <span class="text-secondary" style="font-size: 0.78rem;">{{ implode(', ', $destination->not_recommended_months) }}</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
                 <!-- Map Location & Directions Widget -->
                 <div class="card card-custom border-0 shadow-sm p-4 mb-4">
                     <h5 class="fw-bold text-dark mb-3">
