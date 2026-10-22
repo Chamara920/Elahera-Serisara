@@ -34,8 +34,21 @@ class ElaheraSirisaraTest extends TestCase
      */
     public function test_single_destination_detail_page(): void
     {
-        $destination = Destination::where('slug', 'elahera-ancient-anicut')->first();
-        $this->assertNotNull($destination);
+        $destination = Destination::firstOrCreate(
+            ['slug' => 'elahera-ancient-anicut'],
+            [
+                'title_en' => 'Elahera Ancient Anicut',
+                'title_si' => 'ඇලහැර පුරාණ අමුණ',
+                'short_description_en' => 'Built across Amban Ganga by King Mahasen.',
+                'description_en' => 'The Elahera Anicut is a monumental stone dam.',
+                'description_si' => 'ඇලහැර අමුණ යනු මහවැලි ගඟෙහි ප්‍රධාන අතු ගංගාවකි.',
+                'category' => 'Historical & Cultural',
+                'route_zone' => 'Zone B - Elahera Anicut',
+                'latitude' => 7.9866,
+                'longitude' => 80.8144,
+                'is_active' => true,
+            ]
+        );
 
         $response = $this->get('/destinations/' . $destination->slug);
         $response->assertStatus(200);
@@ -48,6 +61,22 @@ class ElaheraSirisaraTest extends TestCase
      */
     public function test_sinhala_fallback_notice_displays_when_sinhala_missing(): void
     {
+        Destination::firstOrCreate(
+            ['slug' => 'moragahakanda-reservoir-dam-viewpoint'],
+            [
+                'title_en' => 'Moragahakanda Reservoir Dam Viewpoint',
+                'title_si' => null, // Deliberately null to test fallback
+                'short_description_en' => 'Panoramic vista over the largest reservoir.',
+                'description_en' => 'Provides sweeping bird-eye perspectives.',
+                'description_si' => null, // Deliberately null to test fallback
+                'category' => 'Viewpoints',
+                'route_zone' => 'Zone D - Moragahakanda Viewpoints',
+                'latitude' => 7.7058,
+                'longitude' => 80.7811,
+                'is_active' => true,
+            ]
+        );
+
         // Switch locale to Sinhala
         $response = $this->withSession(['locale' => 'si'])->get('/destinations/moragahakanda-reservoir-dam-viewpoint');
         $response->assertStatus(200);

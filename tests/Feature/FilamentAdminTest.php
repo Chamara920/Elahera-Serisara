@@ -95,7 +95,14 @@ class FilamentAdminTest extends TestCase
      */
     public function test_community_member_forbidden_from_admin_panel(): void
     {
-        $member = User::where('role', 'community_member')->first();
+        $member = User::firstOrCreate(
+            ['email' => 'test_community_member@elaheraserisara.lk'],
+            [
+                'name' => 'Community Member',
+                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                'role' => 'community_member',
+            ]
+        );
         $this->assertNotNull($member);
 
         $response = $this->actingAs($member)->get('/admin');

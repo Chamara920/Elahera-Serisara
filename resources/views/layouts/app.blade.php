@@ -241,23 +241,25 @@
             gap: 12px;
         }
 
-        /* Footer */
+        /* Footer - Ultra sleek and compact */
         .footer-main {
-            background: linear-gradient(rgba(15, 23, 42, 0.90), rgba(15, 23, 42, 0.94)), url('/images/main/footer_background.jpg') center/cover no-repeat;
+            background: linear-gradient(rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.95)), url('/images/main/footer_background.jpg') center/cover no-repeat;
             color: #94a3b8;
             margin-top: auto;
-            padding: 3rem 0 1.25rem 0;
-            border-top: 4px solid var(--primary-emerald);
+            padding: 1rem 0 0.45rem 0;
+            border-top: 2px solid var(--primary-emerald);
             position: relative;
+            font-size: 0.74rem;
         }
 
         .footer-title {
             color: #ffffff;
             font-weight: 700;
-            font-size: 1.15rem;
-            margin-bottom: 1.25rem;
+            font-size: 0.8rem;
+            margin-bottom: 0.45rem;
             position: relative;
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.2rem;
+            letter-spacing: 0.2px;
         }
 
         .footer-title::after {
@@ -265,8 +267,8 @@
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 35px;
-            height: 3px;
+            width: 18px;
+            height: 1.5px;
             background: var(--primary-emerald);
             border-radius: 2px;
         }
@@ -278,28 +280,52 @@
         }
 
         .footer-links li {
-            margin-bottom: 0.65rem;
+            margin-bottom: 0.2rem;
         }
 
         .footer-links a {
             color: #94a3b8;
+            font-size: 0.72rem;
             text-decoration: none;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
         }
 
         .footer-links a:hover {
             color: #34d399;
-            transform: translateX(4px);
+            transform: translateX(2px);
+        }
+
+        .footer-brand-desc {
+            font-size: 0.7rem;
+            line-height: 1.35;
+            color: #94a3b8;
+            margin-bottom: 0.4rem;
+        }
+
+        .footer-form-control {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.45rem;
+            height: 26px;
+            background-color: rgba(15, 23, 42, 0.7);
+            border-color: #334155;
+            color: #ffffff;
+        }
+
+        .footer-form-control:focus {
+            background-color: rgba(15, 23, 42, 0.9);
+            border-color: var(--primary-emerald);
+            color: #ffffff;
+            box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
         }
 
         .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 1.25rem;
-            margin-top: 2rem;
-            font-size: 0.88rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 0.45rem;
+            margin-top: 0.75rem;
+            font-size: 0.68rem;
         }
     </style>
 
@@ -502,21 +528,21 @@
         @yield('content')
     </main>
 
-    <!-- Footer (4 Equal Columns on Desktop) -->
+    <!-- Footer (4 Equal Columns on Desktop - Streamlined & Compact) -->
     <footer class="footer-main">
         <div class="container-xl">
-            <div class="row g-4">
+            <div class="row g-2 g-lg-3">
                 <!-- Col 1: Brand & About -->
                 <div class="col-lg-3 col-md-6">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <img src="{{ asset('images/logo.svg') }}" alt="Elahera Serisara" height="42" class="bg-white p-1 rounded-3">
+                    <div class="d-flex align-items-center gap-2 mb-1.5">
+                        <img src="{{ asset('images/logo.svg') }}" alt="Elahera Serisara" height="28" class="bg-white p-1 rounded-2">
                     </div>
-                    <div class="fw-bold text-white fs-5 mb-1">{{ __('messages.brand_name') }}</div>
-                    <div class="small text-success fw-bold text-uppercase letter-spacing-1 mb-2">{{ __('messages.tagline') }}</div>
-                    <p class="small text-secondary mb-3 leading-relaxed">
+                    <div class="fw-bold text-white mb-0" style="font-size: 0.85rem;">{{ __('messages.brand_name') }}</div>
+                    <div class="text-success fw-bold text-uppercase letter-spacing-1 mb-1" style="font-size: 0.62rem;">{{ __('messages.tagline') }}</div>
+                    <p class="footer-brand-desc">
                         {{ __('messages.brand_description') }}
                     </p>
-                    <a href="{{ route('about') }}" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                    <a href="{{ route('about') }}" class="btn btn-outline-success rounded-pill px-2 py-0.5" style="font-size: 0.68rem; line-height: 1.2;">
                         <i class="bi bi-info-circle me-1"></i> {{ __('messages.read_more_about') }}
                     </a>
                 </div>
@@ -525,24 +551,24 @@
                 <div class="col-lg-3 col-md-6">
                     <h5 class="footer-title">{{ __('messages.quick_links') }}</h5>
                     <ul class="footer-links">
-                        <li><a href="{{ route('destinations.index') }}"><i class="bi bi-chevron-right text-success small"></i> {{ __('messages.destinations') }}</a></li>
-                        <li><a href="{{ route('planner.index') }}"><i class="bi bi-chevron-right text-success small"></i> {{ __('messages.trip_planner') }}</a></li>
-                        <li><a href="{{ route('map.index') }}"><i class="bi bi-chevron-right text-success small"></i> {{ __('messages.interactive_map') }}</a></li>
-                        <li><a href="{{ route('transport.index') }}"><i class="bi bi-chevron-right text-success small"></i> {{ __('messages.public_transport') }}</a></li>
-                        <li><a href="{{ route('emergency.index') }}"><i class="bi bi-chevron-right text-danger small"></i> {{ __('messages.emergency_info') }}</a></li>
+                        <li><a href="{{ route('destinations.index') }}"><i class="bi bi-chevron-right text-success" style="font-size: 0.6rem;"></i> {{ __('messages.destinations') }}</a></li>
+                        <li><a href="{{ route('planner.index') }}"><i class="bi bi-chevron-right text-success" style="font-size: 0.6rem;"></i> {{ __('messages.trip_planner') }}</a></li>
+                        <li><a href="{{ route('map.index') }}"><i class="bi bi-chevron-right text-success" style="font-size: 0.6rem;"></i> {{ __('messages.interactive_map') }}</a></li>
+                        <li><a href="{{ route('transport.index') }}"><i class="bi bi-chevron-right text-success" style="font-size: 0.6rem;"></i> {{ __('messages.public_transport') }}</a></li>
+                        <li><a href="{{ route('emergency.index') }}"><i class="bi bi-chevron-right text-danger" style="font-size: 0.6rem;"></i> {{ __('messages.emergency_info') }}</a></li>
                     </ul>
                 </div>
 
                 <!-- Col 3: Community Hub -->
                 <div class="col-lg-3 col-md-6">
                     <h5 class="footer-title">{{ __('messages.community_hub') }}</h5>
-                    <ul class="footer-links mb-3">
-                        <li><a href="{{ route('blog.index') }}"><i class="bi bi-journal-text text-info small"></i> {{ __('messages.community_blog') }}</a></li>
-                        <li><a href="{{ route('forum.index') }}"><i class="bi bi-chat-dots text-primary small"></i> {{ __('messages.forum') }}</a></li>
-                        <li><a href="{{ route('news.index') }}"><i class="bi bi-megaphone text-warning small"></i> {{ __('messages.news_events') }}</a></li>
-                        <li><a href="{{ route('guide.index') }}"><i class="bi bi-card-checklist text-success small"></i> {{ __('messages.contribute_guideline') }}</a></li>
+                    <ul class="footer-links mb-1.5">
+                        <li><a href="{{ route('blog.index') }}"><i class="bi bi-journal-text text-info" style="font-size: 0.65rem;"></i> {{ __('messages.community_blog') }}</a></li>
+                        <li><a href="{{ route('forum.index') }}"><i class="bi bi-chat-dots text-primary" style="font-size: 0.65rem;"></i> {{ __('messages.forum') }}</a></li>
+                        <li><a href="{{ route('news.index') }}"><i class="bi bi-megaphone text-warning" style="font-size: 0.65rem;"></i> {{ __('messages.news_events') }}</a></li>
+                        <li><a href="{{ route('guide.index') }}"><i class="bi bi-card-checklist text-success" style="font-size: 0.65rem;"></i> {{ __('messages.contribute_guideline') }}</a></li>
                     </ul>
-                    <a href="{{ route('blog.create') }}" class="btn btn-success btn-sm rounded-pill px-3 fw-bold">
+                    <a href="{{ route('blog.create') }}" class="btn btn-success rounded-pill px-2 py-0.5 fw-bold" style="font-size: 0.68rem; line-height: 1.2;">
                         <i class="bi bi-pencil-square me-1"></i> {{ __('messages.become_contributor') }}
                     </a>
                 </div>
@@ -552,16 +578,16 @@
                     <h5 class="footer-title">{{ __('messages.contact_us') }}</h5>
                     <form action="{{ route('contact.store') }}" method="POST">
                         @csrf
-                        <div class="mb-2">
-                            <input type="text" name="name" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Your Name" required>
+                        <div class="mb-1">
+                            <input type="text" name="name" class="form-control form-control-sm footer-form-control rounded-2" placeholder="Your Name" required>
                         </div>
-                        <div class="mb-2">
-                            <input type="email" name="email" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Your Email" required>
+                        <div class="mb-1">
+                            <input type="email" name="email" class="form-control form-control-sm footer-form-control rounded-2" placeholder="Your Email" required>
                         </div>
-                        <div class="mb-2">
-                            <textarea name="message" class="form-control form-control-sm bg-dark text-white border-secondary" rows="2" placeholder="Your Message / Query" required></textarea>
+                        <div class="mb-1">
+                            <input type="text" name="message" class="form-control form-control-sm footer-form-control rounded-2" placeholder="Your Message / Query" required>
                         </div>
-                        <button type="submit" class="btn btn-primary-custom btn-sm w-100">
+                        <button type="submit" class="btn btn-primary-custom py-0.5 w-100 fw-semibold" style="font-size: 0.7rem; line-height: 1.3;">
                             <i class="bi bi-send me-1"></i> Send Message
                         </button>
                     </form>
@@ -569,15 +595,15 @@
             </div>
 
             <!-- Bottom Copyright -->
-            <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-                <div class="text-secondary small">
+            <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center gap-1">
+                <div class="text-secondary" style="font-size: 0.68rem;">
                     &copy; {{ date('Y') }} <strong>Elahera Serisara (ඇලහැර සැරිසර)</strong>. All rights reserved.
                 </div>
-                <div class="d-flex gap-3 text-secondary small">
-                    <a href="{{ route('about') }}" class="text-secondary text-decoration-none">About</a>
-                    <a href="{{ route('guide.index') }}" class="text-secondary text-decoration-none">Guide</a>
-                    <a href="{{ route('emergency.index') }}" class="text-secondary text-decoration-none">Emergency</a>
-                    <a href="/admin" class="text-secondary text-decoration-none" target="_blank">Admin Portal</a>
+                <div class="d-flex gap-3 text-secondary" style="font-size: 0.68rem;">
+                    <a href="{{ route('about') }}" class="text-secondary text-decoration-none hover-emerald">About</a>
+                    <a href="{{ route('guide.index') }}" class="text-secondary text-decoration-none hover-emerald">Guide</a>
+                    <a href="{{ route('emergency.index') }}" class="text-secondary text-decoration-none hover-emerald">Emergency</a>
+                    <a href="/admin" class="text-secondary text-decoration-none hover-emerald" target="_blank">Admin Portal</a>
                 </div>
             </div>
         </div>
