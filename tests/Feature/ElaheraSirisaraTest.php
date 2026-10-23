@@ -271,4 +271,28 @@ class ElaheraSirisaraTest extends TestCase
             ->get('/admin/news-events/create')
             ->assertStatus(200);
     }
+
+    /**
+     * Test Register page renders localized strings based on user selected language.
+     */
+    public function test_register_page_bilingual_localization(): void
+    {
+        // 1. English
+        $enResponse = $this->withSession(['locale' => 'en'])->get('/register');
+        $enResponse->assertStatus(200);
+        $enResponse->assertSee('Create Community Account');
+        $enResponse->assertSee('Full Name');
+        $enResponse->assertSee('Email Address');
+        $enResponse->assertSee('Register as Member');
+        $enResponse->assertSee('What is your primary school name?');
+
+        // 2. Sinhala
+        $siResponse = $this->withSession(['locale' => 'si'])->get('/register');
+        $siResponse->assertStatus(200);
+        $siResponse->assertSee('ප්‍රජා ගිණුමක් සාදන්න');
+        $siResponse->assertSee('සම්පූර්ණ නම');
+        $siResponse->assertSee('විද්‍යුත් තැපැල් ලිපිනය');
+        $siResponse->assertSee('සාමාජිකයෙකු ලෙස ලියාපදිංචි වන්න');
+        $siResponse->assertSee('ඔබේ ප්‍රාථමික පාසලේ නම කුමක්ද?');
+    }
 }
