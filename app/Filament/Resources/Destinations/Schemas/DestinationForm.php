@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Destinations\Schemas;
 
+use App\Models\BusStop;
+use App\Models\DestinationCategory;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -11,6 +13,7 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class DestinationForm
 {
@@ -107,10 +110,11 @@ class DestinationForm
                 Section::make('Classification & Location')
                     ->schema([
                         Select::make('category_id')
-                            ->label('Destination Category')
+                            ->label('Primary Category (ප්‍රධාන වර්ගීකරණය)')
                             ->relationship('destinationCategory', 'name_en')
                             ->searchable()
                             ->preload()
+                            ->required()
                             ->createOptionForm([
                                 TextInput::make('name_en')
                                     ->label('Category Name (English)')
@@ -121,31 +125,39 @@ class DestinationForm
                                     ->maxLength(255),
                             ])
                             ->createOptionUsing(function (array $data): int {
-                                $cat = \App\Models\DestinationCategory::create([
+                                $cat = DestinationCategory::create([
                                     'name_en' => $data['name_en'],
                                     'name_si' => $data['name_si'] ?? null,
-                                    'slug' => \Illuminate\Support\Str::slug($data['name_en']),
+                                    'slug' => Str::slug($data['name_en']),
                                     'is_active' => true,
                                 ]);
+
                                 return $cat->id;
                             })
                             ->live()
                             ->afterStateUpdated(function ($state, callable $set) {
-                                $cat = \App\Models\DestinationCategory::find($state);
+                                $cat = DestinationCategory::find($state);
                                 if ($cat) {
                                     $set('category', $cat->name_en);
-                                    if (!empty($cat->name_si)) {
+                                    if (! empty($cat->name_si)) {
                                         $set('category_si', $cat->name_si);
                                     }
                                 }
                             }),
+                        Select::make('categories')
+                            ->label('Additional Categories / Tags (අමතර වර්ගීකරණයන්)')
+                            ->relationship('categories', 'name_en')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->placeholder('Select additional categories...')
+                            ->helperText('Select all categories that describe this destination (e.g. Waterfalls, Nature & Wildlife, Viewpoints)'),
                         TextInput::make('category')
                             ->label('Category Code / Label')
-                            ->helperText('Auto-populated from Destination Category, or type custom label')
+                            ->helperText('Auto-populated from Primary Category, or custom tag')
                             ->datalist(function () {
-                                return \App\Models\DestinationCategory::pluck('name_en')->filter()->values()->toArray();
-                            })
-                            ->required(),
+                                return DestinationCategory::pluck('name_en')->filter()->values()->toArray();
+                            }),
                         Select::make('route_zone')
                             ->label('Route Zone')
                             ->options([
@@ -300,13 +312,55 @@ class DestinationForm
                     ])->columns(2),
 
                 Section::make('Public Transport Connections')
+                    ->description('Nearest bus stop halt and transit routes serving this destination.')
                     ->schema([
+                        Select::make('nearest_bus_stop_id')
+                            ->label('Nearest Bus Stop (ආසන්නතම බස් නැවතුම්පළ)')
+                            ->relationship('nearestBusStop', 'name_en')
+                            ->searchable()
+                            ->preload()
+                            ->placeholder('Select registered bus stop...')
+                            ->helperText('Choose from registered bus halts with GPS coordinates, or create a new one')
+                            ->createOptionForm([
+                                TextInput::make('name_en')
+                                    ->label('Bus Stop Name (English)')
+                                    ->required(),
+                                TextInput::make('name_si')
+                                    ->label('Bus Stop Name (Sinhala)'),
+                                TextInput::make('code')
+                                    ->label('Stop Code (e.g. BAKAMUNA)')
+                                    ->required(),
+                                TextInput::make('connecting_routes')
+                                    ->label('Connecting Route Numbers (e.g. 422, 45/1)'),
+                                Toggle::make('is_hub')
+                                    ->label('Transfer Hub (බස් මාරුවන සන්ධිස්ථානයක්ද)'),
+                            ])
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state) {
+                                    $stop = BusStop::find($state);
+                                    if ($stop) {
+                                        $set('nearest_bus_stop', $stop->name_en);
+                                        if (! empty($stop->connecting_routes)) {
+                                            $set('bus_route_numbers', $stop->connecting_routes);
+                                        }
+                                    }
+                                }
+                            }),
+                        TextInput::make('bus_stop_walk_minutes')
+                            ->label('Walking Time from Stop (Minutes)')
+                            ->numeric()
+                            ->default(5)
+                            ->suffix('min walk')
+                            ->helperText('Estimated walking time from the bus stop to this destination'),
                         TextInput::make('nearest_bus_stop')
-                            ->label('Nearest Bus Stop')
-                            ->placeholder('e.g., Elahera Junction or Bakamuna Bus Stand'),
+                            ->label('Bus Stop Display Name')
+                            ->placeholder('e.g., Elahera Junction or Bakamuna Bus Stand')
+                            ->helperText('Auto-populated from selected bus stop, or custom description'),
                         TextInput::make('bus_route_numbers')
                             ->label('Bus Route Numbers')
-                            ->placeholder('e.g., Route 422, 45/1'),
+                            ->placeholder('e.g., Route 422, 45/1')
+                            ->helperText('Auto-populated from selected stop, or specify routes'),
                     ])->columns(2),
 
                 Section::make('Publishing & Visibility')

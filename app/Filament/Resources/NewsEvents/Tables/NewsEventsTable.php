@@ -30,6 +30,24 @@ class NewsEventsTable
                         'event' => 'warning',
                         default => 'info',
                     }),
+                TextColumn::make('category.name_en')
+                    ->label('Category')
+                    ->badge()
+                    ->placeholder('-'),
+                TextColumn::make('language')
+                    ->label('Language')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'all' => 'All (Bilingual)',
+                        'en' => 'English',
+                        'si' => 'Sinhala',
+                        default => $state ?? 'All',
+                    })
+                    ->color(fn ($state) => match ($state) {
+                        'si' => 'warning',
+                        'en' => 'info',
+                        default => 'success',
+                    }),
                 TextColumn::make('user.name')
                     ->label('Submitted By')
                     ->searchable(),

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Destination;
+use App\Models\DestinationCategory;
 use App\Models\DestinationReview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,22 +28,29 @@ class DestinationController extends Controller
             ->get();
 
         // 2. Query builder for filtering
-        $query = Destination::where('is_active', true);
+        $query = Destination::with(['categories'])->where('is_active', true);
 
         // Search by keyword
         if ($request->filled('search')) {
             $search = trim($request->input('search'));
             $query->where(function ($q) use ($search) {
                 $q->where('title_en', 'like', "%{$search}%")
-                  ->orWhere('title_si', 'like', "%{$search}%")
-                  ->orWhere('short_description_en', 'like', "%{$search}%")
-                  ->orWhere('description_en', 'like', "%{$search}%");
+                    ->orWhere('title_si', 'like', "%{$search}%")
+                    ->orWhere('short_description_en', 'like', "%{$search}%")
+                    ->orWhere('description_en', 'like', "%{$search}%");
             });
         }
 
-        // Filter by category
+        // Filter by category (matches primary or any associated category)
         if ($request->filled('category') && $request->category !== 'all') {
-            $query->where('category', $request->category);
+            $catFilter = $request->category;
+            $query->where(function ($q) use ($catFilter) {
+                $q->where('category', $catFilter)
+                    ->orWhereHas('categories', function ($catQ) use ($catFilter) {
+                        $catQ->where('name_en', $catFilter)
+                            ->orWhere('slug', $catFilter);
+                    });
+            });
         }
 
         // Filter by route zone
@@ -57,7 +65,13 @@ class DestinationController extends Controller
             ->withQueryString();
 
         // Available categories and zones for dropdown filters
-        $categories = Destination::where('is_active', true)->distinct()->pluck('category')->filter();
+        $categories = DestinationCategory::where('is_active', true)
+            ->orderBy('sort_order')
+            ->pluck('name_en')
+            ->filter();
+        if ($categories->isEmpty()) {
+            $categories = Destination::where('is_active', true)->distinct()->pluck('category')->filter();
+        }
         $zones = Destination::where('is_active', true)->distinct()->pluck('route_zone')->filter();
 
         return view('destinations.index', compact('sliderDestinations', 'destinations', 'categories', 'zones'));
@@ -68,7 +82,8 @@ class DestinationController extends Controller
      */
     public function show($slug)
     {
-        $destination = Destination::where('slug', $slug)
+        $destination = Destination::with(['categories', 'nearestBusStop'])
+            ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
 
@@ -76,11 +91,15 @@ class DestinationController extends Controller
         $destination->increment('views_count');
 
         // Nearby recommended destinations (2-3 cards in same zone or category)
-        $nearbyDestinations = Destination::where('is_active', true)
+        $nearbyDestinations = Destination::with('categories')
+            ->where('is_active', true)
             ->where('id', '!=', $destination->id)
             ->where(function ($q) use ($destination) {
                 $q->where('route_zone', $destination->route_zone)
-                  ->orWhere('category', $destination->category);
+                    ->orWhere('category', $destination->category)
+                    ->orWhereHas('categories', function ($catQ) use ($destination) {
+                        $catQ->where('destination_categories.id', $destination->category_id);
+                    });
             })
             ->take(3)
             ->get();
@@ -100,7 +119,7 @@ class DestinationController extends Controller
      */
     public function storeReview(Request $request, $id)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to submit a review and rating.');
         }
 
@@ -127,7 +146,7 @@ class DestinationController extends Controller
      */
     public function destroyReview($id)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
+        if (! Auth::check() || ! Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized. Only administrators can delete reviews.');
         }
 

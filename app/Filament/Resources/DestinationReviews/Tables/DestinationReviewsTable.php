@@ -34,7 +34,7 @@ class DestinationReviewsTable
                         3 => 'warning',
                         default => 'danger',
                     })
-                    ->formatStateUsing(fn ($state): string => str_repeat('★', (int) $state) . " ({$state}/5)")
+                    ->formatStateUsing(fn ($state): string => str_repeat('★', (int) $state)." ({$state}/5)")
                     ->sortable(),
                 TextColumn::make('comment')
                     ->label('User Comment')

@@ -20,8 +20,8 @@
         </div>
 
         <!-- Filter Pills -->
-        <div class="d-flex gap-2 mb-4">
-            <a href="{{ route('news.index') }}" class="btn btn-sm rounded-pill px-3 {{ !$type ? 'btn-success text-white' : 'btn-outline-secondary' }}">
+        <div class="d-flex flex-wrap gap-2 mb-4 align-items-center">
+            <a href="{{ route('news.index') }}" class="btn btn-sm rounded-pill px-3 {{ (!$type && empty($categorySlug)) ? 'btn-success text-white' : 'btn-outline-secondary' }}">
                 All Updates
             </a>
             <a href="{{ route('news.index', ['type' => 'news']) }}" class="btn btn-sm rounded-pill px-3 {{ $type === 'news' ? 'btn-success text-white' : 'btn-outline-secondary' }}">
@@ -30,6 +30,14 @@
             <a href="{{ route('news.index', ['type' => 'event']) }}" class="btn btn-sm rounded-pill px-3 {{ $type === 'event' ? 'btn-success text-white' : 'btn-outline-secondary' }}">
                 <i class="bi bi-calendar-event me-1"></i> Events Only
             </a>
+            @if(isset($categories) && $categories->isNotEmpty())
+                <span class="text-muted small mx-1">|</span>
+                @foreach($categories as $cat)
+                    <a href="{{ route('news.index', ['category' => $cat->slug]) }}" class="btn btn-sm rounded-pill px-3 {{ (isset($categorySlug) && $categorySlug === $cat->slug) ? 'btn-primary text-white' : 'btn-outline-dark' }}">
+                        {{ $cat->getLocalizedName() }}
+                    </a>
+                @endforeach
+            @endif
         </div>
 
         <!-- News Grid -->
@@ -38,10 +46,17 @@
                 <div class="col">
                     <div class="card card-custom h-100 d-flex flex-column border-0 shadow-sm overflow-hidden">
                         <div class="position-relative overflow-hidden" style="height: 180px;">
-                            <img src="{{ $item->getFeaturedImageUrl() }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $item->title }}">
-                            <span class="position-absolute top-0 start-0 m-3 badge {{ $item->type === 'event' ? 'bg-warning text-dark' : 'bg-primary' }} text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">
-                                {{ $item->type }}
-                            </span>
+                            <img src="{{ $item->getFeaturedImageUrl() }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $item->getLocalizedTitle() }}">
+                            <div class="position-absolute top-0 start-0 m-3 d-flex gap-1">
+                                <span class="badge {{ $item->type === 'event' ? 'bg-warning text-dark' : 'bg-primary' }} text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                                    {{ $item->type }}
+                                </span>
+                                @if($item->category)
+                                    <span class="badge bg-dark bg-opacity-75 text-white" style="font-size: 0.72rem;">
+                                        {{ $item->category->getLocalizedName() }}
+                                    </span>
+                                @endif
+                            </div>
                         </div>
 
                         <div class="card-body p-4 d-flex flex-column">
@@ -59,12 +74,12 @@
 
                             <h5 class="fw-bold mb-2">
                                 <a href="{{ route('news.show', $item->slug) }}" class="text-dark text-decoration-none hover-success">
-                                    {{ $item->title }}
+                                    {{ $item->getLocalizedTitle() }}
                                 </a>
                             </h5>
 
                             <p class="text-secondary small mb-3 flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                                {{ Str::limit($item->content, 110) }}
+                                {{ Str::limit(strip_tags($item->getLocalizedContent()), 110) }}
                             </p>
 
                             <div class="pt-3 border-top d-flex justify-content-between align-items-center small text-muted">

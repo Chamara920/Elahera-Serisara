@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
 
         // 2. Base Categories (Optional classification taxonomy)
         $this->call(DestinationCategorySeeder::class);
+        $this->call(NewsCategorySeeder::class);
 
         BlogCategory::firstOrCreate(['slug' => 'travel-stories'], ['name_en' => 'Travel Stories', 'name_si' => 'සංචාරක අත්දැකීම්']);
         BlogCategory::firstOrCreate(['slug' => 'heritage-history'], ['name_en' => 'Heritage & History', 'name_si' => 'උරුමය සහ ඉතිහාසය']);

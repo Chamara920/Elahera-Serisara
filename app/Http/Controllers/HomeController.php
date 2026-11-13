@@ -79,7 +79,7 @@ class HomeController extends Controller
     public function search(Request $request)
     {
         $query = trim($request->input('q', ''));
-        
+
         if (empty($query)) {
             return redirect()->route('home');
         }
@@ -87,23 +87,23 @@ class HomeController extends Controller
         $destinations = Destination::where('is_active', true)
             ->where(function ($q) use ($query) {
                 $q->where('title_en', 'like', "%{$query}%")
-                  ->orWhere('title_si', 'like', "%{$query}%")
-                  ->orWhere('description_en', 'like', "%{$query}%")
-                  ->orWhere('category', 'like', "%{$query}%");
+                    ->orWhere('title_si', 'like', "%{$query}%")
+                    ->orWhere('description_en', 'like', "%{$query}%")
+                    ->orWhere('category', 'like', "%{$query}%");
             })
             ->get();
 
         $blogs = BlogPost::where('is_approved', true)
             ->where(function ($q) use ($query) {
                 $q->where('title', 'like', "%{$query}%")
-                  ->orWhere('content', 'like', "%{$query}%");
+                    ->orWhere('content', 'like', "%{$query}%");
             })
             ->get();
 
         $news = NewsEvent::where('is_approved', true)
             ->where(function ($q) use ($query) {
                 $q->where('title', 'like', "%{$query}%")
-                  ->orWhere('content', 'like', "%{$query}%");
+                    ->orWhere('content', 'like', "%{$query}%");
             })
             ->get();
 
@@ -118,6 +118,7 @@ class HomeController extends Controller
         if (in_array($locale, ['en', 'si'])) {
             session(['locale' => $locale]);
         }
+
         return back();
     }
 }

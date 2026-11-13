@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Destination;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class FilamentAdminTest extends TestCase
@@ -111,7 +113,7 @@ class FilamentAdminTest extends TestCase
      */
     public function test_destination_operational_and_seasonal_attributes(): void
     {
-        $destination = \App\Models\Destination::create([
+        $destination = Destination::create([
             'title_en' => 'Wasgamuwa Park Corridor',
             'slug' => 'wasgamuwa-park-corridor',
             'short_description_en' => 'Wildlife reserve corridor near Elahera.',
@@ -162,7 +164,7 @@ class FilamentAdminTest extends TestCase
             ['email' => 'test_community_member@elaheraserisara.lk'],
             [
                 'name' => 'Community Member',
-                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                'password' => Hash::make('password123'),
                 'role' => 'community_member',
             ]
         );
@@ -171,5 +173,95 @@ class FilamentAdminTest extends TestCase
         $response = $this->actingAs($member)->get('/admin');
         // Filament returns 403 Forbidden for unauthorized users
         $response->assertStatus(403);
+    }
+
+    /**
+     * Test admin can access bus routes create page in English only.
+     */
+    public function test_admin_can_access_bus_routes_create_page_in_english_only(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $this->assertNotNull($admin);
+
+        $response = $this->actingAs($admin)->get('/admin/bus-routes/create');
+        $response->assertStatus(200);
+
+        // Verify English labels
+        $response->assertSee('Route Number');
+        $response->assertSee('Service Type');
+        $response->assertSee('Origin Departure Time');
+        $response->assertSee('Halts &amp; Timings Schedule', false);
+        $response->assertSee('Stop Name');
+
+        // Verify absence of Sinhala labels on this page
+        $response->assertDontSee('මාර්ග අංකය');
+        $response->assertDontSee('සේවා වර්ගය');
+        $response->assertDontSee('නැවතුම්පළේ නම');
+    }
+
+    /**
+     * Test blog create page renders rich text editor for article content.
+     */
+    public function test_blog_create_page_renders_rich_text_editor(): void
+    {
+        $member = User::where('role', 'community_member')->first() ?? User::where('role', 'admin')->first();
+        $this->assertNotNull($member);
+
+        $response = $this->actingAs($member)->get('/blog/create');
+        $response->assertStatus(200);
+
+        // Check for Trix Rich Text Editor elements and assets
+        $response->assertSee('vendor/trix/trix.css');
+        $response->assertSee('vendor/trix/trix.umd.min.js');
+        $response->assertSee('trix-editor', false);
+        $response->assertSee('article_content');
+    }
+
+    /**
+     * Test admin dashboard displays overview stats, community activity, and destination reviews widgets.
+     */
+    public function test_admin_dashboard_displays_overview_stats_and_community_widgets(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $this->assertNotNull($admin);
+
+        $response = $this->actingAs($admin)->get('/admin');
+        $response->assertStatus(200);
+
+        // Stats overview metrics
+        $response->assertSee('Tourist Destinations');
+        $response->assertSee('Destination Reviews &amp; Comments', false);
+        $response->assertSee('Community Blog Articles');
+        $response->assertSee('News Notices &amp; Events', false);
+        $response->assertSee('Forum Community Topics');
+        $response->assertSee('Registered Members');
+
+        // Community and moderation widgets
+        $response->assertSee('Recent Destination Reviews');
+        $response->assertSee('Recent Travel Blogs');
+        $response->assertSee('Recent News');
+        $response->assertSee('Recent Forum Community Discussions');
+        $response->assertSee('Quick Management Actions');
+    }
+
+    /**
+     * Test database backup page displays database metrics, quick generation, and restoration cards.
+     */
+    public function test_database_backup_page_displays_database_metrics_and_actions(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $this->assertNotNull($admin);
+
+        $response = $this->actingAs($admin)->get('/admin/database-backup-restore');
+        $response->assertStatus(200);
+
+        // Key metrics & labels
+        $response->assertSee('Create Full Database Backup');
+        $response->assertSee('Active Database');
+        $response->assertSee('Database Size');
+        $response->assertSee('Primary Content Records');
+        $response->assertSee('Available Snapshots');
+        $response->assertSee('Restore from SQL File');
+        $response->assertSee('Available Database Backups');
     }
 }

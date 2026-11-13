@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BusStop;
 use App\Models\Destination;
 use App\Models\SavedTrip;
+use App\Services\TransitRoutingService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,7 +14,8 @@ use Illuminate\Support\Facades\Auth;
  * Class TripPlannerController
  *
  * Implements the interactive Smart Day-Trip Planner, itinerary builder,
- * sticky time-meter calculations, Leaflet map route, Google Maps export, and trip saving.
+ * sticky time-meter calculations, Leaflet map route, Google Maps export,
+ * public transit routing engine with transfer alternatives, and trip saving.
  */
 class TripPlannerController extends Controller
 {
@@ -29,7 +33,8 @@ class TripPlannerController extends Controller
         $mealBreak = $request->boolean('meal_break', true);
 
         // Fetch all active destinations with metrics and guides
-        $destinations = Destination::where('is_active', true)
+        $destinations = Destination::with('nearestBusStop')
+            ->where('is_active', true)
             ->orderBy('title_en')
             ->get();
 
@@ -37,6 +42,10 @@ class TripPlannerController extends Controller
             ->distinct()
             ->pluck('category')
             ->filter();
+
+        // Master bus stops for public transit routing & start hub selection
+        $busStops = BusStop::orderByDesc('is_hub')->orderBy('name_en')->get();
+        $defaultBusStop = $busStops->firstWhere('code', 'BAKAMUNA') ?? $busStops->first();
 
         return view('planner.index', compact(
             'destinations',
@@ -46,8 +55,105 @@ class TripPlannerController extends Controller
             'startTime',
             'endTime',
             'transportMode',
-            'mealBreak'
+            'mealBreak',
+            'busStops',
+            'defaultBusStop'
         ));
+    }
+
+    /**
+     * Calculate public transit timetable connections and alternatives for itinerary.
+     */
+    public function calculateTransit(Request $request, TransitRoutingService $transitService): JsonResponse
+    {
+        $validated = $request->validate([
+            'start_stop_id' => 'required|integer|exists:bus_stops,id',
+            'stops' => 'required|array|min:1',
+            'stops.*.destination_id' => 'required|integer|exists:destinations,id',
+            'stops.*.stay_minutes' => 'nullable|integer|min:15|max:480',
+            'start_time' => 'required|string',
+            'service_day' => 'nullable|string|in:all,weekdays,weekends,poya',
+            'return_to_start' => 'nullable|boolean',
+            'chosen_alternatives' => 'nullable|array',
+        ]);
+
+        $startMinutes = $transitService->parseTimeToMinutes($validated['start_time']);
+        $serviceDay = $validated['service_day'] ?? 'all';
+        $returnToStart = $request->boolean('return_to_start', true);
+        $chosenAlternatives = $validated['chosen_alternatives'] ?? [];
+
+        $plan = $transitService->planItinerary(
+            (int) $validated['start_stop_id'],
+            $validated['stops'],
+            $startMinutes,
+            $returnToStart,
+            $chosenAlternatives,
+            $serviceDay
+        );
+
+        return response()->json([
+            'success' => true,
+            'plan' => $plan,
+        ]);
+    }
+
+    /**
+     * Optimize destination visit order to minimize bus waiting and total travel time.
+     */
+    public function optimizeTransitSequence(Request $request, TransitRoutingService $transitService): JsonResponse
+    {
+        $validated = $request->validate([
+            'start_stop_id' => 'required|integer|exists:bus_stops,id',
+            'stops' => 'required|array|min:2',
+            'stops.*.destination_id' => 'required|integer|exists:destinations,id',
+            'stops.*.stay_minutes' => 'nullable|integer|min:15|max:480',
+            'start_time' => 'required|string',
+            'service_day' => 'nullable|string|in:all,weekdays,weekends,poya',
+            'return_to_start' => 'nullable|boolean',
+        ]);
+
+        $startMinutes = $transitService->parseTimeToMinutes($validated['start_time']);
+        $serviceDay = $validated['service_day'] ?? 'all';
+        $returnToStart = $request->boolean('return_to_start', true);
+
+        $optimization = $transitService->optimizeDestinationSequence(
+            (int) $validated['start_stop_id'],
+            $validated['stops'],
+            $startMinutes,
+            $returnToStart,
+            $serviceDay
+        );
+
+        return response()->json([
+            'success' => true,
+            'optimization' => $optimization,
+        ]);
+    }
+
+    /**
+     * Return JSON list of bus stops with coordinates for the interactive planner mini map.
+     */
+    public function getBusStops(): JsonResponse
+    {
+        $stops = BusStop::orderByDesc('is_hub')
+            ->orderBy('name_en')
+            ->get()
+            ->map(fn ($s) => [
+                'id' => $s->id,
+                'name_en' => $s->name_en,
+                'name_si' => $s->name_si,
+                'localized_name' => $s->getLocalizedName(),
+                'code' => $s->code,
+                'latitude' => $s->latitude,
+                'longitude' => $s->longitude,
+                'is_hub' => $s->is_hub,
+                'description' => $s->getLocalizedDescription(),
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'stops' => $stops,
+        ]);
     }
 
     /**
@@ -55,7 +161,7 @@ class TripPlannerController extends Controller
      */
     public function saveTrip(Request $request)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Please log in to save your trip itinerary to your account.',
@@ -105,7 +211,7 @@ class TripPlannerController extends Controller
     {
         $stopsJson = $request->input('stops', '[]');
         $stops = json_decode($stopsJson, true) ?: [];
-        
+
         $destinationIds = array_column($stops, 'id');
         $destinations = Destination::whereIn('id', $destinationIds)->get()->keyBy('id');
 

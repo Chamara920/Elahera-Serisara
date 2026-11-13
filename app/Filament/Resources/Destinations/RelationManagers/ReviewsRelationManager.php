@@ -33,7 +33,7 @@ class ReviewsRelationManager extends RelationManager
                         3 => 'warning',
                         default => 'danger',
                     })
-                    ->formatStateUsing(fn ($state): string => str_repeat('★', (int) $state) . " ({$state}/5)"),
+                    ->formatStateUsing(fn ($state): string => str_repeat('★', (int) $state)." ({$state}/5)"),
                 TextColumn::make('comment')
                     ->label('User Comment')
                     ->wrap(),

@@ -16,6 +16,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use UnitEnum;
 
 class HomepageDestinationsPage extends Page implements HasTable
@@ -75,7 +76,7 @@ class HomepageDestinationsPage extends Page implements HasTable
                     ->sortable(),
             ])
             ->recordActions([
-                \Filament\Actions\Action::make('edit')
+                Action::make('edit')
                     ->label('Edit')
                     ->icon(Heroicon::OutlinedPencilSquare)
                     ->url(fn (Destination $record): string => DestinationResource::getUrl('edit', ['record' => $record])),
@@ -97,6 +98,15 @@ class HomepageDestinationsPage extends Page implements HasTable
                 ->color('primary')
                 ->url(DestinationResource::getUrl('create')),
         ];
+    }
+
+    public function getFeaturedDestinations(): Collection
+    {
+        return Destination::where('is_featured', true)
+            ->where('is_active', true)
+            ->orderBy('featured_priority', 'asc')
+            ->take(6)
+            ->get();
     }
 
     public function getFeaturedCount(): int

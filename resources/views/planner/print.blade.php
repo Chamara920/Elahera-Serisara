@@ -60,7 +60,7 @@
                         <tr>
                             <td class="text-center fw-bold">{{ $idx + 1 }}</td>
                             <td>
-                                <strong class="fs-6">{{ $stop['title'] }}</strong>
+                                <strong class="fs-6">{{ $stop['title'] ?? ($d ? $d->getLocalizedTitle() : 'Destination') }}</strong>
                                 @if($d && $d->nearest_bus_stop)
                                     <div class="small text-muted">Halt: {{ $d->nearest_bus_stop }}</div>
                                 @endif
@@ -78,8 +78,8 @@
                             <td class="small fw-semibold text-success">
                                 {{ $d ? $d->getFormattedTicketPrice() : 'Free' }}
                             </td>
-                            <td>{{ $stop['stay'] }} mins</td>
-                            <td>{{ $stop['travel'] }} mins</td>
+                            <td>{{ $stop['stay'] ?? ($d ? $d->stay_duration_minutes : 60) }} mins</td>
+                            <td>{{ $stop['travel'] ?? ($d ? $d->travel_time_minutes : 20) }} mins</td>
                             <td class="small text-danger">
                                 {{ $d ? ($d->safety_alerts_en ?: 'Exercise normal outdoor caution') : '' }}
                             </td>

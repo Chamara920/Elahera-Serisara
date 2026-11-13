@@ -17,6 +17,7 @@ class BusRouteHalt extends Model
 
     protected $fillable = [
         'bus_route_id',
+        'bus_stop_id',
         'stop_name',
         'arrival_time',
         'departure_time',
@@ -33,6 +34,11 @@ class BusRouteHalt extends Model
     public function busRoute(): BelongsTo
     {
         return $this->belongsTo(BusRoute::class);
+    }
+
+    public function busStop(): BelongsTo
+    {
+        return $this->belongsTo(BusStop::class);
     }
 
     public function destination(): BelongsTo

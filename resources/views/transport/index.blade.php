@@ -8,16 +8,22 @@
         
         <!-- Page Title & Header -->
         <div class="mb-4">
-            <span class="badge bg-danger text-white px-3 py-1.5 rounded-pill mb-2">Transit Schedule</span>
-            <h1 class="display-6 fw-bold text-dark mb-1">Elahera & Bakamuna Bus Timetable</h1>
-            <p class="text-secondary small mb-0">Direct routes, connecting halts, and master schedules across the Mahaweli irrigation corridor.</p>
+            <span class="badge bg-danger text-white px-3 py-1.5 rounded-pill mb-2">
+                {{ app()->getLocale() === 'si' ? 'ගමනාගමන කාලසටහන' : 'Transit Schedule' }}
+            </span>
+            <h1 class="display-6 fw-bold text-dark mb-1">
+                {{ app()->getLocale() === 'si' ? 'ඇලහැර සහ බකමූණ බස් කාලසටහන' : 'Elahera & Bakamuna Bus Timetable' }}
+            </h1>
+            <p class="text-secondary small mb-0">
+                {{ app()->getLocale() === 'si' ? 'මහවැලි සංවර්ධන කලාපයේ ප්‍රධාන මාර්ග, සම්බන්ධක නැවතුම්පළ සහ ප්‍රධාන බස් ගමන් වාර.' : 'Direct routes, connecting halts, and master schedules across the Mahaweli irrigation corridor.' }}
+            </p>
         </div>
 
         <!-- 1. Mandatory Disclaimer Notice -->
         <div class="alert alert-warning border-warning-subtle shadow-sm p-3 mb-4 d-flex align-items-start gap-3">
             <i class="bi bi-exclamation-triangle-fill fs-4 text-warning flex-shrink-0 mt-1"></i>
             <div>
-                <h6 class="fw-bold mb-1 text-warning-emphasis">විශේෂ නිවේදන සටහන (Disclaimer Notice)</h6>
+                <h6 class="fw-bold mb-1 text-warning-emphasis">{{ __('messages.bus_disclaimer_title') }}</h6>
                 <p class="small text-secondary mb-0 leading-relaxed">
                     {{ __('messages.bus_disclaimer') }}
                 </p>
@@ -29,17 +35,17 @@
         <div class="card card-custom border-0 shadow-sm p-4 mb-5" style="background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border-top: 4px solid var(--primary-emerald) !important;">
             <div class="d-flex align-items-center gap-2 mb-3">
                 <i class="bi bi-search text-success fs-5"></i>
-                <h4 class="fw-bold text-dark mb-0">Bus Route Finder</h4>
+                <h4 class="fw-bold text-dark mb-0">{{ app()->getLocale() === 'si' ? 'බස් මාර්ග සෙවුම' : 'Bus Route Finder' }}</h4>
             </div>
 
             <form action="{{ route('transport.index') }}" method="GET">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-5">
                         <label class="form-label small fw-bold text-secondary mb-1">
-                            <i class="bi bi-geo-alt-fill text-danger me-1"></i> Departure Point (From)
+                            <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ app()->getLocale() === 'si' ? 'ආරම්භක නැවතුම (From)' : 'Departure Point (From)' }}
                         </label>
                         <select name="from" class="form-select bg-white shadow-sm" required>
-                            <option value="">Select departure halt...</option>
+                            <option value="">{{ app()->getLocale() === 'si' ? 'ආරම්භක නැවතුම තෝරන්න...' : 'Select departure halt...' }}</option>
                             @foreach($haltsList as $h)
                                 <option value="{{ $h }}" {{ $fromStop == $h ? 'selected' : '' }}>{{ $h }}</option>
                             @endforeach
@@ -48,10 +54,10 @@
 
                     <div class="col-md-5">
                         <label class="form-label small fw-bold text-secondary mb-1">
-                            <i class="bi bi-flag-fill text-success me-1"></i> Destination Point (To)
+                            <i class="bi bi-flag-fill text-success me-1"></i> {{ app()->getLocale() === 'si' ? 'ගමනාන්ත නැවතුම (To)' : 'Destination Point (To)' }}
                         </label>
                         <select name="to" class="form-select bg-white shadow-sm" required>
-                            <option value="">Select destination halt...</option>
+                            <option value="">{{ app()->getLocale() === 'si' ? 'ගමනාන්ත නැවතුම තෝරන්න...' : 'Select destination halt...' }}</option>
                             @foreach($haltsList as $h)
                                 <option value="{{ $h }}" {{ $toStop == $h ? 'selected' : '' }}>{{ $h }}</option>
                             @endforeach
@@ -60,7 +66,7 @@
 
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary-custom w-100 fw-bold shadow-sm">
-                            <i class="bi bi-binoculars me-1"></i> Search Buses
+                            <i class="bi bi-binoculars me-1"></i> {{ app()->getLocale() === 'si' ? 'බස් සොයන්න' : 'Search Buses' }}
                         </button>
                     </div>
                 </div>

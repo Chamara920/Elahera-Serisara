@@ -2,6 +2,10 @@
 
 @section('title', $destination->getLocalizedTitle() . ' - ' . __('messages.brand_name'))
 
+@push('styles')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+@endpush
+
 @section('content')
 
     <!-- 1. Hero Banner & Header -->
@@ -17,9 +21,11 @@
             </div>
 
             <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                <span class="badge bg-success px-3 py-1.5 rounded-pill fs-7">
-                    <i class="bi bi-tag-fill me-1"></i> {{ $destination->getLocalizedCategory() }}
-                </span>
+                @foreach($destination->getAllLocalizedCategories() as $catName)
+                    <span class="badge bg-success px-3 py-1.5 rounded-pill fs-7">
+                        <i class="bi bi-tag-fill me-1"></i> {{ $catName }}
+                    </span>
+                @endforeach
                 <span class="badge bg-dark bg-opacity-75 px-3 py-1.5 rounded-pill fs-7">
                     <i class="bi bi-compass me-1"></i> {{ $destination->route_zone }}
                 </span>
@@ -28,13 +34,9 @@
                 </span>
             </div>
 
-            <h1 class="display-4 fw-extrabold text-white mb-2" style="font-weight: 800;">
+            <h1 class="display-4 fw-extrabold text-white mb-3" style="font-weight: 800;">
                 {{ $destination->getLocalizedTitle() }}
             </h1>
-
-            @if(!empty($destination->title_si) && app()->getLocale() !== 'si')
-                <div class="fs-5 text-light opacity-80 mb-3">{{ $destination->title_si }}</div>
-            @endif
 
             <p class="lead text-light opacity-90 fs-6 mb-0" style="max-width: 800px;">
                 {{ $destination->getLocalizedShortDescription() }}
@@ -310,9 +312,9 @@
                         <div><strong>Longitude:</strong> {{ $destination->longitude }}</div>
                     </div>
 
-                    <!-- [ 📍 Google Maps මඟින් යන්න ] Name Specified by User -->
+                    <!-- Google Maps Directions Button -->
                     <a href="{{ $destination->getGoogleMapsUrl() }}" target="_blank" class="btn btn-success w-100 fw-bold py-2 shadow-sm mb-2">
-                        <i class="bi bi-geo-alt-fill me-1"></i> 📍 Google Maps මඟින් යන්න
+                        <i class="bi bi-geo-alt-fill me-1"></i> {{ __('messages.open_in_google_maps') }}
                     </a>
 
                     <a href="{{ route('planner.index') }}?add_id={{ $destination->id }}" class="btn btn-outline-success w-100 fw-semibold btn-sm">
@@ -321,23 +323,64 @@
                 </div>
 
                 <!-- Transport & Access Info -->
+                <!-- Transport & Access Info -->
                 <div class="card card-custom border-0 shadow-sm p-4 mb-4">
                     <h5 class="fw-bold text-dark mb-3">
-                        <i class="bi bi-bus-front text-danger me-2"></i> Transport & Access
+                        <i class="bi bi-bus-front text-danger me-2"></i> Public Transport & Bus Halts
                     </h5>
                     <ul class="list-unstyled small mb-3">
-                        <li class="mb-2">
-                            <strong>Nearest Halt:</strong> {{ $destination->nearest_bus_stop ?: 'Elahera Junction' }}
+                        <li class="py-2 border-bottom">
+                            <span class="text-muted d-block small">{{ app()->getLocale() === 'si' ? 'ළඟම බස් නැවතුම:' : 'Nearest Bus Halt:' }}</span>
+                            @if($destination->nearestBusStop)
+                                <div class="fw-bold text-dark fs-6 mt-0.5">
+                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                                    {{ $destination->nearestBusStop->getLocalizedName() }}
+                                    @if($destination->nearestBusStop->is_hub)
+                                        <span class="badge bg-primary text-white ms-1" style="font-size: 0.68rem;">
+                                            <i class="bi bi-arrow-left-right me-0.5"></i> Transfer Hub
+                                        </span>
+                                    @endif
+                                </div>
+                                @if($destination->nearestBusStop->getLocalizedDescription())
+                                    <div class="text-muted small mt-0.5">{{ $destination->nearestBusStop->getLocalizedDescription() }}</div>
+                                @endif
+                            @else
+                                <div class="fw-bold text-dark fs-6 mt-0.5">
+                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                                    {{ $destination->nearest_bus_stop ?: 'Elahera Junction' }}
+                                </div>
+                            @endif
                         </li>
-                        <li class="mb-2">
-                            <strong>Connecting Bus Routes:</strong> {{ $destination->bus_route_numbers ?: 'Route 422, Route 45/1' }}
-                        </li>
-                        <li class="mb-0 text-muted">
-                            Daily buses operate from 05:30 AM to 06:45 PM along Bakamuna hub corridors.
+
+                        @if($destination->bus_stop_walk_minutes > 0)
+                            <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                <span class="text-muted"><i class="bi bi-person-walking me-1 text-primary"></i> Walking from Halt:</span>
+                                <span class="fw-bold text-dark">~{{ $destination->bus_stop_walk_minutes }} min walk</span>
+                            </li>
+                        @endif
+
+                        @php
+                            $routesStr = $destination->bus_route_numbers ?? ($destination->nearestBusStop->connecting_routes ?? null);
+                        @endphp
+                        @if($routesStr)
+                            <li class="py-2 border-bottom">
+                                <span class="text-muted d-block small mb-1.5"><i class="bi bi-signpost-2 me-1 text-info"></i> Connecting Bus Routes:</span>
+                                <div class="d-flex flex-wrap gap-1">
+                                    @foreach(explode(',', $routesStr) as $r)
+                                        <span class="badge bg-light text-dark border px-2 py-1 fw-semibold" style="font-size: 0.75rem;">
+                                            <i class="bi bi-bus-front-fill text-success me-1"></i>{{ trim($r) }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </li>
+                        @endif
+
+                        <li class="pt-2 text-muted" style="font-size: 0.8rem;">
+                            Daily regional buses operate regularly through the corridor connecting Dambulla, Matale, Bakamuna & Kaduruwela.
                         </li>
                     </ul>
-                    <a href="{{ route('transport.index') }}?filter_stop={{ urlencode($destination->title_en) }}" class="btn btn-outline-danger btn-sm w-100 fw-semibold">
-                        <i class="bi bi-clock-history me-1"></i> Check Bus Timetable Here
+                    <a href="{{ route('transport.index') }}?filter_stop={{ urlencode($destination->nearestBusStop ? $destination->nearestBusStop->name_en : ($destination->nearest_bus_stop ?: $destination->title_en)) }}" class="btn btn-outline-danger btn-sm w-100 fw-semibold">
+                        <i class="bi bi-clock-history me-1"></i> Check Bus Timetable & Transfers
                     </a>
                 </div>
 
@@ -376,6 +419,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const lat = {{ $destination->latitude }};

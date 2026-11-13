@@ -23,8 +23,31 @@ class ForumController extends Controller
     {
         $categorySlug = $request->input('category');
         $search = $request->input('search');
+        $langFilter = $request->input('lang');
+        $currentLocale = app()->getLocale();
 
         $query = ForumTopic::with(['user', 'category', 'replies']);
+
+        if ($langFilter && in_array($langFilter, ['all', 'en', 'si'])) {
+            if ($langFilter !== 'all') {
+                $query->where(function ($q) use ($langFilter) {
+                    $q->where('language', $langFilter)->orWhere('language', 'all');
+                });
+            }
+        } else {
+            // Check if topics exist for user's selected language
+            $hasMatchingLocale = ForumTopic::where(function ($q) use ($currentLocale) {
+                $q->where('language', $currentLocale)->orWhere('language', 'all');
+            })->exists();
+
+            if ($hasMatchingLocale) {
+                $query->where(function ($q) use ($currentLocale) {
+                    $q->where('language', $currentLocale)
+                        ->orWhere('language', 'all')
+                        ->orWhereNull('language');
+                });
+            }
+        }
 
         if ($categorySlug) {
             $category = ForumCategory::where('slug', $categorySlug)->first();
@@ -36,14 +59,16 @@ class ForumController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('content', 'like', "%{$search}%");
+                    ->orWhere('title_si', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%")
+                    ->orWhere('content_si', 'like', "%{$search}%");
             });
         }
 
         $topics = $query->latest()->paginate(10)->withQueryString();
         $categories = ForumCategory::withCount('topics')->get();
 
-        return view('forum.index', compact('topics', 'categories', 'categorySlug', 'search'));
+        return view('forum.index', compact('topics', 'categories', 'categorySlug', 'search', 'langFilter'));
     }
 
     /**
@@ -65,11 +90,12 @@ class ForumController extends Controller
      */
     public function create()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to start a forum discussion.');
         }
 
         $categories = ForumCategory::all();
+
         return view('forum.create', compact('categories'));
     }
 
@@ -78,22 +104,28 @@ class ForumController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to post in the forum.');
         }
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'title_si' => 'nullable|string|max:255',
             'forum_category_id' => 'required|exists:forum_categories,id',
+            'language' => 'nullable|in:all,en,si',
             'content' => 'required|string|min:20',
+            'content_si' => 'nullable|string',
         ]);
 
         $topic = ForumTopic::create([
             'user_id' => Auth::id(),
             'forum_category_id' => $validated['forum_category_id'],
+            'language' => $validated['language'] ?? 'all',
             'title' => $validated['title'],
-            'slug' => Str::slug($validated['title']) . '-' . Str::random(5),
+            'title_si' => $validated['title_si'] ?? null,
+            'slug' => Str::slug($validated['title']).'-'.Str::random(5),
             'content' => $validated['content'],
+            'content_si' => $validated['content_si'] ?? null,
         ]);
 
         return redirect()->route('forum.show', $topic->slug)
@@ -105,7 +137,7 @@ class ForumController extends Controller
      */
     public function storeReply(Request $request, $id)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to reply.');
         }
 

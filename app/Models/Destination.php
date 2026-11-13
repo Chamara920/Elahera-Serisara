@@ -4,7 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -52,6 +55,8 @@ class Destination extends Model
         'dress_code_en',
         'dress_code_si',
         'nearest_bus_stop',
+        'nearest_bus_stop_id',
+        'bus_stop_walk_minutes',
         'bus_route_numbers',
         'latitude',
         'longitude',
@@ -66,6 +71,7 @@ class Destination extends Model
         'distance_km' => 'float',
         'travel_time_minutes' => 'integer',
         'stay_duration_minutes' => 'integer',
+        'bus_stop_walk_minutes' => 'integer',
         'is_always_open' => 'boolean',
         'closed_days' => 'array',
         'best_months' => 'array',
@@ -104,7 +110,7 @@ class Destination extends Model
                         $destination->category_si = $cat->name_si;
                     }
                 }
-            } elseif (empty($destination->category_id) && !empty($destination->category)) {
+            } elseif (empty($destination->category_id) && ! empty($destination->category)) {
                 $cat = DestinationCategory::where('name_en', $destination->category)->first();
                 if ($cat) {
                     $destination->category_id = $cat->id;
@@ -126,17 +132,18 @@ class Destination extends Model
      */
     public function getFeaturedImageUrl(): string
     {
-        if (!empty($this->featured_image)) {
-            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->featured_image)) {
-                return \Illuminate\Support\Facades\Storage::disk('public')->url($this->featured_image);
+        if (! empty($this->featured_image)) {
+            if (Storage::disk('public')->exists($this->featured_image)) {
+                return asset('storage/'.$this->featured_image);
             }
-            if (file_exists(public_path('storage/' . $this->featured_image))) {
-                return asset('storage/' . $this->featured_image);
+            if (file_exists(public_path('storage/'.$this->featured_image))) {
+                return asset('storage/'.$this->featured_image);
             }
             if (file_exists(public_path($this->featured_image))) {
                 return asset($this->featured_image);
             }
         }
+
         return asset('images/destinations/anicut.svg');
     }
 
@@ -147,24 +154,27 @@ class Destination extends Model
      */
     public function getGalleryImageUrls(): array
     {
-        if (empty($this->gallery_images) || !is_array($this->gallery_images)) {
+        if (empty($this->gallery_images) || ! is_array($this->gallery_images)) {
             return [];
         }
 
         $urls = [];
         foreach ($this->gallery_images as $img) {
-            if (empty($img)) continue;
+            if (empty($img)) {
+                continue;
+            }
 
-            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($img)) {
-                $urls[] = \Illuminate\Support\Facades\Storage::disk('public')->url($img);
-            } elseif (file_exists(public_path('storage/' . $img))) {
-                $urls[] = asset('storage/' . $img);
+            if (Storage::disk('public')->exists($img)) {
+                $urls[] = asset('storage/'.$img);
+            } elseif (file_exists(public_path('storage/'.$img))) {
+                $urls[] = asset('storage/'.$img);
             } elseif (file_exists(public_path($img))) {
                 $urls[] = asset($img);
             } else {
                 $urls[] = asset('images/destinations/anicut1.svg');
             }
         }
+
         return $urls;
     }
 
@@ -173,7 +183,7 @@ class Destination extends Model
      */
     public function hasSinhala(): bool
     {
-        return !empty(trim($this->title_si ?? '')) && !empty(trim($this->description_si ?? ''));
+        return ! empty(trim($this->title_si ?? '')) && ! empty(trim($this->description_si ?? ''));
     }
 
     /**
@@ -182,7 +192,7 @@ class Destination extends Model
      */
     public function needsSinhalaNotice(): bool
     {
-        return app()->getLocale() === 'si' && !$this->hasSinhala();
+        return app()->getLocale() === 'si' && ! $this->hasSinhala();
     }
 
     /**
@@ -190,9 +200,10 @@ class Destination extends Model
      */
     public function getLocalizedTitle(): string
     {
-        if (app()->getLocale() === 'si' && !empty($this->title_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->title_si)) {
             return $this->title_si;
         }
+
         return $this->title_en;
     }
 
@@ -201,9 +212,10 @@ class Destination extends Model
      */
     public function getLocalizedShortDescription(): string
     {
-        if (app()->getLocale() === 'si' && !empty($this->short_description_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->short_description_si)) {
             return $this->short_description_si;
         }
+
         return $this->short_description_en;
     }
 
@@ -212,9 +224,10 @@ class Destination extends Model
      */
     public function getLocalizedDescription(): string
     {
-        if (app()->getLocale() === 'si' && !empty($this->description_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->description_si)) {
             return $this->description_si;
         }
+
         return $this->description_en;
     }
 
@@ -223,9 +236,10 @@ class Destination extends Model
      */
     public function getLocalizedCategory(): string
     {
-        if (app()->getLocale() === 'si' && !empty($this->category_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->category_si)) {
             return $this->category_si;
         }
+
         return $this->category;
     }
 
@@ -234,9 +248,10 @@ class Destination extends Model
      */
     public function getLocalizedSafetyAlerts(): ?string
     {
-        if (app()->getLocale() === 'si' && !empty($this->safety_alerts_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->safety_alerts_si)) {
             return $this->safety_alerts_si;
         }
+
         return $this->safety_alerts_en;
     }
 
@@ -245,9 +260,10 @@ class Destination extends Model
      */
     public function getLocalizedPackingList(): ?string
     {
-        if (app()->getLocale() === 'si' && !empty($this->packing_list_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->packing_list_si)) {
             return $this->packing_list_si;
         }
+
         return $this->packing_list_en;
     }
 
@@ -256,9 +272,10 @@ class Destination extends Model
      */
     public function getLocalizedDressCode(): ?string
     {
-        if (app()->getLocale() === 'si' && !empty($this->dress_code_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->dress_code_si)) {
             return $this->dress_code_si;
         }
+
         return $this->dress_code_en;
     }
 
@@ -273,9 +290,38 @@ class Destination extends Model
     /**
      * Category relationship.
      */
-    public function destinationCategory(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function destinationCategory(): BelongsTo
     {
         return $this->belongsTo(DestinationCategory::class, 'category_id');
+    }
+
+    /**
+     * All categories associated with this destination.
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(DestinationCategory::class, 'destination_destination_category');
+    }
+
+    /**
+     * Get all localized category names as a list or collection.
+     */
+    public function getAllLocalizedCategories(): array
+    {
+        if ($this->relationLoaded('categories') && $this->categories->isNotEmpty()) {
+            return $this->categories->map(function ($c) {
+                return (app()->getLocale() === 'si' && ! empty($c->name_si)) ? $c->name_si : $c->name_en;
+            })->all();
+        }
+
+        $cats = $this->categories()->get();
+        if ($cats->isNotEmpty()) {
+            return $cats->map(function ($c) {
+                return (app()->getLocale() === 'si' && ! empty($c->name_si)) ? $c->name_si : $c->name_en;
+            })->all();
+        }
+
+        return [$this->getLocalizedCategory()];
     }
 
     /**
@@ -322,7 +368,7 @@ class Destination extends Model
         $open = $this->opening_time ? substr($this->opening_time, 0, 5) : '06:00';
         $close = $this->closing_time ? substr($this->closing_time, 0, 5) : '18:00';
 
-        return ($check >= $open && $check <= $close);
+        return $check >= $open && $check <= $close;
     }
 
     /**
@@ -330,7 +376,7 @@ class Destination extends Model
      */
     public function isClosedOnDay(string $dayName): bool
     {
-        if (empty($this->closed_days) || !is_array($this->closed_days)) {
+        if (empty($this->closed_days) || ! is_array($this->closed_days)) {
             return false;
         }
 
@@ -369,15 +415,16 @@ class Destination extends Model
      */
     public function getFormattedTicketPrice(): string
     {
-        if (!empty($this->ticket_price_range)) {
+        if (! empty($this->ticket_price_range)) {
             return $this->ticket_price_range;
         }
 
         if ($this->ticket_price_min > 0 || $this->ticket_price_max > 0) {
             if ($this->ticket_price_min == $this->ticket_price_max) {
-                return 'LKR ' . number_format($this->ticket_price_min);
+                return 'LKR '.number_format($this->ticket_price_min);
             }
-            return 'LKR ' . number_format($this->ticket_price_min) . ' - ' . number_format($this->ticket_price_max);
+
+            return 'LKR '.number_format($this->ticket_price_min).' - '.number_format($this->ticket_price_max);
         }
 
         return 'Free Entry';
@@ -389,5 +436,13 @@ class Destination extends Model
     public function reviewsCount(): int
     {
         return $this->reviews()->where('is_approved', true)->count();
+    }
+
+    /**
+     * Nearest physical bus stop halt.
+     */
+    public function nearestBusStop(): BelongsTo
+    {
+        return $this->belongsTo(BusStop::class, 'nearest_bus_stop_id');
     }
 }

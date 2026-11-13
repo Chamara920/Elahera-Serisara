@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NewsCategory;
 use App\Models\NewsEvent;
 use App\Models\NewsEventComment;
 use Illuminate\Http\Request;
@@ -21,17 +22,50 @@ class NewsEventController extends Controller
     public function index(Request $request)
     {
         $type = $request->input('type'); // 'news' or 'event'
+        $categorySlug = $request->input('category');
+        $langFilter = $request->input('lang');
+        $currentLocale = app()->getLocale();
 
-        $query = NewsEvent::with('user')
+        $query = NewsEvent::with(['user', 'category'])
             ->where('is_approved', true);
+
+        if ($langFilter && in_array($langFilter, ['all', 'en', 'si'])) {
+            if ($langFilter !== 'all') {
+                $query->where(function ($q) use ($langFilter) {
+                    $q->where('language', $langFilter)->orWhere('language', 'all');
+                });
+            }
+        } else {
+            // Check if items exist for user's selected language
+            $hasMatchingLocale = NewsEvent::where('is_approved', true)
+                ->where(function ($q) use ($currentLocale) {
+                    $q->where('language', $currentLocale)->orWhere('language', 'all');
+                })->exists();
+
+            if ($hasMatchingLocale) {
+                $query->where(function ($q) use ($currentLocale) {
+                    $q->where('language', $currentLocale)
+                        ->orWhere('language', 'all')
+                        ->orWhereNull('language');
+                });
+            }
+        }
 
         if ($type && in_array($type, ['news', 'event'])) {
             $query->where('type', $type);
         }
 
-        $items = $query->latest('event_date')->paginate(8)->withQueryString();
+        if ($categorySlug) {
+            $category = NewsCategory::where('slug', $categorySlug)->first();
+            if ($category) {
+                $query->where('category_id', $category->id);
+            }
+        }
 
-        return view('news.index', compact('items', 'type'));
+        $items = $query->latest('event_date')->paginate(8)->withQueryString();
+        $categories = NewsCategory::where('is_active', true)->orderBy('sort_order')->get();
+
+        return view('news.index', compact('items', 'type', 'categories', 'categorySlug', 'langFilter'));
     }
 
     /**
@@ -39,7 +73,7 @@ class NewsEventController extends Controller
      */
     public function show($slug)
     {
-        $item = NewsEvent::with(['user', 'comments.user'])
+        $item = NewsEvent::with(['user', 'category', 'comments.user'])
             ->where('slug', $slug)
             ->where(function ($q) {
                 if (Auth::check() && (Auth::user()->isAdmin() || Auth::id() === NewsEvent::where('slug', request()->route('slug'))->value('user_id'))) {
@@ -66,11 +100,13 @@ class NewsEventController extends Controller
      */
     public function create()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to submit news or events.');
         }
 
-        return view('news.create');
+        $categories = NewsCategory::where('is_active', true)->orderBy('sort_order')->get();
+
+        return view('news.create', compact('categories'));
     }
 
     /**
@@ -78,16 +114,20 @@ class NewsEventController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to submit news or events.');
         }
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'title_si' => 'nullable|string|max:255',
+            'category_id' => 'nullable|exists:news_categories,id',
             'type' => 'required|in:news,event',
+            'language' => 'nullable|in:all,en,si',
             'event_date' => 'nullable|date',
             'location' => 'nullable|string|max:255',
             'content' => 'required|string|min:30',
+            'content_si' => 'nullable|string',
             'featured_image' => 'nullable|image|max:3072',
         ]);
 
@@ -100,12 +140,16 @@ class NewsEventController extends Controller
 
         $item = NewsEvent::create([
             'user_id' => Auth::id(),
+            'category_id' => $validated['category_id'] ?? null,
+            'language' => $validated['language'] ?? 'all',
             'title' => $validated['title'],
-            'slug' => Str::slug($validated['title']) . '-' . Str::random(5),
+            'title_si' => $validated['title_si'] ?? null,
+            'slug' => Str::slug($validated['title']).'-'.Str::random(5),
             'type' => $validated['type'],
             'event_date' => $validated['event_date'] ?? null,
             'location' => $validated['location'] ?? null,
             'content' => $validated['content'],
+            'content_si' => $validated['content_si'] ?? null,
             'featured_image' => $imagePath,
             'is_approved' => $isApproved,
         ]);
@@ -124,7 +168,7 @@ class NewsEventController extends Controller
      */
     public function storeComment(Request $request, $id)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to leave a comment.');
         }
 
@@ -148,7 +192,7 @@ class NewsEventController extends Controller
      */
     public function destroyComment($id)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
+        if (! Auth::check() || ! Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized. Only administrators can delete comments.');
         }
 

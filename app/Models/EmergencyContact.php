@@ -25,9 +25,10 @@ class EmergencyContact extends Model
 
     public function getLocalizedName(): string
     {
-        if (app()->getLocale() === 'si' && !empty($this->institution_name_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->institution_name_si)) {
             return $this->institution_name_si;
         }
+
         return $this->institution_name_en;
     }
 }

@@ -28,13 +28,18 @@
                         <span class="badge {{ $item->type === 'event' ? 'bg-warning text-dark' : 'bg-primary' }} text-uppercase">
                             {{ $item->type }}
                         </span>
+                        @if($item->category)
+                            <span class="badge bg-secondary">
+                                {{ $item->category->getLocalizedName() }}
+                            </span>
+                        @endif
                         @if($item->event_date)
                             <span class="badge bg-danger">Event Date: {{ $item->event_date->format('M d, Y') }}</span>
                         @endif
                         <span class="text-muted small">&bull; {{ $item->created_at->format('M d, Y') }}</span>
                     </div>
 
-                    <h1 class="display-6 fw-bold text-dark mb-3">{{ $item->title }}</h1>
+                    <h1 class="display-6 fw-bold text-dark mb-3">{{ $item->getLocalizedTitle() }}</h1>
 
                     @if($item->location)
                         <div class="p-2.5 bg-light rounded-3 text-secondary small mb-4">
@@ -49,9 +54,12 @@
                     @endif
 
                     <div class="fs-6 leading-relaxed text-secondary mb-5 rich-text-content" style="line-height: 1.8;">
-                        {!! Str::contains($item->content, ['<p>', '<br>', '<div>', '<h1>', '<h2>', '<h3>', '<h4>', '<h5>', '<h6>', '<ul>', '<ol>', '<strong>', '<em>', '<li>', '<blockquote>']) 
-                            ? $item->content 
-                            : nl2br(e($item->content)) !!}
+                        @php
+                            $newsContent = $item->getLocalizedContent();
+                        @endphp
+                        {!! Str::contains($newsContent, ['<p>', '<br>', '<div>', '<h1>', '<h2>', '<h3>', '<h4>', '<h5>', '<h6>', '<ul>', '<ol>', '<strong>', '<em>', '<li>', '<blockquote>']) 
+                            ? $newsContent 
+                            : nl2br(e($newsContent)) !!}
                     </div>
 
                     <!-- Comments Section -->

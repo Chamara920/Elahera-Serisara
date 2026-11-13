@@ -5,9 +5,10 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Class User
@@ -34,6 +35,8 @@ class User extends Authenticatable implements FilamentUser
         'bio',
         'security_question',
         'security_answer',
+        'security_question_2',
+        'security_answer_2',
     ];
 
     /**
@@ -45,6 +48,7 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'remember_token',
         'security_answer',
+        'security_answer_2',
     ];
 
     /**
@@ -148,7 +152,7 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * Check if provided answer matches the hashed security answer (case-insensitive & trimmed).
+     * Check if provided answer matches the first hashed security answer (case-insensitive & trimmed).
      */
     public function verifySecurityAnswer(?string $answer): bool
     {
@@ -157,7 +161,39 @@ class User extends Authenticatable implements FilamentUser
         }
 
         $normalized = mb_strtolower(trim($answer));
-        return \Illuminate\Support\Facades\Hash::check($normalized, $this->security_answer);
+
+        return Hash::check($normalized, $this->security_answer);
+    }
+
+    /**
+     * Check if provided answer matches the second hashed security answer (case-insensitive & trimmed).
+     */
+    public function verifySecurityAnswer2(?string $answer): bool
+    {
+        if (empty($this->security_answer_2) || empty($answer)) {
+            return false;
+        }
+
+        $normalized = mb_strtolower(trim($answer));
+
+        return Hash::check($normalized, $this->security_answer_2);
+    }
+
+    /**
+     * Verify both security answers. If the user only has question 1 set (legacy), verify question 1.
+     */
+    public function verifyBothSecurityAnswers(?string $answer1, ?string $answer2): bool
+    {
+        if (! $this->verifySecurityAnswer($answer1)) {
+            return false;
+        }
+
+        // If second question is configured, require and verify second answer too
+        if (! empty($this->security_question_2)) {
+            return $this->verifySecurityAnswer2($answer2);
+        }
+
+        return true;
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\BlogCategory;
 use App\Models\BlogComment;
 use App\Models\BlogPost;
 use App\Models\Destination;

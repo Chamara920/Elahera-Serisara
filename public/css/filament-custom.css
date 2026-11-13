@@ -1,0 +1,79 @@
+/**
+ * Elahera Serisara Admin Panel Custom Stylesheet
+ * Ensures consistent, compact icon dimensions and fixes unconstrained SVG rendering.
+ */
+
+/* Sizing Utilities */
+.w-3 { width: 0.75rem !important; }
+.h-3 { height: 0.75rem !important; }
+.w-3\.5 { width: 0.875rem !important; }
+.h-3\.5 { height: 0.875rem !important; }
+.w-4 { width: 1rem !important; }
+.h-4 { height: 1rem !important; }
+.w-5 { width: 1.25rem !important; }
+.h-5 { height: 1.25rem !important; }
+.w-6 { width: 1.5rem !important; }
+.h-6 { height: 1.5rem !important; }
+.w-7 { width: 1.75rem !important; }
+.h-7 { height: 1.75rem !important; }
+.w-8 { width: 2rem !important; }
+.h-8 { height: 2rem !important; }
+.w-9 { width: 2.25rem !important; }
+.h-9 { height: 2.25rem !important; }
+.w-10 { width: 2.5rem !important; }
+.h-10 { height: 2.5rem !important; }
+.w-12 { width: 3rem !important; }
+.h-12 { height: 3rem !important; }
+.w-14 { width: 3.5rem !important; }
+.h-14 { height: 3.5rem !important; }
+.w-16 { width: 4rem !important; }
+.h-16 { height: 4rem !important; }
+
+/* Constrain SVG Icon Dimensions Universally */
+svg.w-3, svg.h-3 { width: 12px !important; height: 12px !important; min-width: 12px !important; max-width: 12px !important; }
+svg.w-3\.5, svg.h-3\.5 { width: 14px !important; height: 14px !important; min-width: 14px !important; max-width: 14px !important; }
+svg.w-4, svg.h-4 { width: 16px !important; height: 16px !important; min-width: 16px !important; max-width: 16px !important; }
+svg.w-5, svg.h-5 { width: 20px !important; height: 20px !important; min-width: 20px !important; max-width: 20px !important; }
+svg.w-6, svg.h-6 { width: 22px !important; height: 22px !important; min-width: 22px !important; max-width: 22px !important; }
+svg.w-7, svg.h-7 { width: 26px !important; height: 26px !important; min-width: 26px !important; max-width: 26px !important; }
+svg.w-8, svg.h-8 { width: 30px !important; height: 30px !important; min-width: 30px !important; max-width: 30px !important; }
+
+/* Custom Action Tile Icon Containers */
+.quick-action-tile-icon {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
+}
+
+.quick-action-tile-icon svg {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    max-width: 20px !important;
+}
+
+.stat-metric-icon {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-metric-icon svg {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    max-width: 20px !important;
+}

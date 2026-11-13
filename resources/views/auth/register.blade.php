@@ -41,40 +41,57 @@
                             </div>
                         </div>
 
-                        <!-- Security Question for Password Recovery -->
+                        <!-- Security Questions for Password Recovery (2 Questions) -->
                         <div class="card bg-light border-0 p-3 mb-3 rounded-3">
                             <div class="d-flex align-items-center gap-2 mb-2">
                                 <i class="bi bi-shield-lock-fill text-success"></i>
                                 <span class="fw-bold text-dark small">{{ __('messages.security_question_heading') }}</span>
                             </div>
-                            <div class="mb-2">
-                                <label class="form-label small text-secondary">{{ __('messages.select_security_question') }}</label>
-                                <select name="security_question" class="form-select form-select-sm" required>
+
+                            @php
+                                $locale = app()->getLocale();
+                                $questions = $securityQuestions ?? \App\Models\User::defaultSecurityQuestions();
+                            @endphp
+
+                            <!-- Question 1 -->
+                            <div class="mb-3 p-2 bg-white rounded-2 border">
+                                <label class="form-label small fw-semibold text-dark mb-1">
+                                    <span class="badge bg-success me-1">1</span> {{ __('messages.security_question_1') }}
+                                </label>
+                                <select name="security_question" id="security_question_1" class="form-select form-select-sm mb-2" required>
                                     <option value="" disabled {{ old('security_question') ? '' : 'selected' }}>{{ __('messages.choose_question_placeholder') }}</option>
-                                    @php
-                                        $locale = app()->getLocale();
-                                        $questions = $securityQuestions ?? \App\Models\User::defaultSecurityQuestions();
-                                    @endphp
                                     @foreach($questions as $key => $q)
                                         <option value="{{ $key }}" {{ old('security_question') === $key ? 'selected' : '' }}>
                                             {{ $locale === 'si' ? $q['si'] : $q['en'] }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('security_question') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
-                            </div>
-                            <div>
-                                <label class="form-label small text-secondary">{{ __('messages.security_answer_label') }}</label>
-                                <input type="text" name="security_answer" class="form-control form-control-sm" placeholder="{{ __('messages.security_answer_placeholder') }}" value="{{ old('security_answer') }}" required>
-                                <div class="form-text text-muted" style="font-size: 0.72rem;">{{ __('messages.security_answer_help') }}</div>
+                                @error('security_question') <div class="text-danger small mb-1">{{ $message }}</div> @enderror
+
+                                <input type="text" name="security_answer" class="form-control form-control-sm" placeholder="{{ __('messages.security_answer_1') }}" value="{{ old('security_answer') }}" required>
                                 @error('security_answer') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold text-dark">{{ __('messages.phone_number_optional') }}</label>
-                            <input type="tel" name="phone" class="form-control" placeholder="{{ __('messages.phone_placeholder') }}" value="{{ old('phone') }}">
-                            @error('phone') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            <!-- Question 2 -->
+                            <div class="p-2 bg-white rounded-2 border">
+                                <label class="form-label small fw-semibold text-dark mb-1">
+                                    <span class="badge bg-primary me-1">2</span> {{ __('messages.security_question_2') }}
+                                </label>
+                                <select name="security_question_2" id="security_question_2" class="form-select form-select-sm mb-2" required>
+                                    <option value="" disabled {{ old('security_question_2') ? '' : 'selected' }}>{{ __('messages.choose_question_placeholder') }}</option>
+                                    @foreach($questions as $key => $q)
+                                        <option value="{{ $key }}" {{ old('security_question_2') === $key ? 'selected' : '' }}>
+                                            {{ $locale === 'si' ? $q['si'] : $q['en'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('security_question_2') <div class="text-danger small mb-1">{{ $message }}</div> @enderror
+
+                                <input type="text" name="security_answer_2" class="form-control form-control-sm" placeholder="{{ __('messages.security_answer_2') }}" value="{{ old('security_answer_2') }}" required>
+                                @error('security_answer_2') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            </div>
+
+                            <div class="form-text text-muted mt-2" style="font-size: 0.72rem;">{{ __('messages.security_answer_help') }}</div>
                         </div>
 
                         <div class="mb-4">

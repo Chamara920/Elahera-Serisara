@@ -14,13 +14,31 @@ class ForumTopicsTable
     {
         return $table
             ->columns([
-                TextColumn::make('forum_category_id')
-                    ->numeric()
+                TextColumn::make('category.name_en')
+                    ->label('Category')
+                    ->badge()
                     ->sortable(),
-                TextColumn::make('user.name')
-                    ->searchable(),
                 TextColumn::make('title')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(40),
+                TextColumn::make('user.name')
+                    ->label('Author')
                     ->searchable(),
+                TextColumn::make('language')
+                    ->label('Language')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'all' => 'All (Bilingual)',
+                        'en' => 'English',
+                        'si' => 'Sinhala',
+                        default => $state ?? 'All',
+                    })
+                    ->color(fn ($state) => match ($state) {
+                        'si' => 'warning',
+                        'en' => 'info',
+                        default => 'success',
+                    }),
                 TextColumn::make('slug')
                     ->searchable(),
                 TextColumn::make('views_count')

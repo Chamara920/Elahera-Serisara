@@ -34,12 +34,12 @@ return new class extends Migration
             $table->string('route_zone')->default('Zone A - Bakamuna Route'); // Route Zone
             $table->string('featured_image')->nullable();
             $table->json('gallery_images')->nullable();
-            
+
             // Metrics & Travel data
             $table->decimal('distance_km', 8, 2)->default(0);
             $table->integer('travel_time_minutes')->default(0);
             $table->integer('stay_duration_minutes')->default(60);
-            
+
             // Guide & Safety details
             $table->text('safety_alerts_en')->nullable();
             $table->text('safety_alerts_si')->nullable();
@@ -47,15 +47,15 @@ return new class extends Migration
             $table->text('packing_list_si')->nullable();
             $table->text('dress_code_en')->nullable();
             $table->text('dress_code_si')->nullable();
-            
+
             // Transport integration
             $table->string('nearest_bus_stop')->nullable();
             $table->string('bus_route_numbers')->nullable();
-            
+
             // Coordinates
             $table->decimal('latitude', 10, 7)->default(7.9866);
             $table->decimal('longitude', 10, 7)->default(80.8144);
-            
+
             // Flags
             $table->boolean('is_featured')->default(false);
             $table->integer('featured_priority')->default(0);
@@ -274,7 +274,7 @@ return new class extends Migration
         Schema::dropIfExists('hero_sliders');
         Schema::dropIfExists('destination_reviews');
         Schema::dropIfExists('destinations');
-        
+
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn(['role', 'avatar', 'phone', 'bio']);
         });

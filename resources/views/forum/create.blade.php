@@ -23,6 +23,30 @@
                     <form action="{{ route('forum.store') }}" method="POST">
                         @csrf
                         
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-7">
+                                <label class="form-label fw-semibold text-dark small">{{ __('messages.select_category') }}</label>
+                                <select name="forum_category_id" class="form-select" required>
+                                    <option value="">-- {{ __('messages.select_category') }} --</option>
+                                    @foreach($categories as $cat)
+                                        <option value="{{ $cat->id }}" {{ old('forum_category_id') == $cat->id ? 'selected' : '' }}>
+                                            {{ $cat->getLocalizedName() }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('forum_category_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label fw-semibold text-dark small">{{ __('messages.post_language') }}</label>
+                                <select name="language" class="form-select">
+                                    <option value="all" {{ old('language', 'all') === 'all' ? 'selected' : '' }}>{{ __('messages.lang_all') }}</option>
+                                    <option value="en" {{ old('language') === 'en' ? 'selected' : '' }}>{{ __('messages.lang_en') }}</option>
+                                    <option value="si" {{ old('language') === 'si' ? 'selected' : '' }}>{{ __('messages.lang_si') }}</option>
+                                </select>
+                                @error('language') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-dark small">Question Title</label>
                             <input type="text" name="title" class="form-control" placeholder="e.g. Is it safe to bathe at Heeratiya Oya cascades after heavy rains?" value="{{ old('title') }}" required>
@@ -30,22 +54,27 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold text-dark small">Channel Category</label>
-                            <select name="forum_category_id" class="form-select" required>
-                                <option value="">-- Choose Forum Category --</option>
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}" {{ old('forum_category_id') == $cat->id ? 'selected' : '' }}>
-                                        {{ $cat->getLocalizedName() }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('forum_category_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            <label class="form-label fw-semibold text-dark small">Details & Specific Context</label>
+                            <textarea name="content" class="form-control" rows="5" placeholder="Provide details like expected travel dates, vehicle type, group size, or specific concerns..." required>{{ old('content') }}</textarea>
+                            @error('content') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold text-dark small">Details & Specific Context</label>
-                            <textarea name="content" class="form-control" rows="6" placeholder="Provide details like expected travel dates, vehicle type, group size, or specific concerns..." required>{{ old('content') }}</textarea>
-                            @error('content') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                        <!-- Optional Sinhala Translation Fields -->
+                        <div class="card bg-light border-0 p-3 mb-4 rounded-3">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-translate text-success"></i>
+                                <span class="fw-bold text-dark small">Publish in Sinhala as well (Optional)</span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-dark small">{{ __('messages.title_si_optional') }}</label>
+                                <input type="text" name="title_si" class="form-control" placeholder="{{ __('messages.title_si_placeholder') }}" value="{{ old('title_si') }}">
+                                @error('title_si') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            </div>
+                            <div>
+                                <label class="form-label fw-semibold text-dark small">{{ __('messages.content_si_optional') }}</label>
+                                <textarea name="content_si" class="form-control" rows="4" placeholder="{{ __('messages.content_si_placeholder') }}">{{ old('content_si') }}</textarea>
+                                @error('content_si') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            </div>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center pt-3 border-top">

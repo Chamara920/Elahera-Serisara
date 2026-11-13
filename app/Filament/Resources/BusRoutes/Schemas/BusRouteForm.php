@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BusRoutes\Schemas;
 
+use App\Models\BusStop;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -17,38 +18,38 @@ class BusRouteForm
         return $schema
             ->components([
                 Section::make('Bus Route Basic Information')
-                    ->description('General details about the route and start time')
+                    ->description('General details about the route and origin departure time')
                     ->schema([
                         TextInput::make('route_number')
-                            ->label('Route Number (මාර්ග අංකය)')
+                            ->label('Route Number')
                             ->placeholder('e.g. 422 or 45/1')
                             ->required(),
                         Select::make('service_type')
-                            ->label('Service Type (සේවා වර්ගය)')
+                            ->label('Service Type')
                             ->options([
-                                'Normal' => 'Normal (සාමාන්‍ය)',
-                                'Semi-Luxury' => 'Semi-Luxury (අර්ධ සුඛෝපභෝගී)',
-                                'Express' => 'Express (අධිවේගී)',
+                                'Normal' => 'Normal',
+                                'Semi-Luxury' => 'Semi-Luxury',
+                                'Express' => 'Express',
                             ])
                             ->default('Normal')
                             ->required(),
                         TextInput::make('origin')
-                            ->label('Origin (ගමන ආරම්භ වන ස්ථානය)')
+                            ->label('Origin')
                             ->placeholder('e.g. Matale, Polonnaruwa, Dambulla')
                             ->required(),
                         TextInput::make('destination')
-                            ->label('Destination (අවසාන ස්ථානය)')
+                            ->label('Destination')
                             ->placeholder('e.g. Bakamuna, Habarana, Elahera')
                             ->required(),
                         TextInput::make('origin_departure_time')
-                            ->label('Origin Departure Time (ගමන ආරම්භක වේලාව)')
+                            ->label('Origin Departure Time')
                             ->placeholder('e.g. 05:30 AM')
                             ->required(),
                         TextInput::make('via_cities')
-                            ->label('Via Cities (ප්‍රධාන හරස් මාර්ග)')
+                            ->label('Via Cities')
                             ->placeholder('e.g. Via Naula, Elahera, Bakamuna'),
                         Textarea::make('remarks')
-                            ->label('Admin Notice / Remarks (විශේෂ සටහන් සහ වෙනස්කම්)')
+                            ->label('Admin Notice / Remarks')
                             ->placeholder('Notice regarding delays, festival schedules, or special remarks')
                             ->columnSpanFull(),
                         Toggle::make('is_active')
@@ -56,24 +57,53 @@ class BusRouteForm
                             ->default(true),
                     ])->columns(2),
 
-                Section::make('Halts & Timings Schedule (නැවතුම්පළවල් සහ කාල අන්තරයන්)')
+                Section::make('Halts & Timings Schedule')
                     ->description('Sequential list of major stops, arrival/departure timings, and associated tourist spots.')
                     ->schema([
                         Repeater::make('halts')
                             ->relationship('halts')
                             ->schema([
+                                Select::make('bus_stop_id')
+                                    ->label('Bus Stop (නැවතුම්පළ තෝරන්න)')
+                                    ->relationship('busStop', 'name_en')
+                                    ->searchable()
+                                    ->preload()
+                                    ->placeholder('Choose registered stop...')
+                                    ->createOptionForm([
+                                        TextInput::make('name_en')
+                                            ->label('Stop Name (English)')
+                                            ->required(),
+                                        TextInput::make('name_si')
+                                            ->label('Stop Name (Sinhala)'),
+                                        TextInput::make('code')
+                                            ->label('Stop Code (e.g. BAKAMUNA)')
+                                            ->required(),
+                                        TextInput::make('connecting_routes')
+                                            ->label('Connecting Routes (e.g. 422, 45/1)'),
+                                        Toggle::make('is_hub')
+                                            ->label('Transfer Hub (මාරුවීම් සන්ධිස්ථානයක්ද)'),
+                                    ])
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        if ($state) {
+                                            $stop = BusStop::find($state);
+                                            if ($stop) {
+                                                $set('stop_name', $stop->name_en);
+                                            }
+                                        }
+                                    }),
                                 TextInput::make('stop_name')
-                                    ->label('Stop Name (නැවතුම්පළේ නම)')
+                                    ->label('Stop Name Display')
                                     ->placeholder('e.g. Elahera Junction, Bakamuna')
                                     ->required(),
                                 TextInput::make('arrival_time')
-                                    ->label('Arrival Time (පැමිණෙන වේලාව)')
+                                    ->label('Arrival Time')
                                     ->placeholder('e.g. 06:15 AM'),
                                 TextInput::make('departure_time')
-                                    ->label('Departure Time (පිටත්වන වේලාව)')
+                                    ->label('Departure Time')
                                     ->placeholder('e.g. 06:20 AM'),
                                 Select::make('destination_id')
-                                    ->label('Associated Destination (සමීප සංචාරක ස්ථානය)')
+                                    ->label('Associated Destination')
                                     ->relationship('destination', 'title_en')
                                     ->searchable()
                                     ->preload()

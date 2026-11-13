@@ -41,7 +41,7 @@
                         <div class="card card-custom border-0 shadow-sm p-4">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <span class="badge bg-light text-primary border small">
-                                    <i class="bi bi-chat-text me-1"></i> {{ $topic->category->name_en }}
+                                    <i class="bi bi-chat-text me-1"></i> {{ $topic->category?->getLocalizedName() ?? 'General' }}
                                 </span>
                                 <span class="small text-muted" style="font-size: 0.75rem;">
                                     <i class="bi bi-clock me-1"></i> {{ $topic->created_at->diffForHumans() }}
@@ -50,12 +50,12 @@
 
                             <h5 class="fw-bold mb-2">
                                 <a href="{{ route('forum.show', $topic->slug) }}" class="text-dark text-decoration-none hover-success">
-                                    {{ $topic->title }}
+                                    {{ $topic->getLocalizedTitle() }}
                                 </a>
                             </h5>
 
                             <p class="text-secondary small mb-3">
-                                {{ Str::limit($topic->content, 140) }}
+                                {{ Str::limit($topic->getLocalizedContent(), 140) }}
                             </p>
 
                             <div class="d-flex justify-content-between align-items-center pt-3 border-top small text-muted">

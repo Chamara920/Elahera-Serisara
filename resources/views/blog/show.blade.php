@@ -26,12 +26,12 @@
 
                 <div class="card card-custom border-0 shadow-sm p-4 p-md-5 mb-5">
                     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                        <span class="badge bg-success small">{{ $post->category?->name_en ?: 'Travel Article' }}</span>
+                        <span class="badge bg-success small">{{ $post->category?->getLocalizedName() ?: 'Travel Article' }}</span>
                         <span class="text-muted small">&bull; {{ $post->created_at->format('F d, Y') }}</span>
                         <span class="text-muted small">&bull; <i class="bi bi-eye"></i> {{ $post->views_count }} views</span>
                     </div>
 
-                    <h1 class="display-6 fw-bold text-dark mb-4">{{ $post->title }}</h1>
+                    <h1 class="display-6 fw-bold text-dark mb-4">{{ $post->getLocalizedTitle() }}</h1>
 
                     <!-- Author Info -->
                     <div class="d-flex align-items-center gap-3 pb-4 mb-4 border-bottom">
@@ -51,9 +51,12 @@
                     @endif
 
                     <div class="fs-6 leading-relaxed text-secondary mb-5 rich-text-content" style="line-height: 1.9;">
-                        {!! Str::contains($post->content, ['<p>', '<br>', '<div>', '<h1>', '<h2>', '<h3>', '<h4>', '<h5>', '<h6>', '<ul>', '<ol>', '<strong>', '<em>', '<li>', '<blockquote>']) 
-                            ? $post->content 
-                            : nl2br(e($post->content)) !!}
+                        @php
+                            $mainContent = $post->getLocalizedContent();
+                        @endphp
+                        {!! Str::contains($mainContent, ['<p>', '<br>', '<div>', '<h1>', '<h2>', '<h3>', '<h4>', '<h5>', '<h6>', '<ul>', '<ol>', '<strong>', '<em>', '<li>', '<blockquote>']) 
+                            ? $mainContent 
+                            : nl2br(e($mainContent)) !!}
                     </div>
 
                     <!-- Comments Section -->

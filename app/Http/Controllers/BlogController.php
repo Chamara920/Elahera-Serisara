@@ -24,9 +24,33 @@ class BlogController extends Controller
     {
         $sort = $request->input('sort', 'latest');
         $categorySlug = $request->input('category');
+        $langFilter = $request->input('lang');
+        $currentLocale = app()->getLocale();
 
         $query = BlogPost::with('user', 'category')
             ->where('is_approved', true);
+
+        if ($langFilter && in_array($langFilter, ['all', 'en', 'si'])) {
+            if ($langFilter !== 'all') {
+                $query->where(function ($q) use ($langFilter) {
+                    $q->where('language', $langFilter)->orWhere('language', 'all');
+                });
+            }
+        } else {
+            // Check if posts exist for user's selected language
+            $hasMatchingLocale = BlogPost::where('is_approved', true)
+                ->where(function ($q) use ($currentLocale) {
+                    $q->where('language', $currentLocale)->orWhere('language', 'all');
+                })->exists();
+
+            if ($hasMatchingLocale) {
+                $query->where(function ($q) use ($currentLocale) {
+                    $q->where('language', $currentLocale)
+                        ->orWhere('language', 'all')
+                        ->orWhereNull('language');
+                });
+            }
+        }
 
         if ($categorySlug) {
             $category = BlogCategory::where('slug', $categorySlug)->first();
@@ -57,7 +81,7 @@ class BlogController extends Controller
             ->take(5)
             ->get();
 
-        return view('blog.index', compact('posts', 'categories', 'contributors', 'sort', 'categorySlug'));
+        return view('blog.index', compact('posts', 'categories', 'contributors', 'sort', 'categorySlug', 'langFilter'));
     }
 
     /**
@@ -93,11 +117,12 @@ class BlogController extends Controller
      */
     public function create()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to write a blog post.');
         }
 
         $categories = BlogCategory::all();
+
         return view('blog.create', compact('categories'));
     }
 
@@ -106,14 +131,17 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to write a blog post.');
         }
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'title_si' => 'nullable|string|max:255',
             'category_id' => 'required|exists:blog_categories,id',
+            'language' => 'nullable|in:all,en,si',
             'content' => 'required|string|min:50',
+            'content_si' => 'nullable|string',
             'featured_image' => 'nullable|image|max:3072',
         ]);
 
@@ -128,9 +156,12 @@ class BlogController extends Controller
         $post = BlogPost::create([
             'user_id' => Auth::id(),
             'category_id' => $validated['category_id'],
+            'language' => $validated['language'] ?? 'all',
             'title' => $validated['title'],
-            'slug' => Str::slug($validated['title']) . '-' . Str::random(5),
+            'title_si' => $validated['title_si'] ?? null,
+            'slug' => Str::slug($validated['title']).'-'.Str::random(5),
             'content' => $validated['content'],
+            'content_si' => $validated['content_si'] ?? null,
             'featured_image' => $imagePath,
             'is_approved' => $isApproved,
         ]);
@@ -149,7 +180,7 @@ class BlogController extends Controller
      */
     public function storeComment(Request $request, $id)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to comment.');
         }
 
@@ -173,7 +204,7 @@ class BlogController extends Controller
      */
     public function destroyComment($id)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
+        if (! Auth::check() || ! Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized. Only administrators can delete comments.');
         }
 

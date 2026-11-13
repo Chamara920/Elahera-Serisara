@@ -52,20 +52,37 @@
                             </div>
 
                             @php
+                                $locale = app()->getLocale();
                                 $allQuestions = \App\Models\User::defaultSecurityQuestions();
-                                $questionText = isset($allQuestions[$question]) ? (app()->getLocale() === 'si' ? $allQuestions[$question]['si'] : $allQuestions[$question]['en']) : $question;
+                                $questionText1 = isset($allQuestions[$question]) ? ($locale === 'si' ? $allQuestions[$question]['si'] : $allQuestions[$question]['en']) : $question;
+                                $questionText2 = (!empty($question2) && isset($allQuestions[$question2])) ? ($locale === 'si' ? $allQuestions[$question2]['si'] : $allQuestions[$question2]['en']) : ($question2 ?? null);
                             @endphp
 
+                            <!-- Security Question 1 -->
                             <div class="card bg-light border-0 p-3 mb-3 rounded-3">
                                 <label class="form-label small fw-bold text-dark mb-1">
-                                    <i class="bi bi-question-circle text-primary me-1"></i> {{ __('messages.security_question_heading') }}:
+                                    <span class="badge bg-success me-1">1</span> {{ __('messages.security_question_1') }}:
                                 </label>
-                                <div class="text-primary-emerald fw-semibold small mb-2">{{ $questionText }}</div>
+                                <div class="text-primary-emerald fw-semibold small mb-2">{{ $questionText1 }}</div>
 
-                                <label class="form-label small fw-semibold text-secondary">{{ __('messages.security_answer_label') }}</label>
+                                <label class="form-label small fw-semibold text-secondary">{{ __('messages.security_answer_1') }}</label>
                                 <input type="text" name="security_answer" class="form-control" placeholder="{{ __('messages.security_answer_placeholder') }}" required autofocus>
                                 @error('security_answer') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
+
+                            @if(!empty($questionText2))
+                                <!-- Security Question 2 -->
+                                <div class="card bg-light border-0 p-3 mb-3 rounded-3">
+                                    <label class="form-label small fw-bold text-dark mb-1">
+                                        <span class="badge bg-primary me-1">2</span> {{ __('messages.security_question_2') }}:
+                                    </label>
+                                    <div class="text-primary-emerald fw-semibold small mb-2">{{ $questionText2 }}</div>
+
+                                    <label class="form-label small fw-semibold text-secondary">{{ __('messages.security_answer_2') }}</label>
+                                    <input type="text" name="security_answer_2" class="form-control" placeholder="{{ __('messages.security_answer_placeholder') }}" required>
+                                    @error('security_answer_2') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                </div>
+                            @endif
 
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold text-dark">{{ __('messages.new_password') }}</label>

@@ -34,17 +34,43 @@
                         @csrf
                         
                         <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark small">Submission Type</label>
+                                <select name="type" class="form-select" required>
+                                    <option value="news" {{ old('type') == 'news' ? 'selected' : '' }}>News Notice</option>
+                                    <option value="event" {{ old('type') == 'event' ? 'selected' : '' }}>Public Event</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark small">{{ __('messages.select_category') }}</label>
+                                <select name="category_id" class="form-select">
+                                    <option value="">-- {{ __('messages.select_category') }} (Optional) --</option>
+                                    @if(isset($categories))
+                                        @foreach($categories as $cat)
+                                            <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
+                                                {{ $cat->getLocalizedName() }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                @error('category_id') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
                             <div class="col-md-8">
                                 <label class="form-label fw-semibold text-dark small">Title</label>
                                 <input type="text" name="title" class="form-control" placeholder="e.g. Elahera Annual Harvest Festival 2026" value="{{ old('title') }}" required>
                                 @error('title') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-semibold text-dark small">Submission Type</label>
-                                <select name="type" class="form-select" required>
-                                    <option value="news" {{ old('type') == 'news' ? 'selected' : '' }}>News Notice</option>
-                                    <option value="event" {{ old('type') == 'event' ? 'selected' : '' }}>Public Event</option>
+                                <label class="form-label fw-semibold text-dark small">{{ __('messages.post_language') }}</label>
+                                <select name="language" class="form-select">
+                                    <option value="all" {{ old('language', 'all') === 'all' ? 'selected' : '' }}>{{ __('messages.lang_all') }}</option>
+                                    <option value="en" {{ old('language') === 'en' ? 'selected' : '' }}>{{ __('messages.lang_en') }}</option>
+                                    <option value="si" {{ old('language') === 'si' ? 'selected' : '' }}>{{ __('messages.lang_si') }}</option>
                                 </select>
+                                @error('language') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
                         </div>
 
@@ -65,10 +91,28 @@
                             @error('featured_image') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label class="form-label fw-semibold text-dark small">Full Details & Notice Description</label>
-                            <textarea name="content" class="form-control" rows="8" placeholder="Provide event timings, entry criteria, background, and organizing contacts..." required>{{ old('content') }}</textarea>
+                            <textarea name="content" class="form-control" rows="6" placeholder="Provide event timings, entry criteria, background, and organizing contacts..." required>{{ old('content') }}</textarea>
                             @error('content') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                        </div>
+
+                        <!-- Optional Sinhala Translation Fields -->
+                        <div class="card bg-light border-0 p-3 mb-4 rounded-3">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-translate text-success"></i>
+                                <span class="fw-bold text-dark small">Publish in Sinhala as well (Optional)</span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-dark small">{{ __('messages.title_si_optional') }}</label>
+                                <input type="text" name="title_si" class="form-control" placeholder="{{ __('messages.title_si_placeholder') }}" value="{{ old('title_si') }}">
+                                @error('title_si') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            </div>
+                            <div>
+                                <label class="form-label fw-semibold text-dark small">{{ __('messages.content_si_optional') }}</label>
+                                <textarea name="content_si" class="form-control" rows="5" placeholder="{{ __('messages.content_si_placeholder') }}">{{ old('content_si') }}</textarea>
+                                @error('content_si') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                            </div>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center pt-3 border-top">

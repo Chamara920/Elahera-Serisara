@@ -14,6 +14,7 @@ class TravelGuideController extends Controller
     public function index()
     {
         $destinations = Destination::where('is_active', true)->take(6)->get();
+
         return view('guide.index', compact('destinations'));
     }
 }

@@ -31,6 +31,18 @@ class DestinationsTable
                 TextColumn::make('category')
                     ->badge()
                     ->sortable(),
+                TextColumn::make('categories.name_en')
+                    ->label('All Categories')
+                    ->badge()
+                    ->color('info')
+                    ->separator(',')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('nearestBusStop.name_en')
+                    ->label('Nearest Bus Halt')
+                    ->badge()
+                    ->color('gray')
+                    ->placeholder(fn ($record) => $record->nearest_bus_stop ?: 'Not set')
+                    ->toggleable(),
                 TextColumn::make('route_zone')
                     ->sortable()
                     ->toggleable(),
@@ -60,14 +72,9 @@ class DestinationsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('category')
-                    ->options([
-                        'Nature & Wildlife' => 'Nature & Wildlife',
-                        'Waterfalls' => 'Waterfalls',
-                        'Viewpoints' => 'Viewpoints',
-                        'Historical & Cultural' => 'Historical & Cultural',
-                        'Canals & Lakes' => 'Canals & Lakes',
-                    ]),
+                SelectFilter::make('category_id')
+                    ->label('Category')
+                    ->relationship('destinationCategory', 'name_en'),
                 SelectFilter::make('route_zone')
                     ->options([
                         'Zone A - Bakamuna Route' => 'Zone A - Bakamuna Route',

@@ -31,6 +31,20 @@ class BlogPostsTable
                 TextColumn::make('category.name_en')
                     ->label('Category')
                     ->badge(),
+                TextColumn::make('language')
+                    ->label('Language')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'all' => 'All (Bilingual)',
+                        'en' => 'English',
+                        'si' => 'Sinhala',
+                        default => $state ?? 'All',
+                    })
+                    ->color(fn ($state) => match ($state) {
+                        'si' => 'warning',
+                        'en' => 'info',
+                        default => 'success',
+                    }),
                 IconColumn::make('is_approved')
                     ->label('Approved')
                     ->boolean()

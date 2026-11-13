@@ -60,7 +60,7 @@
                                 <div class="col-md-7">
                                     <div class="card-body p-4 d-flex flex-column h-100">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="badge bg-light text-secondary border small">{{ $post->category?->name_en ?: 'Travel' }}</span>
+                                            <span class="badge bg-light text-secondary border small">{{ $post->category?->getLocalizedName() ?: 'Travel' }}</span>
                                             <span class="small text-muted" style="font-size: 0.75rem;">
                                                 <i class="bi bi-calendar3 me-1"></i> {{ $post->created_at->format('M d, Y') }}
                                             </span>
@@ -68,12 +68,12 @@
 
                                         <h5 class="fw-bold mb-2">
                                             <a href="{{ route('blog.show', $post->slug) }}" class="text-dark text-decoration-none hover-success">
-                                                {{ $post->title }}
+                                                {{ $post->getLocalizedTitle() }}
                                             </a>
                                         </h5>
 
                                         <p class="text-secondary small mb-3" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                            {{ Str::limit(strip_tags($post->content), 120) }}
+                                            {{ Str::limit(strip_tags($post->getLocalizedContent()), 120) }}
                                         </p>
 
                                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top text-muted small">

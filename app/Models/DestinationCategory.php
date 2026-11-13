@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
@@ -40,7 +41,7 @@ class DestinationCategory extends Model
     }
 
     /**
-     * Destinations belonging to this category.
+     * Primary destinations belonging to this category.
      */
     public function destinations(): HasMany
     {
@@ -48,13 +49,22 @@ class DestinationCategory extends Model
     }
 
     /**
+     * All destinations tagged with this category (including secondary).
+     */
+    public function allDestinations(): BelongsToMany
+    {
+        return $this->belongsToMany(Destination::class, 'destination_destination_category');
+    }
+
+    /**
      * Localized name helper.
      */
     public function getLocalizedName(): string
     {
-        if (app()->getLocale() === 'si' && !empty($this->name_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->name_si)) {
             return $this->name_si;
         }
+
         return $this->name_en;
     }
 }

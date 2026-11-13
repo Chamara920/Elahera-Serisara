@@ -18,7 +18,7 @@ class TransportController extends Controller
     {
         // 1. Fetch all unique halt names for dropdowns
         $haltsList = BusRouteHalt::distinct()->pluck('stop_name')->sort()->values();
-        
+
         // Also fetch active destinations
         $destinations = Destination::where('is_active', true)->orderBy('title_en')->get();
 
@@ -57,13 +57,14 @@ class TransportController extends Controller
                 ->whereHas('busRoute', fn ($q) => $q->where('is_active', true))
                 ->where(function ($q) use ($selectedStop) {
                     $q->where('stop_name', 'like', "%{$selectedStop}%")
-                      ->orWhere('nearest_spot_name', 'like', "%{$selectedStop}%")
-                      ->orWhereHas('destination', fn ($dq) => $dq->where('title_en', 'like', "%{$selectedStop}%")->orWhere('title_si', 'like', "%{$selectedStop}%"));
+                        ->orWhere('nearest_spot_name', 'like', "%{$selectedStop}%")
+                        ->orWhereHas('destination', fn ($dq) => $dq->where('title_en', 'like', "%{$selectedStop}%")->orWhere('title_si', 'like', "%{$selectedStop}%"));
                 })
                 ->get()
                 ->sortBy(function ($halt) {
                     // Sort by departure or arrival time
                     $time = $halt->departure_time ?: $halt->arrival_time ?: '12:00 PM';
+
                     return strtotime($time);
                 });
         }

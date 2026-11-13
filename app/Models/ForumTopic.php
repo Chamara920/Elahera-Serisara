@@ -20,9 +20,12 @@ class ForumTopic extends Model
     protected $fillable = [
         'forum_category_id',
         'user_id',
+        'language', // 'all', 'en', 'si'
         'title',
+        'title_si',
         'slug',
         'content',
+        'content_si',
         'views_count',
     ];
 
@@ -34,7 +37,7 @@ class ForumTopic extends Model
     {
         static::creating(function ($topic) {
             if (empty($topic->slug)) {
-                $topic->slug = Str::slug($topic->title) . '-' . Str::random(5);
+                $topic->slug = Str::slug($topic->title).'-'.Str::random(5);
             }
         });
     }
@@ -52,5 +55,43 @@ class ForumTopic extends Model
     public function replies(): HasMany
     {
         return $this->hasMany(ForumReply::class);
+    }
+
+    /**
+     * Get title based on active application locale.
+     */
+    public function getLocalizedTitle(): string
+    {
+        if (app()->getLocale() === 'si' && ! empty($this->title_si)) {
+            return $this->title_si;
+        }
+
+        return $this->title;
+    }
+
+    /**
+     * Get content based on active application locale.
+     */
+    public function getLocalizedContent(): string
+    {
+        if (app()->getLocale() === 'si' && ! empty($this->content_si)) {
+            return $this->content_si;
+        }
+
+        return $this->content;
+    }
+
+    /**
+     * Scope query to match user locale ('all' or current locale).
+     */
+    public function scopeForLocale($query, ?string $locale = null)
+    {
+        $loc = $locale ?: app()->getLocale();
+
+        return $query->where(function ($q) use ($loc) {
+            $q->where('language', 'all')
+                ->orWhere('language', $loc)
+                ->orWhereNull('language');
+        });
     }
 }

@@ -2,9 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Services\DatabaseBackupService;
-use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 class DatabaseBackupTest extends TestCase
@@ -14,7 +12,7 @@ class DatabaseBackupTest extends TestCase
      */
     public function test_can_create_and_list_backups(): void
     {
-        $service = new DatabaseBackupService();
+        $service = new DatabaseBackupService;
 
         $filename = $service->createBackup();
         $this->assertNotEmpty($filename);

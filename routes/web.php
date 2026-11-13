@@ -43,6 +43,9 @@ Route::delete('/destinations/reviews/{id}', [DestinationController::class, 'dest
 Route::get('/trip-planner', [TripPlannerController::class, 'index'])->name('planner.index');
 Route::post('/trip-planner/save', [TripPlannerController::class, 'saveTrip'])->name('planner.save');
 Route::get('/trip-planner/print', [TripPlannerController::class, 'printView'])->name('planner.print');
+Route::post('/trip-planner/calculate-transit', [TripPlannerController::class, 'calculateTransit'])->name('planner.calculate-transit');
+Route::post('/trip-planner/optimize-transit-sequence', [TripPlannerController::class, 'optimizeTransitSequence'])->name('planner.optimize-transit-sequence');
+Route::get('/trip-planner/bus-stops', [TripPlannerController::class, 'getBusStops'])->name('planner.bus-stops');
 
 // Interactive Map
 Route::get('/map', [MapController::class, 'index'])->name('map.index');

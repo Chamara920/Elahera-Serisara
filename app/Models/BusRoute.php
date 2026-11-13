@@ -34,4 +34,9 @@ class BusRoute extends Model
     {
         return $this->hasMany(BusRouteHalt::class)->orderBy('stop_order');
     }
+
+    public function trips(): HasMany
+    {
+        return $this->hasMany(BusTrip::class)->orderBy('origin_departure_minutes');
+    }
 }

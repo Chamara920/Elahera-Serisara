@@ -22,6 +22,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('home');
         }
+
         return view('auth.login');
     }
 
@@ -39,7 +40,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            
+
             // If admin, they can also go to admin or stay
             return redirect()->intended(route('home'))->with('success', __('Welcome back, :name!', ['name' => Auth::user()->name]));
         }
@@ -58,6 +59,7 @@ class AuthController extends Controller
             return redirect()->route('home');
         }
         $securityQuestions = User::defaultSecurityQuestions();
+
         return view('auth.register', compact('securityQuestions'));
     }
 
@@ -70,10 +72,11 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'phone' => 'nullable|string|max:20',
             'bio' => 'nullable|string|max:1000',
             'security_question' => 'required|string|max:255',
             'security_answer' => 'required|string|min:2|max:255',
+            'security_question_2' => 'required|string|max:255|different:security_question',
+            'security_answer_2' => 'required|string|min:2|max:255',
         ]);
 
         $user = User::create([
@@ -81,10 +84,11 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => 'community_member',
-            'phone' => $validated['phone'] ?? null,
             'bio' => $validated['bio'] ?? null,
             'security_question' => $validated['security_question'],
             'security_answer' => Hash::make(mb_strtolower(trim($validated['security_answer']))),
+            'security_question_2' => $validated['security_question_2'],
+            'security_answer_2' => Hash::make(mb_strtolower(trim($validated['security_answer_2']))),
         ]);
 
         Auth::login($user);
@@ -103,15 +107,17 @@ class AuthController extends Controller
 
         $email = session('reset_user_email');
         $question = null;
+        $question2 = null;
 
         if ($email) {
             $user = User::where('email', $email)->first();
-            if ($user && !empty($user->security_question)) {
+            if ($user && ! empty($user->security_question)) {
                 $question = $user->security_question;
+                $question2 = $user->security_question_2;
             }
         }
 
-        return view('auth.forgot-password', compact('email', 'question'));
+        return view('auth.forgot-password', compact('email', 'question', 'question2'));
     }
 
     /**
@@ -125,7 +131,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return back()->withErrors([
                 'email' => 'No account was found with this email address.',
             ])->onlyInput('email');
@@ -139,7 +145,7 @@ class AuthController extends Controller
 
         return redirect()->route('password.forgot')
             ->with('reset_user_email', $user->email)
-            ->with('success', 'Account found! Please answer your security question below to reset your password.');
+            ->with('success', 'Account found! Please answer your security questions below to reset your password.');
     }
 
     /**
@@ -150,21 +156,30 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'security_answer' => 'required|string',
+            'security_answer_2' => 'nullable|string',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return back()->withErrors([
                 'email' => 'User account not found.',
             ]);
         }
 
-        if (!$user->verifySecurityAnswer($request->security_answer)) {
-            return back()->withErrors([
-                'security_answer' => 'The security answer you provided is incorrect. Please try again.',
-            ])->with('reset_user_email', $user->email);
+        if (! empty($user->security_question_2)) {
+            if (empty($request->security_answer_2) || ! $user->verifyBothSecurityAnswers($request->security_answer, $request->security_answer_2)) {
+                return back()->withErrors([
+                    'security_answer' => __('messages.both_answers_incorrect'),
+                ])->with('reset_user_email', $user->email);
+            }
+        } else {
+            if (! $user->verifySecurityAnswer($request->security_answer)) {
+                return back()->withErrors([
+                    'security_answer' => 'The security answer you provided is incorrect. Please try again.',
+                ])->with('reset_user_email', $user->email);
+            }
         }
 
         // Answer is correct, update password!
@@ -195,6 +210,7 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         $securityQuestions = User::defaultSecurityQuestions();
+
         return view('user.profile', compact('user', 'securityQuestions'));
     }
 
@@ -217,11 +233,11 @@ class AuthController extends Controller
         $user->phone = $validated['phone'] ?? null;
         $user->bio = $validated['bio'] ?? null;
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
         }
 
-        if (!empty($validated['security_question']) && !empty($validated['security_answer'])) {
+        if (! empty($validated['security_question']) && ! empty($validated['security_answer'])) {
             $user->security_question = $validated['security_question'];
             $user->security_answer = Hash::make(mb_strtolower(trim($validated['security_answer'])));
         }

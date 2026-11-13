@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Destination;
+use App\Models\DestinationCategory;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -50,7 +51,7 @@ class ElaheraSirisaraTest extends TestCase
             ]
         );
 
-        $response = $this->get('/destinations/' . $destination->slug);
+        $response = $this->get('/destinations/'.$destination->slug);
         $response->assertStatus(200);
         $response->assertSee('Elahera Ancient Anicut');
         $response->assertSee('Google Maps මඟින් යන්න');
@@ -88,7 +89,7 @@ class ElaheraSirisaraTest extends TestCase
     }
 
     /**
-     * Test Smart Trip Planner page.
+     * Test Smart Trip Planner page, saving trip, and print view.
      */
     public function test_smart_trip_planner_page(): void
     {
@@ -96,6 +97,38 @@ class ElaheraSirisaraTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Live Day-Trip Timeline');
         $response->assertSee('Save Trip to My Account');
+
+        // Unauthenticated save returns 401 with login redirect
+        $saveGuest = $this->postJson('/trip-planner/save', [
+            'title' => 'My Elahera Trip',
+            'start_location' => 'Bakamuna',
+            'start_time' => '08:00',
+            'end_time' => '18:00',
+            'transport_mode' => 'Car/Van',
+            'meal_break' => true,
+            'stops' => [['id' => 1, 'title' => 'Elahera Anicut']],
+            'total_duration_minutes' => 600,
+        ]);
+        $saveGuest->assertStatus(401);
+
+        // Authenticated user can save trip
+        $user = User::factory()->create();
+        $saveAuth = $this->actingAs($user)->postJson('/trip-planner/save', [
+            'title' => 'My Elahera Trip',
+            'start_location' => 'Bakamuna',
+            'start_time' => '08:00',
+            'end_time' => '18:00',
+            'transport_mode' => 'Car/Van',
+            'meal_break' => true,
+            'stops' => [['id' => 1, 'title' => 'Elahera Anicut']],
+            'total_duration_minutes' => 360,
+        ]);
+        $saveAuth->assertStatus(200);
+        $saveAuth->assertJson(['success' => true]);
+
+        // Printable itinerary view
+        $printRes = $this->get('/trip-planner/print?stops='.urlencode(json_encode([['id' => 1, 'title' => 'Elahera Anicut']])));
+        $printRes->assertStatus(200);
     }
 
     /**
@@ -220,14 +253,14 @@ class ElaheraSirisaraTest extends TestCase
      */
     public function test_destination_category_auto_sync(): void
     {
-        $cat = \App\Models\DestinationCategory::firstOrCreate(
+        $cat = DestinationCategory::firstOrCreate(
             ['slug' => 'test-nature-category'],
             ['name_en' => 'Test Nature', 'name_si' => 'පරීක්ෂණ සොබාදහම', 'is_active' => true]
         );
 
         $destination = new Destination([
             'title_en' => 'Auto Sync Destination',
-            'slug' => 'auto-sync-dest-' . uniqid(),
+            'slug' => 'auto-sync-dest-'.uniqid(),
             'short_description_en' => 'Testing auto sync',
             'description_en' => 'Testing auto sync description',
             'category_id' => $cat->id,
@@ -294,5 +327,52 @@ class ElaheraSirisaraTest extends TestCase
         $siResponse->assertSee('විද්‍යුත් තැපැල් ලිපිනය');
         $siResponse->assertSee('සාමාජිකයෙකු ලෙස ලියාපදිංචි වන්න');
         $siResponse->assertSee('ඔබේ ප්‍රාථමික පාසලේ නම කුමක්ද?');
+    }
+
+    /**
+     * Test locale switching strictly supports English and Sinhala, ignoring unsupported locales like Tamil.
+     */
+    public function test_locale_switching_and_unsupported_locale_handling(): void
+    {
+        // 1. Switch locale to Sinhala
+        $switchResponseSi = $this->get('/locale/si');
+        $switchResponseSi->assertRedirect();
+        $this->assertEquals('si', session('locale'));
+
+        // 2. Attempt switching to unsupported locale (ta) should be rejected
+        $switchResponseTa = $this->get('/locale/ta');
+        $switchResponseTa->assertRedirect();
+        // Locale remains 'si' because 'ta' is not in allowed list ['en', 'si']
+        $this->assertEquals('si', session('locale'));
+
+        // 3. Switch back to English
+        $switchResponseEn = $this->get('/locale/en');
+        $switchResponseEn->assertRedirect();
+        $this->assertEquals('en', session('locale'));
+    }
+
+    /**
+     * Test Contact Form in footer validates properly and saves message.
+     */
+    public function test_footer_contact_form_submission_and_validation(): void
+    {
+        // 1. Validation failure: missing message
+        $invalid = $this->post('/contact', [
+            'name' => 'Kusal Mendis',
+            'email' => 'kusal@example.com',
+            'message' => 'short', // less than 10 characters
+        ]);
+        $invalid->assertSessionHasErrors(['message']);
+
+        // 2. Valid submission
+        $valid = $this->post('/contact', [
+            'name' => 'Kusal Mendis',
+            'email' => 'kusal@example.com',
+            'message' => 'Hello, I would like to learn more about the Elahera canal boat tour.',
+        ]);
+        $valid->assertSessionHas('success');
+        $this->assertDatabaseHas('contact_messages', [
+            'email' => 'kusal@example.com',
+        ]);
     }
 }

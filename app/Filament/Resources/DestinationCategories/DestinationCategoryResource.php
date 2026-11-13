@@ -9,11 +9,11 @@ use App\Filament\Resources\DestinationCategories\Schemas\DestinationCategoryForm
 use App\Filament\Resources\DestinationCategories\Tables\DestinationCategoriesTable;
 use App\Models\DestinationCategory;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class DestinationCategoryResource extends Resource
 {

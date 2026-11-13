@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class HeroSlider
@@ -37,33 +38,37 @@ class HeroSlider extends Model
 
     public function getLocalizedTitle(): string
     {
-        if (app()->getLocale() === 'si' && !empty($this->title_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->title_si)) {
             return $this->title_si;
         }
+
         return $this->title_en;
     }
 
     public function getLocalizedSubtitle(): ?string
     {
-        if (app()->getLocale() === 'si' && !empty($this->subtitle_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->subtitle_si)) {
             return $this->subtitle_si;
         }
+
         return $this->subtitle_en;
     }
 
     public function getLocalizedButton1Text(): string
     {
-        if (app()->getLocale() === 'si' && !empty($this->button1_text_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->button1_text_si)) {
             return $this->button1_text_si;
         }
+
         return $this->button1_text_en ?: 'Smart Trip Planner';
     }
 
     public function getLocalizedButton2Text(): string
     {
-        if (app()->getLocale() === 'si' && !empty($this->button2_text_si)) {
+        if (app()->getLocale() === 'si' && ! empty($this->button2_text_si)) {
             return $this->button2_text_si;
         }
+
         return $this->button2_text_en ?: 'Explore Destinations';
     }
 
@@ -72,17 +77,18 @@ class HeroSlider extends Model
      */
     public function getImageUrl(): string
     {
-        if (!empty($this->image)) {
-            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->image)) {
-                return \Illuminate\Support\Facades\Storage::disk('public')->url($this->image);
+        if (! empty($this->image)) {
+            if (Storage::disk('public')->exists($this->image)) {
+                return asset('storage/'.$this->image);
             }
-            if (file_exists(public_path('storage/' . $this->image))) {
-                return asset('storage/' . $this->image);
+            if (file_exists(public_path('storage/'.$this->image))) {
+                return asset('storage/'.$this->image);
             }
             if (file_exists(public_path($this->image))) {
                 return asset($this->image);
             }
         }
+
         return asset('images/sliders/slider1.jpg');
     }
 }

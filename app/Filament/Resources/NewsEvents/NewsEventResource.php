@@ -9,11 +9,11 @@ use App\Filament\Resources\NewsEvents\Schemas\NewsEventForm;
 use App\Filament\Resources\NewsEvents\Tables\NewsEventsTable;
 use App\Models\NewsEvent;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class NewsEventResource extends Resource
 {
